@@ -2,534 +2,544 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyTracker — Personal Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MyTracker">
+<meta name="theme-color" content="#0b0d12">
+<title>MyTracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root {
-  --bg:#0b0d12;--bg2:#111318;--bg3:#181b24;--bg4:#1e222e;--bg5:#252a38;
-  --border:#252a38;--border2:#2e3548;--border3:#3a4260;
+:root{
+  --bg:#0b0d12;--bg2:#111318;--bg3:#181b24;--bg4:#1e222e;
+  --border:#252a38;--border2:#2e3548;
   --text:#e4e8f0;--text2:#8892aa;--text3:#4a5268;
-  --accent:#4f8ef7;--accent-dim:rgba(79,142,247,.12);
-  --green:#2dd4a0;--green-dim:rgba(45,212,160,.12);
-  --gold:#f5c542;--gold-dim:rgba(245,197,66,.12);
-  --red:#f06464;--red-dim:rgba(240,100,100,.12);
-  --purple:#a78bfa;--purple-dim:rgba(167,139,250,.12);
-  --teal:#38bdf8;--teal-dim:rgba(56,189,248,.12);
-  --r8:8px;--r12:12px;--r16:16px;--r20:20px;
+  --accent:#4f8ef7;--adim:rgba(79,142,247,.14);
+  --green:#2dd4a0;--gdim:rgba(45,212,160,.14);
+  --gold:#f5c542;--ydim:rgba(245,197,66,.14);
+  --red:#f06464;--rdim:rgba(240,100,100,.14);
+  --purple:#a78bfa;--pdim:rgba(167,139,250,.14);
   --font:'DM Sans',system-ui,sans-serif;
   --mono:'DM Mono',monospace;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+  --nav-h:64px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;overflow:hidden}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;background:var(--bg)}
+body{
+  height:100%;background:var(--bg);color:var(--text);
+  font-family:var(--font);font-size:15px;
+  overflow:hidden;
+  padding-top:var(--safe-top);
+}
 
-/* ── AUTH SCREEN ── */
+/* ── LOADING ── */
+#loading{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:999;gap:18px;
+}
+.spin{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── AUTH ── */
 #auth-screen{
   position:fixed;inset:0;background:var(--bg);
-  display:flex;align-items:center;justify-content:center;z-index:1000;
+  display:none;align-items:flex-end;justify-content:center;
+  z-index:1000;padding:0 0 calc(var(--safe-bot) + 20px);
 }
-.auth-card{
-  width:380px;background:var(--bg2);
-  border:1px solid var(--border2);border-radius:var(--r20);
-  padding:36px;
+.auth-sheet{
+  width:100%;background:var(--bg2);
+  border-radius:28px 28px 0 0;
+  border-top:1px solid var(--border2);
+  padding:28px 24px calc(var(--safe-bot) + 24px);
 }
-.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
-.auth-logo-icon{
-  width:44px;height:44px;background:var(--accent);border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:20px;flex-shrink:0;
-}
-.auth-logo-name{font-size:20px;font-weight:600;letter-spacing:-.3px}
-.auth-logo-sub{font-size:12px;color:var(--text3);margin-top:2px}
-.auth-title{font-size:22px;font-weight:600;margin-bottom:6px;letter-spacing:-.4px}
-.auth-sub{font-size:13px;color:var(--text2);margin-bottom:28px}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500}
-.field input{
+.auth-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 28px}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.auth-logo-icon{width:44px;height:44px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px}
+.auth-title{font-size:24px;font-weight:600;letter-spacing:-.5px}
+.auth-sub-txt{font-size:13px;color:var(--text2);margin-bottom:4px}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.auth-field input{
   width:100%;background:var(--bg3);border:1px solid var(--border2);
-  border-radius:var(--r8);padding:11px 14px;color:var(--text);
-  font-family:var(--font);font-size:14px;outline:none;transition:border .15s;
+  border-radius:14px;padding:14px 16px;color:var(--text);
+  font-family:var(--font);font-size:16px;outline:none;
+  -webkit-appearance:none;
 }
-.field input:focus{border-color:var(--accent)}
+.auth-field input:focus{border-color:var(--accent)}
 .auth-btn{
-  width:100%;padding:12px;background:var(--accent);color:#fff;
-  border:none;border-radius:var(--r8);font-size:14px;font-weight:500;
-  cursor:pointer;transition:opacity .15s;margin-top:4px;
-  font-family:var(--font);
+  width:100%;padding:16px;background:var(--accent);color:#fff;
+  border:none;border-radius:14px;font-size:16px;font-weight:600;
+  cursor:pointer;margin-top:8px;font-family:var(--font);
+  -webkit-appearance:none;
 }
-.auth-btn:hover{opacity:.88}
-.auth-error{
-  background:var(--red-dim);border:1px solid rgba(240,100,100,.25);
-  border-radius:var(--r8);padding:10px 14px;font-size:13px;color:var(--red);
-  margin-bottom:16px;display:none;
+.auth-err{
+  background:var(--rdim);border:1px solid rgba(240,100,100,.2);
+  border-radius:10px;padding:10px 14px;font-size:13px;color:var(--red);
+  margin-bottom:14px;display:none;
 }
-.auth-lock{
-  display:flex;align-items:center;gap:6px;
-  font-size:11px;color:var(--text3);margin-top:16px;justify-content:center;
+.auth-lock{text-align:center;font-size:12px;color:var(--text3);margin-top:16px;display:flex;align-items:center;justify-content:center;gap:5px}
+
+/* ── APP SHELL ── */
+#app{
+  display:none;flex-direction:column;
+  height:100%;overflow:hidden;
 }
 
-/* ── LAYOUT ── */
-#app{display:flex;height:100vh;display:none}
-
-/* ── SIDEBAR ── */
-.sidebar{
-  width:228px;min-width:228px;background:var(--bg2);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;overflow:hidden;
+/* ── MAIN SCROLL AREA ── */
+.main-area{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding-bottom:calc(var(--nav-h) + var(--safe-bot) + 16px);
+  -webkit-overflow-scrolling:touch;
 }
-.sb-logo{
-  padding:18px 16px 14px;
+
+/* ── HEADER ── */
+.mob-header{
+  padding:14px 18px 12px;
+  background:var(--bg2);
   border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:10px;
-}
-.sb-logo-icon{
-  width:34px;height:34px;background:var(--accent);border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:16px;flex-shrink:0;
-}
-.sb-logo-text{font-size:15px;font-weight:600;letter-spacing:-.3px}
-.sb-logo-sub{font-size:10px;color:var(--text3);margin-top:1px}
-.sb-nav{padding:10px 8px;flex:1;overflow-y:auto}
-.sb-group{margin-bottom:18px}
-.sb-group-label{
-  font-size:10px;font-weight:600;color:var(--text3);
-  padding:3px 10px 6px;letter-spacing:.08em;text-transform:uppercase;
-}
-.sb-item{
-  display:flex;align-items:center;gap:9px;
-  padding:8px 10px;border-radius:var(--r8);
-  cursor:pointer;color:var(--text2);transition:all .12s;
-  margin-bottom:1px;font-size:13px;
-}
-.sb-item:hover{background:var(--bg3);color:var(--text)}
-.sb-item.active{background:rgba(79,142,247,.15);color:var(--accent)}
-.sb-item i{font-size:16px;width:18px;text-align:center;flex-shrink:0}
-.sb-badge{
-  margin-left:auto;background:var(--accent);color:#fff;
-  font-size:9px;padding:2px 6px;border-radius:20px;font-weight:600;
-}
-.sb-user{
-  padding:12px 14px;border-top:1px solid var(--border);
-  display:flex;align-items:center;gap:10px;
-}
-.sb-avatar{
-  width:32px;height:32px;border-radius:50%;background:var(--accent-dim);
-  border:1px solid var(--accent);display:flex;align-items:center;
-  justify-content:center;font-size:13px;font-weight:600;color:var(--accent);
+  display:flex;align-items:center;justify-content:space-between;
   flex-shrink:0;
 }
-.sb-user-info{flex:1;min-width:0}
-.sb-user-email{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-user-role{font-size:10px;color:var(--text3)}
-.sb-logout{
-  width:28px;height:28px;border-radius:7px;background:transparent;
-  border:1px solid var(--border2);color:var(--text3);
+.mob-header-left{}
+.mob-header-title{font-size:18px;font-weight:600;letter-spacing:-.4px}
+.mob-header-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.mob-header-right{display:flex;align-items:center;gap:8px}
+.mob-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--adim);border:1.5px solid var(--accent);
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:14px;transition:all .15s;flex-shrink:0;
+  font-size:14px;font-weight:600;color:var(--accent);cursor:pointer;
 }
-.sb-logout:hover{border-color:var(--red);color:var(--red)}
 
-/* ── MAIN ── */
-.main{flex:1;overflow-y:auto;background:var(--bg)}
-
-/* ── TOPBAR ── */
-.topbar{
-  padding:14px 24px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--bg2);position:sticky;top:0;z-index:10;
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--nav-h) + var(--safe-bot));
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  display:flex;align-items:flex-start;
+  padding-top:8px;
+  z-index:100;
+  padding-bottom:var(--safe-bot);
 }
-.topbar-title{font-size:16px;font-weight:600;letter-spacing:-.3px}
-.topbar-sub{font-size:11px;color:var(--text3);margin-top:2px}
-.topbar-right{display:flex;align-items:center;gap:10px}
+.nav-tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:6px 4px;border-radius:12px;
+  transition:all .15s;color:var(--text3);
+  font-size:10px;font-weight:500;
+}
+.nav-tab i{font-size:22px;transition:all .15s}
+.nav-tab.active{color:var(--accent)}
+.nav-tab.active i{color:var(--accent)}
+.nav-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:1px;opacity:0}
+.nav-tab.active .nav-dot{opacity:1}
 
-/* ── BADGES ── */
-.badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;display:inline-flex;align-items:center;gap:4px}
-.badge-blue{background:var(--accent-dim);color:var(--accent)}
-.badge-green{background:var(--green-dim);color:var(--green)}
-.badge-gold{background:var(--gold-dim);color:var(--gold)}
-.badge-red{background:var(--red-dim);color:var(--red)}
-.badge-purple{background:var(--purple-dim);color:var(--purple)}
+/* ── MORE DRAWER ── */
+.more-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;
+  display:none;align-items:flex-end;
+}
+.more-overlay.open{display:flex}
+.more-sheet{
+  width:100%;background:var(--bg2);
+  border-radius:24px 24px 0 0;border-top:1px solid var(--border2);
+  padding:20px 16px calc(var(--safe-bot) + 80px);
+}
+.more-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px}
+.more-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.more-item{
+  display:flex;align-items:center;gap:12px;padding:14px;
+  background:var(--bg3);border-radius:14px;border:1px solid var(--border);
+  cursor:pointer;
+}
+.more-item-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.more-item-name{font-size:13px;font-weight:500}
+.more-item-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.more-logout{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--rdim);border:1px solid rgba(240,100,100,.15);border-radius:14px;color:var(--red);font-size:14px;font-weight:500;cursor:pointer;margin-top:10px}
 
 /* ── CONTENT ── */
-.content{padding:20px 24px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.content{padding:16px}
+.section-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.g2-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.gfull{margin-bottom:12px}
 
 /* ── CARDS ── */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r16);padding:16px 18px}
-.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.card-title{font-size:12px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.05em}
-.card-title i{font-size:15px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:14px 16px;margin-bottom:12px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-ttl{font-size:12px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.05em}
+.card-ttl i{font-size:14px}
 
-/* ── STAT CARDS ── */
-.stat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r12);padding:14px 16px}
-.stat-lbl{font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:500}
-.stat-val{font-size:22px;font-weight:600;letter-spacing:-.5px}
-.stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
-.c-green{color:var(--green)}.c-gold{color:var(--gold)}.c-red{color:var(--red)}.c-accent{color:var(--accent)}.c-purple{color:var(--purple)}
+/* ── STAT PILLS ── */
+.stat{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+.stat-lbl{font-size:11px;color:var(--text3);margin-bottom:5px;font-weight:500}
+.stat-val{font-size:20px;font-weight:600;letter-spacing:-.5px}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* COLORS */
+.c-g{color:var(--green)}.c-y{color:var(--gold)}.c-r{color:var(--red)}.c-a{color:var(--accent)}.c-p{color:var(--purple)}
 
 /* ── PROGRESS ── */
-.pbar{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:8px}
-.pfill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
-.pf-blue{background:var(--accent)}.pf-green{background:var(--green)}.pf-gold{background:var(--gold)}.pf-purple{background:var(--purple)}
+.pbar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-top:7px}
+.pf{height:100%;border-radius:2px;transition:width .5s}
+.pf-a{background:var(--accent)}.pf-g{background:var(--green)}.pf-y{background:var(--gold)}.pf-p{background:var(--purple)}
 
-/* ── HABIT DOTS ── */
-.hdots{display:flex;gap:3px}
-.hdot{
-  width:24px;height:24px;border-radius:6px;
-  border:1px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:9px;font-weight:600;cursor:pointer;transition:all .12s;
-  color:var(--text3);
-}
-.hdot.done{border-color:transparent;color:#fff}
-.hdot.today{border-width:2px;border-color:var(--accent)}
+/* ── BADGES ── */
+.badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;display:inline-flex;align-items:center;gap:3px}
+.b-a{background:var(--adim);color:var(--accent)}
+.b-g{background:var(--gdim);color:var(--green)}
+.b-y{background:var(--ydim);color:var(--gold)}
+.b-r{background:var(--rdim);color:var(--red)}
+.b-p{background:var(--pdim);color:var(--purple)}
 
 /* ── ROWS ── */
-.row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
 .row:last-child{border-bottom:none}
-.row:hover{opacity:.85}
 
-/* ── STOCK ROW ── */
-.stock-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
-.stock-row:last-child{border-bottom:none}
-.stock-name{font-size:13px;font-weight:500}
-.stock-code{font-size:10px;color:var(--text3)}
-.stock-price{font-size:13px;font-weight:600;text-align:right}
-.stock-chg{font-size:10px;text-align:right}
-.signal{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600}
-.sig-buy{background:var(--green-dim);color:var(--green)}
-.sig-watch{background:var(--gold-dim);color:var(--gold)}
-.sig-wait{background:var(--red-dim);color:var(--red)}
-
-/* ── MINI CHART ── */
-.mchart{height:36px;display:flex;align-items:flex-end;gap:2px}
-.mbar{background:var(--accent);border-radius:2px 2px 0 0;opacity:.5;flex:1;transition:height .3s}
-.mbar.hi{opacity:1}
-
-/* ── ROUTINE ── */
+/* ── ROUTINE BLOCK ── */
 .rblock{
-  display:flex;align-items:center;gap:12px;padding:10px 12px;
-  border-radius:var(--r8);margin-bottom:6px;
-  border:1px solid var(--border);background:var(--bg3);cursor:pointer;
-  transition:all .12s;
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  border-radius:14px;margin-bottom:8px;
+  border:1px solid var(--border);background:var(--bg3);
 }
-.rblock:hover{border-color:var(--border2)}
-.rblock.done-block{opacity:.45}
-.rtime{font-size:11px;color:var(--text3);min-width:65px;font-family:var(--mono)}
+.rblock.done-block{opacity:.4}
+.rtime{font-size:11px;color:var(--text3);min-width:56px;font-family:var(--mono)}
 .rdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 
-/* ── PRAYER ── */
-.prayer-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
-.prayer-row:last-child{border-bottom:none}
-.prayer-next{
-  background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);
-  border-radius:var(--r8);padding:9px 12px;margin:4px -4px;
+/* ── STOCK ROW ── */
+.srow{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.srow:last-child{border-bottom:none}
+.sname{font-size:13px;font-weight:500}
+.scode{font-size:10px;color:var(--text3)}
+.sprice{font-size:13px;font-weight:600;text-align:right}
+.schg{font-size:10px;text-align:right}
+.signal{padding:3px 8px;border-radius:7px;font-size:11px;font-weight:600;flex-shrink:0}
+.s-buy{background:var(--gdim);color:var(--green)}
+.s-watch{background:var(--ydim);color:var(--gold)}
+.s-wait{background:var(--rdim);color:var(--red)}
+
+/* ── PRAYER ROW ── */
+.prayer-r{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px}
+.prayer-r:last-child{border-bottom:none}
+.prayer-next-wrap{background:var(--adim);border:1px solid rgba(79,142,247,.2);border-radius:12px;padding:10px 14px;margin:4px 0}
+
+/* ── INPUTS ── */
+.inp-group{margin-bottom:14px}
+.inp-label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.inp{
+  width:100%;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:12px;padding:13px 14px;color:var(--text);
+  font-family:var(--font);font-size:15px;outline:none;-webkit-appearance:none;
 }
-.prayer-next .prayer-row{border-bottom:none;padding:0}
+.inp:focus{border-color:var(--accent)}
+textarea.inp{resize:vertical;min-height:80px}
+select.inp{appearance:none;-webkit-appearance:none}
+
+/* ── BUTTONS ── */
+.btn{
+  padding:14px 20px;border-radius:14px;border:none;
+  cursor:pointer;font-size:14px;font-weight:600;
+  font-family:var(--font);display:inline-flex;align-items:center;gap:6px;
+  -webkit-appearance:none;
+}
+.btn-a{background:var(--accent);color:#fff}
+.btn-g{background:var(--gdim);color:var(--green);border:1px solid rgba(45,212,160,.2)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.btn-full{width:100%;justify-content:center}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:10px}
+
+/* ── FLOATING ACTION BUTTON ── */
+.fab{
+  position:fixed;bottom:calc(var(--nav-h) + var(--safe-bot) + 16px);right:18px;
+  width:52px;height:52px;background:var(--accent);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:24px;border:none;cursor:pointer;z-index:50;
+  box-shadow:0 4px 20px rgba(79,142,247,.4);
+}
+
+/* ── MOOD BUTTONS ── */
+.mood-row{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.mood-btn{
+  width:52px;height:52px;border-radius:14px;border:1px solid var(--border2);
+  background:var(--bg3);font-size:24px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;
+}
+.mood-btn.sel{border-color:var(--accent);background:var(--adim)}
+
+/* ── POMODORO ── */
+.pomo-ring{
+  width:180px;height:180px;border-radius:50%;
+  border:6px solid var(--border2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0 auto 20px;position:relative;
+}
+.pomo-svg{position:absolute;top:-6px;left:-6px;transform:rotate(-90deg)}
+.pomo-time{font-size:40px;font-weight:600;font-family:var(--mono);letter-spacing:-2px}
+.pomo-lbl{font-size:11px;color:var(--text3)}
+
+/* ── ZAKAT ── */
+.zrow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.zrow:last-child{border-bottom:none}
 
 /* ── AI CHAT ── */
-.ai-msg{background:var(--bg3);border-radius:var(--r12);padding:12px 14px;margin-bottom:10px;font-size:13px;line-height:1.65;color:var(--text2)}
+.ai-msg{background:var(--bg3);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:13px;line-height:1.65;color:var(--text2)}
 .ai-msg strong{color:var(--text)}
-.ai-user-msg{background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.15)}
+.ai-user{background:var(--adim);border:1px solid rgba(79,142,247,.15)}
 .ai-row{display:flex;gap:8px}
-.ai-inp{
-  flex:1;background:var(--bg3);border:1px solid var(--border2);
-  border-radius:var(--r8);padding:9px 12px;color:var(--text);
-  font-family:var(--font);font-size:13px;outline:none;
-}
+.ai-inp{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;color:var(--text);font-family:var(--font);font-size:14px;outline:none}
 .ai-inp:focus{border-color:var(--accent)}
-.thinking{display:flex;gap:4px;align-items:center;padding:12px 14px;background:var(--bg3);border-radius:var(--r12);margin-bottom:10px}
+.thinking{display:flex;gap:4px;align-items:center;padding:12px 14px;background:var(--bg3);border-radius:14px;margin-bottom:10px}
 .tdot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:tdot 1.2s ease-in-out infinite}
 .tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
 @keyframes tdot{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
 
-/* ── BUTTONS ── */
-.btn{padding:8px 16px;border-radius:var(--r8);border:none;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;font-family:var(--font);display:inline-flex;align-items:center;gap:6px}
-.btn-accent{background:var(--accent);color:#fff}
-.btn-accent:hover{opacity:.88}
-.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
-.btn-ghost:hover{background:var(--bg4);color:var(--text)}
-.btn-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(45,212,160,.2)}
-.btn-green:hover{background:rgba(45,212,160,.2)}
-.btn-sm{padding:5px 10px;font-size:12px}
-
-/* ── INPUTS ── */
-.inp-group{margin-bottom:14px}
-.inp-label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
-.inp{
-  width:100%;background:var(--bg3);border:1px solid var(--border2);
-  border-radius:var(--r8);padding:9px 12px;color:var(--text);
-  font-family:var(--font);font-size:13px;outline:none;
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:calc(var(--nav-h) + var(--safe-bot) + 12px);left:50%;
+  transform:translateX(-50%) translateY(100px);opacity:0;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:50px;padding:10px 18px;font-size:13px;
+  white-space:nowrap;z-index:9999;transition:all .25s;
+  display:flex;align-items:center;gap:8px;
 }
-.inp:focus{border-color:var(--accent)}
-textarea.inp{resize:vertical;min-height:90px}
-select.inp{appearance:none}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-/* ── POMODORO ── */
-.pomo-wrap{
-  width:180px;height:180px;border-radius:50%;
-  border:6px solid var(--border2);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  margin:0 auto;position:relative;
-}
-.pomo-svg{position:absolute;top:-6px;left:-6px;transform:rotate(-90deg)}
-.pomo-time{font-size:38px;font-weight:600;letter-spacing:-2px;font-family:var(--mono)}
-.pomo-lbl{font-size:11px;color:var(--text3)}
-
-/* ── MOOD ── */
-.mood-btn{
-  width:50px;height:50px;border-radius:12px;border:1px solid var(--border2);
-  background:var(--bg3);cursor:pointer;font-size:22px;
-  display:flex;align-items:center;justify-content:center;transition:all .15s;
-}
-.mood-btn:hover,.mood-btn.sel{border-color:var(--accent);background:var(--accent-dim)}
-
-/* ── ZAKAT ── */
-.zakat-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
-.zakat-row:last-child{border-bottom:none}
-
-/* ── GOAL ITEM ── */
-.goal-item{padding:13px 0;border-bottom:1px solid var(--border)}
-.goal-item:last-child{border-bottom:none}
-.goal-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
-.goal-name{font-size:14px;font-weight:500}
-.goal-meta{font-size:11px;color:var(--text3);margin-top:3px}
-.goal-bar-row{display:flex;align-items:center;gap:10px}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
 /* ── PAGES ── */
 .page{display:none}
 .page.active{display:block}
 
-/* ── LOADING ── */
-.loading-screen{
-  position:fixed;inset:0;background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:999;gap:16px;
-}
-.spin{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.load-text{font-size:13px;color:var(--text3)}
+/* ── GOAL ITEM ── */
+.goal-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.goal-item:last-child{border-bottom:none}
 
-/* ── SYNC INDICATOR ── */
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px}
+/* ── SBREAK ── */
+.sbreak{height:1px;background:var(--border);margin:14px 0}
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+/* ── MINI CHART ── */
+.mchart{height:32px;display:flex;align-items:flex-end;gap:2px}
+.mbar{background:var(--accent);border-radius:2px 2px 0 0;opacity:.45;flex:1}
+.mbar.hi{opacity:1}
 
-/* ── TOAST ── */
-#toast{
-  position:fixed;bottom:24px;right:24px;
-  background:var(--bg2);border:1px solid var(--border2);
-  border-radius:var(--r12);padding:12px 18px;font-size:13px;
-  color:var(--text);z-index:9999;
-  transform:translateY(80px);opacity:0;transition:all .25s;
-  display:flex;align-items:center;gap:8px;
-}
-#toast.show{transform:translateY(0);opacity:1}
+/* ── HIJRI CHIP ── */
+.hijri-chip{font-size:11px;color:var(--text3);padding:3px 9px;background:var(--bg3);border-radius:20px;border:1px solid var(--border)}
 
-/* ── SECTION BREAK ── */
-.sbreak{height:1px;background:var(--border);margin:16px 0}
+/* ── SCROLL FIX ── */
+::-webkit-scrollbar{display:none}
 </style>
 </head>
 <body>
 
 <!-- LOADING -->
-<div class="loading-screen" id="loading">
-  <div class="spin"></div>
-  <div class="load-text">Loading MyTracker...</div>
+<div id="loading">
+  <div style="width:52px;height:52px;background:var(--accent);border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;margin-bottom:4px">
+    <i class="ti ti-chart-dots-3"></i>
+  </div>
+  <div style="font-size:18px;font-weight:600">MyTracker</div>
+  <div class="spin" style="margin-top:8px"></div>
 </div>
 
-<!-- AUTH -->
-<div id="auth-screen" style="display:none">
-  <div class="auth-card">
+<!-- AUTH BOTTOM SHEET -->
+<div id="auth-screen">
+  <div class="auth-sheet">
+    <div class="auth-handle"></div>
     <div class="auth-logo">
-      <div class="auth-logo-icon"><i class="ti ti-chart-dots-3" aria-hidden="true"></i></div>
+      <div class="auth-logo-icon"><i class="ti ti-chart-dots-3"></i></div>
       <div>
-        <div class="auth-logo-name">MyTracker</div>
-        <div class="auth-logo-sub">Personal Dashboard</div>
+        <div class="auth-title">MyTracker</div>
+        <div class="auth-sub-txt">Private personal dashboard</div>
       </div>
     </div>
-    <div class="auth-title">Welcome back</div>
-    <div class="auth-sub">This is a private dashboard — authorized access only.</div>
-    <div id="auth-error" class="auth-error"></div>
-    <div class="field">
-      <label>Email address</label>
-      <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email">
+    <div id="auth-err" class="auth-err"></div>
+    <div class="auth-field">
+      <label>Email</label>
+      <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email" inputmode="email">
     </div>
-    <div class="field">
+    <div class="auth-field">
       <label>Password</label>
       <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <button class="auth-btn" onclick="doLogin()" id="login-btn">
-      <i class="ti ti-login" style="margin-right:6px" aria-hidden="true"></i>Sign in to dashboard
+    <button class="auth-btn" id="login-btn" onclick="doLogin()">
+      <i class="ti ti-login" style="margin-right:6px"></i>Sign in
     </button>
     <div class="auth-lock">
-      <i class="ti ti-shield-check" style="font-size:13px" aria-hidden="true"></i>
-      Private — signup is disabled
+      <i class="ti ti-shield-check" style="font-size:13px"></i>
+      Private — signup disabled
     </div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sb-logo">
-      <div class="sb-logo-icon"><i class="ti ti-chart-dots-3" aria-hidden="true"></i></div>
-      <div>
-        <div class="sb-logo-text">MyTracker</div>
-        <div class="sb-logo-sub"><span class="sync-dot"></span>Synced to Supabase</div>
-      </div>
+
+  <!-- HEADER (changes per page) -->
+  <div class="mob-header" id="mob-header">
+    <div class="mob-header-left">
+      <div class="mob-header-title" id="hdr-title">Dashboard</div>
+      <div class="mob-header-sub" id="hdr-sub"></div>
     </div>
-    <div class="sb-nav">
-      <div class="sb-group">
-        <div class="sb-group-label">Overview</div>
-        <div class="sb-item active" onclick="showPage('dashboard')"><i class="ti ti-home" aria-hidden="true"></i>Dashboard</div>
-      </div>
-      <div class="sb-group">
-        <div class="sb-group-label">Productivity</div>
-        <div class="sb-item" onclick="showPage('goals')"><i class="ti ti-target" aria-hidden="true"></i>Goals & Habits</div>
-        <div class="sb-item" onclick="showPage('routine')"><i class="ti ti-calendar-time" aria-hidden="true"></i>Daily Routine</div>
-        <div class="sb-item" onclick="showPage('focus')"><i class="ti ti-clock" aria-hidden="true"></i>Focus Timer</div>
-      </div>
-      <div class="sb-group">
-        <div class="sb-group-label">Finance</div>
-        <div class="sb-item" onclick="showPage('savings')"><i class="ti ti-piggy-bank" aria-hidden="true"></i>Savings & Charity</div>
-        <div class="sb-item" onclick="showPage('stocks')"><i class="ti ti-trending-up" aria-hidden="true"></i>SAHM Stocks AI<span class="sb-badge">AI</span></div>
-        <div class="sb-item" onclick="showPage('portfolio')"><i class="ti ti-briefcase" aria-hidden="true"></i>Portfolio</div>
-        <div class="sb-item" onclick="showPage('zakat')"><i class="ti ti-star" aria-hidden="true"></i>Zakat Calculator</div>
-      </div>
-      <div class="sb-group">
-        <div class="sb-group-label">Wellbeing</div>
-        <div class="sb-item" onclick="showPage('journal')"><i class="ti ti-notes" aria-hidden="true"></i>AI Journal</div>
-        <div class="sb-item" onclick="showPage('prayer')"><i class="ti ti-sun" aria-hidden="true"></i>Prayer Times</div>
-      </div>
-    </div>
-    <div class="sb-user">
-      <div class="sb-avatar" id="sb-avatar">?</div>
-      <div class="sb-user-info">
-        <div class="sb-user-email" id="sb-email">—</div>
-        <div class="sb-user-role">Owner · Private</div>
-      </div>
-      <button class="sb-logout" onclick="doLogout()" title="Sign out"><i class="ti ti-logout" aria-hidden="true"></i></button>
+    <div class="mob-header-right">
+      <span class="hijri-chip" id="hdr-hijri"></span>
+      <div class="mob-avatar" id="mob-avatar" onclick="openMore()">?</div>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
+  <!-- PAGES -->
+  <div class="main-area">
 
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
-      <div class="topbar">
-        <div>
-          <div class="topbar-title">Good morning!</div>
-          <div class="topbar-sub" id="dash-date-sub"></div>
+      <div class="content">
+        <div class="g2">
+          <div class="stat"><div class="stat-lbl">Savings (month)</div><div class="stat-val c-g" id="ds-saved">SAR 0</div><div class="pbar"><div class="pf pf-g" id="ds-bar" style="width:0%"></div></div></div>
+          <div class="stat"><div class="stat-lbl">Charity</div><div class="stat-val c-y" id="ds-charity">SAR 0</div><div class="stat-sub">This month</div></div>
         </div>
-        <div class="topbar-right">
-          <span class="badge badge-gold" id="hijri-badge"></span>
-          <span class="badge badge-green"><i class="ti ti-flame" style="font-size:11px" aria-hidden="true"></i><span id="streak-count">—</span> day streak</span>
+        <div class="g2">
+          <div class="stat"><div class="stat-lbl">Habits Today</div><div class="stat-val" id="ds-habits">— / —</div><div class="pbar"><div class="pf pf-a" id="ds-hbar" style="width:0%"></div></div></div>
+          <div class="stat"><div class="stat-lbl">Streak</div><div class="stat-val c-y"><i class="ti ti-flame" style="font-size:18px"></i><span id="ds-streak">12</span></div></div>
+        </div>
+
+        <!-- Prayer next -->
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-sun"></i>Prayer Times</div><span class="badge b-y" id="dash-next-prayer">—</span></div>
+          <div id="dash-prayers"></div>
+        </div>
+
+        <!-- Habits -->
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-check"></i>Today's Habits</div></div>
+          <div id="dash-habits"></div>
+        </div>
+
+        <!-- Routine -->
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-calendar-time"></i>Schedule</div><span class="badge b-a" id="dash-day-badge"></span></div>
+          <div id="dash-routine"></div>
+        </div>
+
+        <!-- Stocks -->
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-trending-up"></i>SAHM AI Picks</div><span class="badge b-a">AI</span></div>
+          <div id="dash-stocks"></div>
         </div>
       </div>
+    </div>
+
+    <!-- FINANCE -->
+    <div id="page-finance" class="page">
       <div class="content">
-        <div class="g4">
-          <div class="stat"><div class="stat-lbl">Daily Savings</div><div class="stat-val c-green" id="ds-saved">SAR 0</div><div class="stat-sub" id="ds-goal">Goal: —</div><div class="pbar"><div class="pfill pf-green" id="ds-bar" style="width:0%"></div></div></div>
-          <div class="stat"><div class="stat-lbl">Charity (Sadaqah)</div><div class="stat-val c-gold" id="ds-charity">SAR 0</div><div class="stat-sub">This month</div></div>
-          <div class="stat"><div class="stat-lbl">Habits Today</div><div class="stat-val" id="ds-habits">— / —</div><div class="stat-sub" id="ds-habits-pct"></div><div class="pbar"><div class="pfill pf-blue" id="ds-habits-bar" style="width:0%"></div></div></div>
-          <div class="stat"><div class="stat-lbl">Portfolio Value</div><div class="stat-val">SAR 42,800</div><div class="stat-sub c-green">+SAR 1,200 today</div></div>
+        <!-- Savings log -->
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-piggy-bank"></i>Log Savings</div></div>
+          <div class="inp-group"><label class="inp-label">Amount (SAR)</label><input class="inp" id="sav-amt" type="number" inputmode="decimal" placeholder="150"></div>
+          <div class="inp-group"><label class="inp-label">Type</label>
+            <select class="inp" id="sav-type">
+              <option value="fixed">Fixed Daily Saving</option>
+              <option value="pct">% of Income</option>
+              <option value="charity">Sadaqah / Charity</option>
+              <option value="nospend">No-Spend Day</option>
+            </select>
+          </div>
+          <div class="inp-group"><label class="inp-label">Note (optional)</label><input class="inp" id="sav-note" placeholder="e.g. Skipped lunch out"></div>
+          <button class="btn btn-g btn-full" onclick="logSaving()"><i class="ti ti-check"></i>Save Entry</button>
         </div>
+        <!-- Totals -->
         <div class="g2">
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-bolt" aria-hidden="true"></i>Today's Schedule</div><span class="badge badge-blue" id="dash-day-badge"></span></div>
-            <div id="dash-routine"></div>
-          </div>
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-sun" aria-hidden="true"></i>Prayer Times — Dammam</div><span class="badge badge-gold" id="dash-next-prayer"></span></div>
-            <div id="dash-prayers"></div>
-          </div>
+          <div class="stat"><div class="stat-lbl">Total Saved</div><div class="stat-val c-g" id="fin-saved">SAR 0</div></div>
+          <div class="stat"><div class="stat-lbl">Charity</div><div class="stat-val c-y" id="fin-charity">SAR 0</div></div>
         </div>
-        <div class="g2">
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-trending-up" aria-hidden="true"></i>SAHM Top Picks</div><span class="badge badge-blue">AI Powered</span></div>
-            <div id="dash-stocks"></div>
-          </div>
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-check" aria-hidden="true"></i>Habits Snapshot</div><span class="badge badge-green" id="dash-streak-badge"></span></div>
-            <div id="dash-habits"></div>
+        <!-- Chart -->
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-chart-bar"></i>This Week</div></div>
+          <div style="position:relative;height:120px"><canvas id="sav-chart" role="img" aria-label="Savings chart">Savings</canvas></div>
+        </div>
+        <!-- Log -->
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-list"></i>Recent Entries</div></div>
+          <div id="sav-log"><div style="color:var(--text3);font-size:13px;padding:8px 0">No entries yet.</div></div>
+        </div>
+        <!-- Portfolio preview -->
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-briefcase"></i>Portfolio</div></div>
+          <div class="g2-3" style="margin-bottom:0">
+            <div class="stat"><div class="stat-lbl">Invested</div><div style="font-size:15px;font-weight:600">38K</div></div>
+            <div class="stat"><div class="stat-lbl">Value</div><div style="font-size:15px;font-weight:600">42.8K</div></div>
+            <div class="stat"><div class="stat-lbl">Gain</div><div style="font-size:15px;font-weight:600" class="c-g">+12.6%</div></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- GOALS -->
+    <!-- STOCKS AI -->
+    <div id="page-stocks" class="page">
+      <div class="content">
+        <div class="g2-3" style="margin-bottom:12px">
+          <div class="stat"><div class="stat-lbl">TASI</div><div class="stat-val">12,450</div><div class="stat-sub c-g">+0.6%</div></div>
+          <div class="stat"><div class="stat-lbl">Buy Picks</div><div class="stat-val c-g">3</div></div>
+          <div class="stat"><div class="stat-lbl">Watchlist</div><div class="stat-val">4</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-trending-up"></i>AI Signals</div><span class="badge b-p">Educational</span></div>
+          <div id="stocks-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-robot"></i>Ask AI Advisor</div></div>
+          <div id="stock-ai-msgs" style="max-height:220px;overflow-y:auto;margin-bottom:12px">
+            <div class="ai-msg"><strong>AI Advisor:</strong> Welcome! Ask me anything about SAHM investing — I'll explain in simple, beginner-friendly terms.<br><br>Try: <em>"How do I start with SAR 1,000?"</em></div>
+          </div>
+          <div class="ai-row">
+            <input class="ai-inp" id="stock-q" placeholder="Ask about stocks..." onkeydown="if(event.key==='Enter')askStockAI()">
+            <button class="btn btn-a btn-sm" onclick="askStockAI()" style="flex-shrink:0;height:46px;width:46px;padding:0;justify-content:center;border-radius:12px"><i class="ti ti-send"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOALS & HABITS -->
     <div id="page-goals" class="page">
-      <div class="topbar">
-        <div><div class="topbar-title">Goals & Habits</div></div>
-        <div class="topbar-right">
-          <button class="btn btn-accent btn-sm" onclick="showGoalForm()"><i class="ti ti-plus" aria-hidden="true"></i>Add Goal</button>
-        </div>
-      </div>
       <div class="content">
-        <div class="card" style="margin-bottom:16px" id="goal-form-card" style="display:none">
-          <div class="card-hd"><div class="card-title"><i class="ti ti-plus" aria-hidden="true"></i>New Goal</div><button class="btn btn-ghost btn-sm" onclick="hideGoalForm()">Cancel</button></div>
-          <div class="two-col">
-            <div class="inp-group"><label class="inp-label">Goal Name</label><input class="inp" id="gf-name" placeholder="e.g. Save SAR 50,000"></div>
-            <div class="inp-group"><label class="inp-label">Category</label>
-              <select class="inp" id="gf-cat"><option>Finance</option><option>Health</option><option>Learning</option><option>Spiritual</option><option>Other</option></select>
-            </div>
+        <div class="card" id="goal-form" style="display:none">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-plus"></i>New Goal</div><button class="btn btn-ghost btn-sm" onclick="hideGoalForm()">Cancel</button></div>
+          <div class="inp-group"><label class="inp-label">Goal Name</label><input class="inp" id="gf-name" placeholder="e.g. Save SAR 50,000"></div>
+          <div class="inp-group"><label class="inp-label">Category</label>
+            <select class="inp" id="gf-cat"><option>Finance</option><option>Health</option><option>Learning</option><option>Spiritual</option><option>Other</option></select>
           </div>
-          <div class="two-col">
-            <div class="inp-group"><label class="inp-label">Target Value</label><input class="inp" id="gf-target" type="number" placeholder="50000"></div>
-            <div class="inp-group"><label class="inp-label">Deadline</label><input class="inp" id="gf-deadline" type="date"></div>
-          </div>
-          <button class="btn btn-accent" onclick="saveGoal()"><i class="ti ti-check" aria-hidden="true"></i>Save Goal</button>
-        </div>
-        <div class="card" style="margin-bottom:16px">
-          <div class="card-hd"><div class="card-title"><i class="ti ti-target" aria-hidden="true"></i>Active Goals</div></div>
-          <div id="goals-list"><div style="color:var(--text3);font-size:13px;padding:12px 0">No goals yet. Add your first goal above.</div></div>
+          <div class="inp-group"><label class="inp-label">Target (SAR or count)</label><input class="inp" id="gf-target" type="number" inputmode="decimal" placeholder="50000"></div>
+          <div class="inp-group"><label class="inp-label">Deadline</label><input class="inp" id="gf-deadline" type="date"></div>
+          <button class="btn btn-a btn-full" onclick="saveGoal()"><i class="ti ti-check"></i>Save Goal</button>
         </div>
         <div class="card">
-          <div class="card-hd">
-            <div class="card-title"><i class="ti ti-repeat" aria-hidden="true"></i>Daily Habits</div>
-            <button class="btn btn-ghost btn-sm" onclick="addHabitPrompt()"><i class="ti ti-plus" aria-hidden="true"></i>Add</button>
-          </div>
-          <div id="habits-list"><div style="color:var(--text3);font-size:13px;padding:12px 0">No habits yet.</div></div>
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-target"></i>Active Goals</div><button class="btn btn-ghost btn-sm" onclick="showGoalForm()"><i class="ti ti-plus"></i></button></div>
+          <div id="goals-list"><div style="color:var(--text3);font-size:13px;padding:8px 0">No goals yet.</div></div>
         </div>
-      </div>
-    </div>
-
-    <!-- ROUTINE -->
-    <div id="page-routine" class="page">
-      <div class="topbar">
-        <div><div class="topbar-title">Daily Routine</div></div>
-        <div class="topbar-right">
-          <button class="btn btn-accent btn-sm" onclick="addRoutinePrompt()"><i class="ti ti-plus" aria-hidden="true"></i>Add Block</button>
-        </div>
-      </div>
-      <div class="content">
         <div class="card">
-          <div class="card-hd"><div class="card-title"><i class="ti ti-calendar-time" aria-hidden="true"></i>Today's Schedule</div><div id="routine-pct-text" style="font-size:12px;color:var(--text3)"></div></div>
-          <div class="pbar" style="margin-bottom:16px"><div class="pfill pf-blue" id="routine-pbar" style="width:0%"></div></div>
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-repeat"></i>Daily Habits</div><button class="btn btn-ghost btn-sm" onclick="addHabitPrompt()"><i class="ti ti-plus"></i></button></div>
+          <div id="habits-list"><div style="color:var(--text3);font-size:13px;padding:8px 0">No habits yet.</div></div>
+        </div>
+        <!-- Routine -->
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-calendar-time"></i>Daily Routine</div><button class="btn btn-ghost btn-sm" onclick="addRoutinePrompt()"><i class="ti ti-plus"></i></button></div>
+          <div class="pbar" style="margin-bottom:12px"><div class="pf pf-a" id="rtn-pbar" style="width:0%"></div></div>
           <div id="routine-list"></div>
         </div>
       </div>
     </div>
 
-    <!-- FOCUS -->
+    <!-- MORE / MENU handled via drawer -->
+
+    <!-- FOCUS TIMER PAGE -->
     <div id="page-focus" class="page">
-      <div class="topbar"><div class="topbar-title">Focus Timer</div></div>
       <div class="content">
-        <div class="card" style="max-width:420px;margin:0 auto;text-align:center">
-          <div class="card-hd" style="justify-content:center"><div class="card-title"><i class="ti ti-clock" aria-hidden="true"></i>Pomodoro Timer</div></div>
-          <div class="pomo-wrap" id="pomo-ring">
+        <div class="card" style="text-align:center">
+          <div class="card-hd" style="justify-content:center"><div class="card-ttl"><i class="ti ti-clock"></i>Pomodoro Timer</div></div>
+          <div class="pomo-ring" id="pomo-ring">
             <svg class="pomo-svg" width="192" height="192" viewBox="0 0 192 192">
               <circle cx="96" cy="96" r="90" fill="none" stroke="var(--border2)" stroke-width="6"/>
               <circle cx="96" cy="96" r="90" fill="none" stroke="var(--accent)" stroke-width="6" stroke-dasharray="565" stroke-dashoffset="0" id="pomo-arc" stroke-linecap="round"/>
@@ -537,294 +547,210 @@ select.inp{appearance:none}
             <div class="pomo-time" id="pomo-display">25:00</div>
             <div class="pomo-lbl" id="pomo-mode-lbl">Focus Mode</div>
           </div>
-          <div style="display:flex;gap:10px;justify-content:center;margin-top:24px">
-            <button class="btn btn-accent" id="pomo-toggle-btn" onclick="togglePomo()"><i class="ti ti-player-play" aria-hidden="true"></i>Start</button>
-            <button class="btn btn-ghost" onclick="resetPomo()"><i class="ti ti-refresh" aria-hidden="true"></i>Reset</button>
+          <div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px">
+            <button class="btn btn-a" id="pomo-btn" onclick="togglePomo()"><i class="ti ti-player-play"></i>Start</button>
+            <button class="btn btn-ghost" onclick="resetPomo()"><i class="ti ti-refresh"></i>Reset</button>
           </div>
-          <div style="display:flex;gap:8px;justify-content:center;margin-top:14px">
-            <button class="btn btn-ghost btn-sm" onclick="setPomoMode(25,'Focus Mode')">25 min</button>
-            <button class="btn btn-ghost btn-sm" onclick="setPomoMode(5,'Short Break')">5 min break</button>
-            <button class="btn btn-ghost btn-sm" onclick="setPomoMode(15,'Long Break')">15 min break</button>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="btn btn-ghost btn-sm" onclick="setPomoMode(25,'Focus Mode')">25m</button>
+            <button class="btn btn-ghost btn-sm" onclick="setPomoMode(5,'Short Break')">5m</button>
+            <button class="btn btn-ghost btn-sm" onclick="setPomoMode(15,'Long Break')">15m</button>
           </div>
           <div class="sbreak"></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-            <div class="stat" style="text-align:center"><div class="stat-lbl">Sessions</div><div class="stat-val" id="pomo-sess">0</div></div>
-            <div class="stat" style="text-align:center"><div class="stat-lbl">Focus Time</div><div class="stat-val" id="pomo-total-lbl">0m</div></div>
-            <div class="stat" style="text-align:center"><div class="stat-lbl">Streak</div><div class="stat-val c-gold">4</div></div>
+          <div class="g2-3">
+            <div class="stat"><div class="stat-lbl">Sessions</div><div class="stat-val" id="pomo-sess">0</div></div>
+            <div class="stat"><div class="stat-lbl">Focus</div><div class="stat-val" id="pomo-total-lbl">0m</div></div>
+            <div class="stat"><div class="stat-lbl">Streak</div><div class="stat-val c-y">4</div></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SAVINGS -->
-    <div id="page-savings" class="page">
-      <div class="topbar"><div class="topbar-title">Savings & Charity</div></div>
-      <div class="content">
-        <div class="g2">
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-piggy-bank" aria-hidden="true"></i>Log Entry</div></div>
-            <div class="inp-group"><label class="inp-label">Amount (SAR)</label><input class="inp" id="sav-amount" type="number" placeholder="150"></div>
-            <div class="inp-group"><label class="inp-label">Type</label>
-              <select class="inp" id="sav-type">
-                <option value="fixed">Fixed Daily Saving</option>
-                <option value="pct">% of Income</option>
-                <option value="charity">Sadaqah / Charity</option>
-                <option value="nospend">No-Spend Day Bonus</option>
-              </select>
-            </div>
-            <div class="inp-group"><label class="inp-label">Note (optional)</label><input class="inp" id="sav-note" placeholder="e.g. Avoided eating out"></div>
-            <button class="btn btn-green" onclick="logSaving()" style="width:100%"><i class="ti ti-check" aria-hidden="true"></i>Log Entry</button>
-          </div>
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-chart-bar" aria-hidden="true"></i>Monthly Summary</div></div>
-            <div class="g2" style="margin-bottom:14px">
-              <div class="stat"><div class="stat-lbl">Total Saved</div><div class="stat-val c-green" id="sav-total">SAR 0</div></div>
-              <div class="stat"><div class="stat-lbl">Charity Given</div><div class="stat-val c-gold" id="sav-charity">SAR 0</div></div>
-            </div>
-            <div style="position:relative;height:110px"><canvas id="sav-chart" role="img" aria-label="Weekly savings chart">Savings data</canvas></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><div class="card-title"><i class="ti ti-list" aria-hidden="true"></i>Recent Entries</div></div>
-          <div id="sav-log"><div style="color:var(--text3);font-size:13px;padding:10px 0">No entries yet.</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STOCKS -->
-    <div id="page-stocks" class="page">
-      <div class="topbar">
-        <div><div class="topbar-title">SAHM Stock AI Advisor</div></div>
-        <div class="topbar-right"><span class="badge badge-purple">Educational Mode</span></div>
-      </div>
-      <div class="content">
-        <div class="g3" style="margin-bottom:16px">
-          <div class="stat"><div class="stat-lbl">TASI Index</div><div class="stat-val">12,450</div><div class="stat-sub c-green">+0.6% today</div></div>
-          <div class="stat"><div class="stat-lbl">AI Picks Today</div><div class="stat-val c-green">3 BUY</div><div class="stat-sub">2 Watch · 5 Avoid</div></div>
-          <div class="stat"><div class="stat-lbl">Watchlist</div><div class="stat-val">4 stocks</div></div>
-        </div>
-        <div class="g2">
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-trending-up" aria-hidden="true"></i>AI Stock Signals</div></div>
-            <div id="stocks-list"></div>
-          </div>
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-robot" aria-hidden="true"></i>Ask the AI Advisor</div><span class="badge badge-purple">Educational</span></div>
-            <div id="stock-ai-msgs" style="max-height:260px;overflow-y:auto;margin-bottom:12px">
-              <div class="ai-msg"><strong>AI Advisor:</strong> Welcome! I'm here to help you learn about investing in the Saudi Stock Exchange (SAHM / Tadawul). Ask me anything — I'll explain in simple, beginner-friendly terms.<br><br>Try: <em>"What is P/E ratio?"</em> or <em>"Why is Aramco considered safe?"</em> or <em>"How do I start investing with SAR 1,000?"</em></div>
-            </div>
-            <div class="ai-row">
-              <input class="ai-inp" id="stock-q" placeholder="Ask about any stock or concept..." onkeydown="if(event.key==='Enter')askStockAI()">
-              <button class="btn btn-accent" onclick="askStockAI()" style="flex-shrink:0"><i class="ti ti-send" aria-hidden="true"></i></button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PORTFOLIO -->
-    <div id="page-portfolio" class="page">
-      <div class="topbar"><div class="topbar-title">Financial Portfolio</div></div>
-      <div class="content">
-        <div class="g4" style="margin-bottom:16px">
-          <div class="stat"><div class="stat-lbl">Total Invested</div><div class="stat-val">SAR 38,000</div></div>
-          <div class="stat"><div class="stat-lbl">Current Value</div><div class="stat-val">SAR 42,800</div></div>
-          <div class="stat"><div class="stat-lbl">Total Gain</div><div class="stat-val c-green">+SAR 4,800</div><div class="stat-sub c-green">+12.6%</div></div>
-          <div class="stat"><div class="stat-lbl">Today</div><div class="stat-val c-green">+SAR 1,200</div></div>
-        </div>
-        <div class="g2">
-          <div class="card"><div class="card-hd"><div class="card-title"><i class="ti ti-chart-pie" aria-hidden="true"></i>Allocation</div></div><div style="position:relative;height:200px"><canvas id="port-chart" role="img" aria-label="Portfolio allocation">Portfolio</canvas></div></div>
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-briefcase" aria-hidden="true"></i>Holdings</div></div>
-            <div class="stock-row"><div><div class="stock-name">Saudi Aramco</div><div class="stock-code">100 shares · 2222.SR</div></div><div><div class="stock-price">SAR 28,450</div><div class="stock-chg c-green">+8.2%</div></div></div>
-            <div class="stock-row"><div><div class="stock-name">Al Rajhi Bank</div><div class="stock-code">50 shares · 1120.SR</div></div><div><div class="stock-price">SAR 4,210</div><div class="stock-chg c-green">+5.1%</div></div></div>
-            <div class="stock-row"><div><div class="stock-name">STC Group</div><div class="stock-code">20 shares · 7010.SR</div></div><div><div class="stock-price">SAR 936</div><div class="stock-chg c-red">-1.4%</div></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ZAKAT -->
-    <div id="page-zakat" class="page">
-      <div class="topbar"><div class="topbar-title">Zakat Calculator</div></div>
-      <div class="content">
-        <div class="g2">
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-star" aria-hidden="true"></i>Your Assets</div></div>
-            <div class="inp-group"><label class="inp-label">Cash & Bank Balance (SAR)</label><input class="inp" id="z-cash" type="number" placeholder="0" oninput="calcZakat()"></div>
-            <div class="inp-group"><label class="inp-label">Gold Value (SAR)</label><input class="inp" id="z-gold" type="number" placeholder="0" oninput="calcZakat()"></div>
-            <div class="inp-group"><label class="inp-label">Stock Portfolio (SAR)</label><input class="inp" id="z-stocks" type="number" placeholder="0" oninput="calcZakat()"></div>
-            <div class="inp-group"><label class="inp-label">Business Inventory (SAR)</label><input class="inp" id="z-biz" type="number" placeholder="0" oninput="calcZakat()"></div>
-            <div class="inp-group"><label class="inp-label">Money Owed to You (SAR)</label><input class="inp" id="z-owed" type="number" placeholder="0" oninput="calcZakat()"></div>
-            <div class="inp-group"><label class="inp-label">Debts to Deduct (SAR)</label><input class="inp" id="z-debts" type="number" placeholder="0" oninput="calcZakat()"></div>
-          </div>
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-calculator" aria-hidden="true"></i>Zakat Due</div></div>
-            <div class="zakat-row"><span style="color:var(--text2)">Total Assets</span><span id="z-total" style="font-weight:500">SAR 0</span></div>
-            <div class="zakat-row"><span style="color:var(--text2)">Nisab (~85g gold)</span><span style="color:var(--text3)">~SAR 21,000</span></div>
-            <div class="zakat-row"><span style="color:var(--text2)">Rate</span><span style="color:var(--text3)">2.5%</span></div>
-            <div class="sbreak"></div>
-            <div style="text-align:center;padding:20px 0">
-              <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Zakat Payable</div>
-              <div style="font-size:38px;font-weight:600;letter-spacing:-1px;color:var(--gold)" id="z-due">SAR 0</div>
-              <div id="z-status" style="font-size:12px;color:var(--text3);margin-top:8px">Enter assets to calculate</div>
-            </div>
-            <div class="ai-msg" style="font-size:12px">
-              <strong>Islamic Note:</strong> Zakat is due on wealth held for a full lunar year (Hawl) above the Nisab threshold. Always consult a scholar for your specific situation. May Allah accept your Zakat.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- JOURNAL -->
+    <!-- JOURNAL PAGE -->
     <div id="page-journal" class="page">
-      <div class="topbar"><div class="topbar-title">AI Journal & Mood Log</div></div>
       <div class="content">
-        <div class="g2">
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-mood-smile" aria-hidden="true"></i>How are you feeling?</div></div>
-            <div style="display:flex;gap:10px;justify-content:center;margin:14px 0" id="mood-row">
-              <button class="mood-btn" onclick="setMood(this,'😔','sad')" title="Sad">😔</button>
-              <button class="mood-btn" onclick="setMood(this,'😐','neutral')" title="Neutral">😐</button>
-              <button class="mood-btn" onclick="setMood(this,'🙂','good')" title="Good">🙂</button>
-              <button class="mood-btn" onclick="setMood(this,'😊','happy')" title="Happy">😊</button>
-              <button class="mood-btn" onclick="setMood(this,'🤩','great')" title="Great">🤩</button>
-            </div>
-            <div class="inp-group"><label class="inp-label">Journal Entry</label><textarea class="inp" id="journal-body" placeholder="What happened today? What are you grateful for? Any challenges?"></textarea></div>
-            <button class="btn btn-accent" onclick="submitJournal()" style="width:100%"><i class="ti ti-robot" aria-hidden="true"></i>Get AI Reflection & Save</button>
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-mood-smile"></i>How are you feeling?</div></div>
+          <div class="mood-row" id="mood-row">
+            <button class="mood-btn" onclick="setMood(this,'😔','sad')">😔</button>
+            <button class="mood-btn" onclick="setMood(this,'😐','neutral')">😐</button>
+            <button class="mood-btn" onclick="setMood(this,'🙂','good')">🙂</button>
+            <button class="mood-btn" onclick="setMood(this,'😊','happy')">😊</button>
+            <button class="mood-btn" onclick="setMood(this,'🤩','great')">🤩</button>
           </div>
-          <div class="card">
-            <div class="card-hd"><div class="card-title"><i class="ti ti-robot" aria-hidden="true"></i>AI Reflection</div></div>
-            <div id="journal-ai">
-              <div style="color:var(--text3);font-size:13px;padding:20px 0;text-align:center">
-                <i class="ti ti-notes" style="font-size:32px;display:block;margin-bottom:8px;opacity:.3" aria-hidden="true"></i>
-                Write your journal entry and I'll provide a thoughtful reflection and encouragement.
-              </div>
-            </div>
-            <div class="sbreak"></div>
-            <div class="card-hd" style="margin-bottom:10px"><div class="card-title"><i class="ti ti-history" aria-hidden="true"></i>Past Entries</div></div>
-            <div id="journal-history" style="max-height:200px;overflow-y:auto"></div>
+          <div class="inp-group"><label class="inp-label">Journal Entry</label><textarea class="inp" id="journal-body" placeholder="What happened today? What are you grateful for?"></textarea></div>
+          <button class="btn btn-a btn-full" onclick="submitJournal()"><i class="ti ti-robot"></i>Get AI Reflection & Save</button>
+        </div>
+        <div id="journal-ai"></div>
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-history"></i>Past Entries</div></div>
+          <div id="journal-history"><div style="color:var(--text3);font-size:13px;padding:8px 0">No entries yet.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ZAKAT PAGE -->
+    <div id="page-zakat" class="page">
+      <div class="content">
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-star"></i>Your Assets</div></div>
+          <div class="inp-group"><label class="inp-label">Cash & Bank (SAR)</label><input class="inp" id="z-cash" type="number" inputmode="decimal" placeholder="0" oninput="calcZakat()"></div>
+          <div class="inp-group"><label class="inp-label">Gold Value (SAR)</label><input class="inp" id="z-gold" type="number" inputmode="decimal" placeholder="0" oninput="calcZakat()"></div>
+          <div class="inp-group"><label class="inp-label">Stock Portfolio (SAR)</label><input class="inp" id="z-stk" type="number" inputmode="decimal" placeholder="0" oninput="calcZakat()"></div>
+          <div class="inp-group"><label class="inp-label">Business Inventory (SAR)</label><input class="inp" id="z-biz" type="number" inputmode="decimal" placeholder="0" oninput="calcZakat()"></div>
+          <div class="inp-group"><label class="inp-label">Owed to You (SAR)</label><input class="inp" id="z-owed" type="number" inputmode="decimal" placeholder="0" oninput="calcZakat()"></div>
+          <div class="inp-group"><label class="inp-label">Debts to Deduct (SAR)</label><input class="inp" id="z-debts" type="number" inputmode="decimal" placeholder="0" oninput="calcZakat()"></div>
+        </div>
+        <div class="card" style="text-align:center">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-calculator"></i>Zakat Due</div></div>
+          <div class="zrow"><span style="color:var(--text2)">Total Assets</span><span id="z-total" style="font-weight:600">SAR 0</span></div>
+          <div class="zrow"><span style="color:var(--text2)">Nisab (~85g gold)</span><span style="color:var(--text3)">~SAR 21,000</span></div>
+          <div class="zrow"><span style="color:var(--text2)">Rate</span><span style="color:var(--text3)">2.5%</span></div>
+          <div style="padding:24px 0">
+            <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Zakat Payable</div>
+            <div style="font-size:42px;font-weight:600;color:var(--gold);letter-spacing:-1px" id="z-due">SAR 0</div>
+            <div id="z-status" style="font-size:12px;color:var(--text3);margin-top:8px">Enter assets above</div>
+          </div>
+          <div class="ai-msg" style="font-size:12px;text-align:left">
+            <strong>Islamic Note:</strong> Zakat is due on wealth held for a full lunar year (Hawl) above Nisab. Consult a scholar for your situation.
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PRAYER -->
+    <!-- PRAYER FULL PAGE -->
     <div id="page-prayer" class="page">
-      <div class="topbar"><div class="topbar-title">Prayer Times — Dammam</div></div>
       <div class="content">
-        <div class="card" style="max-width:480px;margin:0 auto">
-          <div class="card-hd">
-            <div class="card-title"><i class="ti ti-sun" aria-hidden="true"></i>Today's Prayers</div>
-            <span class="badge badge-gold" id="prayer-hijri-full"></span>
-          </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-ttl"><i class="ti ti-sun"></i>Prayer Times — Dammam</div></div>
           <div id="prayer-full-list"></div>
           <div class="sbreak"></div>
           <div class="ai-msg" style="font-size:12px">
-            <strong>Location:</strong> Dammam, Eastern Province (26.4°N, 50.1°E)<br>
-            <span style="color:var(--text3)">Using Umm al-Qura method for Saudi Arabia.</span>
+            <strong>Location:</strong> Dammam, Eastern Province (26.4°N, 50.1°E) · Umm al-Qura method
           </div>
         </div>
       </div>
     </div>
 
-  </div><!-- /main -->
+  </div><!-- /main-area -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-tab active" id="nav-dashboard" onclick="showPage('dashboard')">
+      <i class="ti ti-home"></i>Home<div class="nav-dot"></div>
+    </div>
+    <div class="nav-tab" id="nav-finance" onclick="showPage('finance')">
+      <i class="ti ti-piggy-bank"></i>Finance<div class="nav-dot"></div>
+    </div>
+    <div class="nav-tab" id="nav-stocks" onclick="showPage('stocks')">
+      <i class="ti ti-trending-up"></i>Stocks<div class="nav-dot"></div>
+    </div>
+    <div class="nav-tab" id="nav-goals" onclick="showPage('goals')">
+      <i class="ti ti-target"></i>Goals<div class="nav-dot"></div>
+    </div>
+    <div class="nav-tab" id="nav-more" onclick="openMore()">
+      <i class="ti ti-dots"></i>More<div class="nav-dot"></div>
+    </div>
+  </div>
+
 </div><!-- /app -->
+
+<!-- MORE DRAWER -->
+<div class="more-overlay" id="more-overlay" onclick="closeMore(event)">
+  <div class="more-sheet">
+    <div class="more-handle"></div>
+    <div class="more-grid">
+      <div class="more-item" onclick="showPageFromMore('focus')">
+        <div class="more-item-icon" style="background:var(--adim);color:var(--accent)"><i class="ti ti-clock"></i></div>
+        <div><div class="more-item-name">Focus Timer</div><div class="more-item-sub">Pomodoro</div></div>
+      </div>
+      <div class="more-item" onclick="showPageFromMore('journal')">
+        <div class="more-item-icon" style="background:var(--pdim);color:var(--purple)"><i class="ti ti-notes"></i></div>
+        <div><div class="more-item-name">AI Journal</div><div class="more-item-sub">Mood + reflect</div></div>
+      </div>
+      <div class="more-item" onclick="showPageFromMore('zakat')">
+        <div class="more-item-icon" style="background:var(--ydim);color:var(--gold)"><i class="ti ti-star"></i></div>
+        <div><div class="more-item-name">Zakat Calc</div><div class="more-item-sub">2.5% calculator</div></div>
+      </div>
+      <div class="more-item" onclick="showPageFromMore('prayer')">
+        <div class="more-item-icon" style="background:var(--ydim);color:var(--gold)"><i class="ti ti-sun"></i></div>
+        <div><div class="more-item-name">Prayer Times</div><div class="more-item-sub">Dammam</div></div>
+      </div>
+    </div>
+    <div class="more-logout" onclick="doLogout()">
+      <i class="ti ti-logout"></i>Sign out
+    </div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
 <script>
-const SUPABASE_URL = 'https://qqxhfaleayormppicadp.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxeGhmYWxlYXlvcm1wcGljYWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MjczMTksImV4cCI6MjA5NDAwMzMxOX0.vWEQbIbFoX9hYDuYv4pGyzfZRvPnFqiOK4mPyY5kga0';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const SUPABASE_URL='https://qqxhfaleayormppicadp.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxeGhmYWxlYXlvcm1wcGljYWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MjczMTksImV4cCI6MjA5NDAwMzMxOX0.vWEQbIbFoX9hYDuYv4pGyzfZRvPnFqiOK4mPyY5kga0';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+let currentUser=null;
+let D={goals:[],habits:[],habitLogs:[],routine:[],routineLogs:[],savingsEntries:[],journalEntries:[]};
 
-let currentUser = null;
-let appData = { goals:[], habits:[], habitLogs:[], routine:[], savingsEntries:[], journalEntries:[] };
-
-/* ── INIT ── */
-async function init() {
-  const { data:{ session } } = await sb.auth.getSession();
-  document.getElementById('loading').style.display = 'none';
-  if (session) {
-    currentUser = session.user;
-    await bootApp();
-  } else {
-    document.getElementById('auth-screen').style.display = 'flex';
-  }
+async function init(){
+  const {data:{session}}=await sb.auth.getSession();
+  document.getElementById('loading').style.display='none';
+  if(session){currentUser=session.user;await bootApp();}
+  else{document.getElementById('auth-screen').style.display='flex';}
 }
 
-/* ── AUTH ── */
-async function doLogin() {
-  const email = document.getElementById('auth-email').value.trim();
-  const pass = document.getElementById('auth-pass').value;
-  const btn = document.getElementById('login-btn');
-  const err = document.getElementById('auth-error');
-  err.style.display = 'none';
-  btn.textContent = 'Signing in...'; btn.disabled = true;
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  btn.innerHTML = '<i class="ti ti-login" style="margin-right:6px"></i>Sign in to dashboard';
-  btn.disabled = false;
-  if (error) {
-    err.textContent = error.message === 'Invalid login credentials'
-      ? 'Incorrect email or password. This dashboard is private.'
-      : error.message;
-    err.style.display = 'block';
-    return;
-  }
-  currentUser = data.user;
-  document.getElementById('auth-screen').style.display = 'none';
+async function doLogin(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-pass').value;
+  const btn=document.getElementById('login-btn');
+  const err=document.getElementById('auth-err');
+  err.style.display='none';
+  btn.textContent='Signing in...';btn.disabled=true;
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  btn.innerHTML='<i class="ti ti-login" style="margin-right:6px"></i>Sign in';btn.disabled=false;
+  if(error){err.textContent=error.message==='Invalid login credentials'?'Incorrect email or password.':error.message;err.style.display='block';return;}
+  currentUser=data.user;
+  document.getElementById('auth-screen').style.display='none';
   await bootApp();
 }
 
-async function doLogout() {
+async function doLogout(){
   await sb.auth.signOut();
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-  currentUser = null;
-  toast('Signed out successfully');
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  currentUser=null;closeMore();toast('Signed out');
 }
 
-/* ── BOOT APP ── */
-async function bootApp() {
-  document.getElementById('app').style.display = 'flex';
-  const email = currentUser.email;
-  document.getElementById('sb-email').textContent = email;
-  document.getElementById('sb-avatar').textContent = email[0].toUpperCase();
+async function bootApp(){
+  document.getElementById('app').style.display='flex';
+  const email=currentUser.email;
+  document.getElementById('mob-avatar').textContent=email[0].toUpperCase();
+  document.getElementById('hdr-hijri').textContent=getHijriDate();
   await loadAllData();
-  renderDashboard();
-  renderStocksList();
-  renderPortfolioChart();
+  renderDashboard();renderStocksList();
 }
 
-/* ── LOAD ALL DATA ── */
-async function loadAllData() {
-  const uid = currentUser.id;
-  const [g, h, hl, r, rl, s, j] = await Promise.all([
-    sb.from('goals').select('*').eq('user_id', uid).order('created_at'),
-    sb.from('habits').select('*').eq('user_id', uid).order('created_at'),
-    sb.from('habit_logs').select('*').eq('user_id', uid).eq('log_date', today()),
-    sb.from('routine_blocks').select('*').eq('user_id', uid).order('sort_order'),
-    sb.from('routine_logs').select('*').eq('user_id', uid).eq('log_date', today()),
-    sb.from('savings_entries').select('*').eq('user_id', uid).order('created_at', {ascending:false}).limit(30),
-    sb.from('journal_entries').select('*').eq('user_id', uid).order('created_at', {ascending:false}).limit(20)
+async function loadAllData(){
+  const uid=currentUser.id;
+  const [g,h,hl,r,rl,s,j]=await Promise.all([
+    sb.from('goals').select('*').eq('user_id',uid).order('created_at'),
+    sb.from('habits').select('*').eq('user_id',uid).order('created_at'),
+    sb.from('habit_logs').select('*').eq('user_id',uid).eq('log_date',today()),
+    sb.from('routine_blocks').select('*').eq('user_id',uid).order('sort_order'),
+    sb.from('routine_logs').select('*').eq('user_id',uid).eq('log_date',today()),
+    sb.from('savings_entries').select('*').eq('user_id',uid).order('created_at',{ascending:false}).limit(30),
+    sb.from('journal_entries').select('*').eq('user_id',uid).order('created_at',{ascending:false}).limit(20)
   ]);
-  appData.goals = g.data || [];
-  appData.habits = h.data || [];
-  appData.habitLogs = hl.data || [];
-  appData.routine = r.data || [];
-  appData.routineLogs = rl.data || [];
-  appData.savingsEntries = s.data || [];
-  appData.journalEntries = j.data || [];
-
-  if (!appData.routine.length) await seedRoutine();
-  if (!appData.habits.length) await seedHabits();
+  D.goals=g.data||[];D.habits=h.data||[];D.habitLogs=hl.data||[];
+  D.routine=r.data||[];D.routineLogs=rl.data||[];
+  D.savingsEntries=s.data||[];D.journalEntries=j.data||[];
+  if(!D.routine.length)await seedRoutine();
+  if(!D.habits.length)await seedHabits();
 }
 
-/* ── SEED DEFAULT DATA ── */
-async function seedRoutine() {
-  const uid = currentUser.id;
-  const blocks = [
+async function seedRoutine(){
+  const uid=currentUser.id;
+  const blocks=[
     {user_id:uid,time_slot:'05:30',name:'Fajr Prayer + Quran',color:'#f5c542',sort_order:0},
     {user_id:uid,time_slot:'07:00',name:'Morning Exercise',color:'#4f8ef7',sort_order:1},
     {user_id:uid,time_slot:'09:00',name:'Review SAHM Stocks',color:'#2dd4a0',sort_order:2},
@@ -835,331 +761,307 @@ async function seedRoutine() {
     {user_id:uid,time_slot:'20:00',name:'Family Time',color:'#f06464',sort_order:7},
     {user_id:uid,time_slot:'21:30',name:'Journal & Reflect',color:'#a78bfa',sort_order:8}
   ];
-  const { data } = await sb.from('routine_blocks').insert(blocks).select();
-  appData.routine = data || [];
+  const{data}=await sb.from('routine_blocks').insert(blocks).select();
+  D.routine=data||[];
 }
 
-async function seedHabits() {
-  const uid = currentUser.id;
-  const habits = [
+async function seedHabits(){
+  const uid=currentUser.id;
+  const h=[
     {user_id:uid,name:'Morning Prayer',color:'#f5c542'},
     {user_id:uid,name:'Exercise 30min',color:'#4f8ef7'},
     {user_id:uid,name:'Read / Learn',color:'#a78bfa'},
     {user_id:uid,name:'No-Spend Day',color:'#2dd4a0'}
   ];
-  const { data } = await sb.from('habits').insert(habits).select();
-  appData.habits = data || [];
+  const{data}=await sb.from('habits').insert(h).select();
+  D.habits=data||[];
 }
 
-/* ── HELPERS ── */
-function today() { return new Date().toISOString().slice(0,10); }
-function toast(msg, type='success') {
-  const t = document.getElementById('toast');
-  t.innerHTML = `<i class="ti ti-${type==='error'?'alert-circle':'circle-check'}" style="color:${type==='error'?'var(--red)':'var(--green)'}"></i>${msg}`;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+function today(){return new Date().toISOString().slice(0,10);}
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.innerHTML=`<i class="ti ti-${type==='error'?'alert-circle':'circle-check'}" style="color:${type==='error'?'var(--red)':'var(--green)'}"></i>${msg}`;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-function getHijriDate() {
-  const now = new Date();
-  const diff = Math.floor((now - new Date('2024-01-11')) / 86400000);
-  const total = 1445 * 354 + 11 + diff;
-  const year = Math.floor(total / 354.367) + 1;
-  const rem = total % 354;
-  const months = ['Muharram','Safar','Rabi I','Rabi II','Jumada I','Jumada II',"Rajab","Sha'ban",'Ramadan','Shawwal','Dhul Qa\'dah','Dhul Hijjah'];
-  const month = Math.min(Math.floor(rem / 29.5), 11);
-  const day = Math.floor(rem % 29.5) + 1;
-  return `${day} ${months[month]} ${year} AH`;
+function getHijriDate(){
+  const now=new Date();
+  const diff=Math.floor((now-new Date('2024-01-11'))/86400000);
+  const total=1445*354+11+diff;
+  const year=Math.floor(total/354.367)+1;
+  const rem=total%354;
+  const months=['Muharram','Safar','Rabi I','Rabi II','Jumada I','Jumada II',"Rajab","Sha'ban",'Ramadan','Shawwal',"Dhul Qa'dah","Dhul Hijjah"];
+  const month=Math.min(Math.floor(rem/29.5),11);
+  const day=Math.floor(rem%29.5)+1;
+  return `${day} ${months[month]} ${year}`;
 }
 
-function getPrayerTimes() {
-  return {Fajr:'04:52',Sunrise:'06:12',Dhuhr:'12:15',Asr:'15:33',Maghrib:'18:35',Isha:'20:05'};
-}
-
-function getNextPrayer() {
-  const now = new Date();
-  const cur = now.getHours() * 60 + now.getMinutes();
-  const times = getPrayerTimes();
-  for (const [name, t] of Object.entries(times)) {
-    if (name === 'Sunrise') continue;
-    const [h,m] = t.split(':').map(Number);
-    if (h*60+m > cur) return name;
+function getPrayerTimes(){return{Fajr:'04:52',Sunrise:'06:12',Dhuhr:'12:15',Asr:'15:33',Maghrib:'18:35',Isha:'20:05'};}
+function getNextPrayer(){
+  const now=new Date();const cur=now.getHours()*60+now.getMinutes();
+  const times=getPrayerTimes();
+  for(const[name,t]of Object.entries(times)){
+    if(name==='Sunrise')continue;
+    const[h,m]=t.split(':').map(Number);
+    if(h*60+m>cur)return name;
   }
   return 'Fajr';
 }
 
-/* ── PAGE NAVIGATION ── */
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.sb-item').forEach(n => {
-    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');
-  });
-  if (id==='dashboard') renderDashboard();
-  else if (id==='goals') renderGoalsPage();
-  else if (id==='routine') renderRoutinePage();
-  else if (id==='savings') { renderSavingsLog(); renderSavingsChart(); renderSavingsTotals(); }
-  else if (id==='stocks') renderStocksList();
-  else if (id==='portfolio') renderPortfolioChart();
-  else if (id==='journal') renderJournalHistory();
-  else if (id==='prayer') renderPrayerFull();
+const PAGE_TITLES={dashboard:'Dashboard',finance:'Finance',stocks:'SAHM Stocks',goals:'Goals & Habits',focus:'Focus Timer',journal:'AI Journal',zakat:'Zakat Calculator',prayer:'Prayer Times'};
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById('page-'+id);
+  if(pg)pg.classList.add('active');
+  const nt=document.getElementById('nav-'+id);
+  if(nt)nt.classList.add('active');
+  document.getElementById('hdr-title').textContent=PAGE_TITLES[id]||id;
+  const now=new Date();
+  document.getElementById('hdr-sub').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  if(id==='dashboard')renderDashboard();
+  else if(id==='finance'){renderSavingsLog();renderSavingsTotals();renderSavingsChart();}
+  else if(id==='stocks')renderStocksList();
+  else if(id==='goals')renderGoalsPage();
+  else if(id==='prayer')renderPrayerFull();
+  else if(id==='journal')renderJournalHistory();
 }
 
-/* ── DASHBOARD ── */
-function renderDashboard() {
-  const now = new Date();
-  document.getElementById('dash-date-sub').textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('hijri-badge').textContent = getHijriDate();
-  document.getElementById('dash-day-badge').textContent = now.toLocaleDateString('en-US',{weekday:'long'});
-  const np = getNextPrayer();
-  document.getElementById('dash-next-prayer').textContent = np + ' next';
-
-  // Habit stats
-  const total = appData.habits.length;
-  const done = appData.habitLogs.filter(l => l.done).length;
-  const pct = total ? Math.round(done/total*100) : 0;
-  document.getElementById('ds-habits').textContent = `${done} / ${total}`;
-  document.getElementById('ds-habits-pct').textContent = pct + '% completion';
-  document.getElementById('ds-habits-bar').style.width = pct + '%';
-  document.getElementById('streak-count').textContent = '12';
-  document.getElementById('dash-streak-badge').textContent = '12 streak';
-
-  // Savings stats
-  const month = today().slice(0,7);
-  const monthSavings = appData.savingsEntries.filter(e => e.entry_date && e.entry_date.startsWith(month));
-  const totalSaved = monthSavings.filter(e => e.entry_type !== 'charity').reduce((a,b) => a + parseFloat(b.amount||0), 0);
-  const totalCharity = monthSavings.filter(e => e.entry_type === 'charity').reduce((a,b) => a + parseFloat(b.amount||0), 0);
-  document.getElementById('ds-saved').textContent = 'SAR ' + totalSaved.toLocaleString();
-  document.getElementById('ds-charity').textContent = 'SAR ' + totalCharity.toLocaleString();
-
-  renderDashRoutine();
-  renderDashPrayers();
-  renderDashHabits();
+function showPageFromMore(id){
+  closeMore();
+  showPage(id);
 }
 
-function renderDashRoutine() {
-  const el = document.getElementById('dash-routine');
-  const loggedIds = new Set(appData.routineLogs.filter(l=>l.done).map(l=>l.block_id));
-  const items = appData.routine.slice(0,4);
-  el.innerHTML = items.map(r => {
-    const done = loggedIds.has(r.id);
-    const isNow = !done && items.find(x => !loggedIds.has(x.id)) === r;
+function openMore(){document.getElementById('more-overlay').classList.add('open');}
+function closeMore(e){
+  if(!e||e.target===document.getElementById('more-overlay'))
+    document.getElementById('more-overlay').classList.remove('open');
+}
+
+/* DASHBOARD */
+function renderDashboard(){
+  const now=new Date();
+  document.getElementById('hdr-title').textContent='Dashboard';
+  document.getElementById('hdr-sub').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('hdr-hijri').textContent=getHijriDate();
+  document.getElementById('dash-day-badge').textContent=now.toLocaleDateString('en-US',{weekday:'long'});
+
+  const total=D.habits.length;
+  const done=D.habitLogs.filter(l=>l.done).length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('ds-habits').textContent=`${done} / ${total}`;
+  document.getElementById('ds-hbar').style.width=pct+'%';
+
+  const month=today().slice(0,7);
+  const me=D.savingsEntries.filter(e=>e.entry_date&&e.entry_date.startsWith(month));
+  const ts=me.filter(e=>e.entry_type!=='charity').reduce((a,b)=>a+parseFloat(b.amount||0),0);
+  const tc=me.filter(e=>e.entry_type==='charity').reduce((a,b)=>a+parseFloat(b.amount||0),0);
+  document.getElementById('ds-saved').textContent='SAR '+ts.toLocaleString();
+  document.getElementById('ds-charity').textContent='SAR '+tc.toLocaleString();
+
+  renderDashPrayers();renderDashHabits();renderDashRoutine();
+}
+
+function renderDashPrayers(){
+  const el=document.getElementById('dash-prayers');if(!el)return;
+  const times=getPrayerTimes();
+  const icons={Fajr:'ti-moon',Sunrise:'ti-sunrise',Dhuhr:'ti-sun',Asr:'ti-sun-low',Maghrib:'ti-sunset-2',Isha:'ti-moon-stars'};
+  const next=getNextPrayer();
+  document.getElementById('dash-next-prayer').textContent=next+' next';
+  el.innerHTML=Object.entries(times).map(([name,t])=>
+    `<div class="prayer-r${name===next?' prayer-next-wrap':''}">
+      <span style="display:flex;align-items:center;gap:8px;color:${name===next?'var(--accent)':'var(--text2)'}">
+        <i class="ti ${icons[name]||'ti-sun'}" style="font-size:15px"></i>${name}
+      </span>
+      <span style="font-weight:600;font-family:var(--mono);color:${name===next?'var(--accent)':'var(--text)'}">${t}</span>
+    </div>`
+  ).join('');
+}
+
+function renderDashHabits(){
+  const el=document.getElementById('dash-habits');if(!el)return;
+  const loggedIds=new Set(D.habitLogs.filter(l=>l.done).map(l=>l.habit_id));
+  el.innerHTML=D.habits.slice(0,4).map(h=>
+    `<div class="row">
+      <div style="display:flex;align-items:center;gap:9px;font-size:14px">
+        <div style="width:9px;height:9px;border-radius:50%;background:${h.color}"></div>${h.name}
+      </div>
+      <div onclick="toggleHabitToday('${h.id}','${h.name}')">
+        <i class="ti ${loggedIds.has(h.id)?'ti-circle-check':'ti-circle'}" style="font-size:22px;color:${loggedIds.has(h.id)?'var(--green)':'var(--text3)'}"></i>
+      </div>
+    </div>`
+  ).join('');
+}
+
+function renderDashRoutine(){
+  const el=document.getElementById('dash-routine');if(!el)return;
+  const loggedIds=new Set((D.routineLogs||[]).filter(l=>l.done).map(l=>l.block_id));
+  const items=D.routine.slice(0,4);
+  el.innerHTML=items.map(r=>{
+    const done=loggedIds.has(r.id);
+    const isNow=!done&&items.find(x=>!loggedIds.has(x.id))===r;
     return `<div class="rblock${done?' done-block':''}">
       <div class="rtime">${r.time_slot}</div>
       <div class="rdot" style="background:${r.color}"></div>
       <div style="flex:1;font-size:13px">${r.name}</div>
-      ${done ? '<span class="badge badge-green">Done</span>' : isNow ? '<span class="badge badge-gold">Now</span>' : '<span class="badge" style="background:var(--bg4);color:var(--text3)">Later</span>'}
+      ${done?'<span class="badge b-g">Done</span>':isNow?'<span class="badge b-y">Now</span>':'<span class="badge" style="background:var(--bg4);color:var(--text3)">Later</span>'}
     </div>`;
   }).join('');
 }
 
-function renderDashPrayers() {
-  const el = document.getElementById('dash-prayers');
-  const times = getPrayerTimes();
-  const icons = {Fajr:'ti-moon',Sunrise:'ti-sunrise',Dhuhr:'ti-sun',Asr:'ti-sun-low',Maghrib:'ti-sunset-2',Isha:'ti-moon-stars'};
-  const next = getNextPrayer();
-  el.innerHTML = Object.entries(times).map(([name,t]) =>
-    `<div class="prayer-row${name===next?' prayer-next':''}">
-      <span style="display:flex;align-items:center;gap:8px;color:${name===next?'var(--accent)':'var(--text2)'}">
-        <i class="ti ${icons[name]||'ti-sun'}" style="font-size:14px" aria-hidden="true"></i>${name}
-      </span>
-      <span style="font-weight:500;font-family:var(--mono);color:${name===next?'var(--accent)':'var(--text)'}">${t}</span>
-    </div>`
-  ).join('');
-}
-
-function renderDashHabits() {
-  const el = document.getElementById('dash-habits');
-  const loggedIds = new Set(appData.habitLogs.filter(l=>l.done).map(l=>l.habit_id));
-  el.innerHTML = appData.habits.slice(0,4).map(h =>
-    `<div class="row">
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px">
-        <div style="width:9px;height:9px;border-radius:50%;background:${h.color}"></div>${h.name}
-      </div>
-      <div style="cursor:pointer" onclick="toggleHabitToday('${h.id}','${h.name}')">
-        ${loggedIds.has(h.id)
-          ? '<i class="ti ti-circle-check" style="font-size:20px;color:var(--green)" aria-hidden="true"></i>'
-          : '<i class="ti ti-circle" style="font-size:20px;color:var(--text3)" aria-hidden="true"></i>'}
-      </div>
-    </div>`
-  ).join('');
-}
-
-/* ── HABIT TOGGLE ── */
-async function toggleHabitToday(habitId, habitName) {
-  const uid = currentUser.id;
-  const existing = appData.habitLogs.find(l => l.habit_id === habitId);
-  if (existing) {
-    const newDone = !existing.done;
-    await sb.from('habit_logs').update({done:newDone}).eq('id', existing.id);
-    existing.done = newDone;
-    toast(newDone ? habitName + ' marked done!' : habitName + ' unmarked');
+async function toggleHabitToday(habitId,habitName){
+  const uid=currentUser.id;
+  const existing=D.habitLogs.find(l=>l.habit_id===habitId);
+  if(existing){
+    const newDone=!existing.done;
+    await sb.from('habit_logs').update({done:newDone}).eq('id',existing.id);
+    existing.done=newDone;
+    toast(newDone?habitName+' done!':habitName+' unmarked');
   } else {
-    const { data } = await sb.from('habit_logs').insert({user_id:uid,habit_id:habitId,log_date:today(),done:true}).select().single();
-    appData.habitLogs.push(data);
-    toast(habitName + ' marked done!');
+    const{data}=await sb.from('habit_logs').insert({user_id:uid,habit_id:habitId,log_date:today(),done:true}).select().single();
+    D.habitLogs.push(data);toast(habitName+' done!');
   }
   renderDashHabits();
-  renderDashboard();
+  const total=D.habits.length;const done=D.habitLogs.filter(l=>l.done).length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('ds-habits').textContent=`${done} / ${total}`;
+  document.getElementById('ds-hbar').style.width=pct+'%';
 }
 
-/* ── GOALS PAGE ── */
-function renderGoalsPage() {
-  const el = document.getElementById('goals-list');
-  const colors = ['var(--accent)','var(--green)','var(--purple)','var(--gold)','var(--teal)'];
-  const catBadge = {Finance:'badge-gold',Health:'badge-green',Learning:'badge-blue',Spiritual:'badge-purple',Other:'badge-blue'};
-  if (!appData.goals.length) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px 0">No goals yet. Add your first goal above.</div>'; }
-  else {
-    el.innerHTML = appData.goals.map((g,i) => {
-      const pct = Math.min(100, Math.round((g.current_value / g.target) * 100));
+/* GOALS */
+function renderGoalsPage(){
+  const el=document.getElementById('goals-list');
+  const colors=['var(--accent)','var(--green)','var(--purple)','var(--gold)'];
+  const cb={Finance:'b-y',Health:'b-g',Learning:'b-a',Spiritual:'b-p',Other:'b-a'};
+  if(!D.goals.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">No goals yet.</div>';}
+  else{
+    el.innerHTML=D.goals.map((g,i)=>{
+      const pct=Math.min(100,Math.round((g.current_value/g.target)*100));
       return `<div class="goal-item">
-        <div class="goal-top">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
           <div>
-            <div class="goal-name">${g.name}</div>
-            <div class="goal-meta">${Number(g.current_value).toLocaleString()} / ${Number(g.target).toLocaleString()} &bull; Due ${g.deadline||'—'}</div>
+            <div style="font-size:14px;font-weight:500">${g.name}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${Number(g.current_value).toLocaleString()} / ${Number(g.target).toLocaleString()} · ${g.deadline||'—'}</div>
           </div>
-          <span class="badge ${catBadge[g.category]||'badge-blue'}">${g.category||''}</span>
+          <span class="badge ${cb[g.category]||'b-a'}">${g.category||''}</span>
         </div>
-        <div class="goal-bar-row">
-          <div class="pbar" style="flex:1"><div class="pfill" style="width:${pct}%;background:${colors[i%colors.length]}"></div></div>
-          <span style="font-size:12px;color:var(--text2);min-width:32px">${pct}%</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="pbar" style="flex:1"><div class="pf" style="width:${pct}%;background:${colors[i%colors.length]}"></div></div>
+          <span style="font-size:12px;color:var(--text2)">${pct}%</span>
         </div>
       </div>`;
     }).join('');
   }
-
-  const hl = document.getElementById('habits-list');
-  if (!appData.habits.length) { hl.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:10px 0">No habits yet.</div>'; return; }
-  const loggedIds = new Set(appData.habitLogs.filter(l=>l.done).map(l=>l.habit_id));
-  const days = ['S','M','T','W','T','F','S'];
-  hl.innerHTML = appData.habits.map(h =>
+  const hl=document.getElementById('habits-list');
+  if(!D.habits.length){hl.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">No habits yet.</div>';return;}
+  const loggedIds=new Set(D.habitLogs.filter(l=>l.done).map(l=>l.habit_id));
+  hl.innerHTML=D.habits.map(h=>
     `<div class="row">
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px">
+      <div style="display:flex;align-items:center;gap:9px;font-size:14px">
         <div style="width:9px;height:9px;border-radius:50%;background:${h.color}"></div>${h.name}
       </div>
-      <div class="hdots">
-        ${days.map((d,j) => `<div class="hdot${j===new Date().getDay()?' today':''}${j<new Date().getDay()&&loggedIds.has(h.id)?' done':''}" style="${j<new Date().getDay()&&loggedIds.has(h.id)?'background:'+h.color+';border-color:'+h.color:''}">${d}</div>`).join('')}
-      </div>
+      <i class="ti ${loggedIds.has(h.id)?'ti-circle-check':'ti-circle'}" style="font-size:22px;color:${loggedIds.has(h.id)?'var(--green)':'var(--text3)'}"></i>
     </div>`
   ).join('');
+  renderRoutineList();
 }
 
-function showGoalForm() { document.getElementById('goal-form-card').style.display = 'block'; }
-function hideGoalForm() { document.getElementById('goal-form-card').style.display = 'none'; }
-
-async function saveGoal() {
-  const name = document.getElementById('gf-name').value.trim();
-  const target = parseFloat(document.getElementById('gf-target').value);
-  const cat = document.getElementById('gf-cat').value;
-  const deadline = document.getElementById('gf-deadline').value;
-  if (!name || !target) { toast('Please fill in name and target','error'); return; }
-  const { data, error } = await sb.from('goals').insert({
-    user_id: currentUser.id, name, category: cat, target, current_value: 0, deadline: deadline || null
-  }).select().single();
-  if (error) { toast('Error saving goal','error'); return; }
-  appData.goals.push(data);
-  hideGoalForm();
-  document.getElementById('gf-name').value = '';
-  document.getElementById('gf-target').value = '';
-  renderGoalsPage();
-  toast('Goal saved to Supabase!');
-}
-
-async function addHabitPrompt() {
-  const name = prompt('Habit name:');
-  if (!name) return;
-  const { data } = await sb.from('habits').insert({user_id:currentUser.id,name,color:'#4f8ef7'}).select().single();
-  appData.habits.push(data);
-  renderGoalsPage();
-  toast('Habit added!');
-}
-
-/* ── ROUTINE PAGE ── */
-function renderRoutinePage() {
-  const el = document.getElementById('routine-list');
-  const loggedIds = new Set((appData.routineLogs||[]).filter(l=>l.done).map(l=>l.block_id));
-  const done = appData.routine.filter(r => loggedIds.has(r.id)).length;
-  const total = appData.routine.length;
-  const pct = total ? Math.round(done/total*100) : 0;
-  document.getElementById('routine-pbar').style.width = pct + '%';
-  document.getElementById('routine-pct-text').textContent = `${done} / ${total} completed`;
-  el.innerHTML = appData.routine.map(r => {
-    const isDone = loggedIds.has(r.id);
+function renderRoutineList(){
+  const el=document.getElementById('routine-list');if(!el)return;
+  const loggedIds=new Set((D.routineLogs||[]).filter(l=>l.done).map(l=>l.block_id));
+  const done=D.routine.filter(r=>loggedIds.has(r.id)).length;
+  const pct=D.routine.length?Math.round(done/D.routine.length*100):0;
+  document.getElementById('rtn-pbar').style.width=pct+'%';
+  el.innerHTML=D.routine.map(r=>{
+    const isDone=loggedIds.has(r.id);
     return `<div class="rblock${isDone?' done-block':''}" onclick="toggleRoutineBlock('${r.id}')">
       <div class="rtime">${r.time_slot}</div>
       <div class="rdot" style="background:${r.color}"></div>
       <div style="flex:1;font-size:13px">${r.name}</div>
-      <i class="ti ${isDone?'ti-circle-check':'ti-circle'}" style="font-size:18px;color:${isDone?'var(--green)':'var(--text3)'}" aria-hidden="true"></i>
+      <i class="ti ${isDone?'ti-circle-check':'ti-circle'}" style="font-size:20px;color:${isDone?'var(--green)':'var(--text3)'}"></i>
     </div>`;
   }).join('');
 }
 
-async function toggleRoutineBlock(blockId) {
-  const uid = currentUser.id;
-  const existing = (appData.routineLogs||[]).find(l => l.block_id === blockId);
-  if (existing) {
-    const newDone = !existing.done;
-    await sb.from('routine_logs').update({done:newDone}).eq('id', existing.id);
-    existing.done = newDone;
+function showGoalForm(){document.getElementById('goal-form').style.display='block';}
+function hideGoalForm(){document.getElementById('goal-form').style.display='none';}
+
+async function saveGoal(){
+  const name=document.getElementById('gf-name').value.trim();
+  const target=parseFloat(document.getElementById('gf-target').value);
+  const cat=document.getElementById('gf-cat').value;
+  const deadline=document.getElementById('gf-deadline').value;
+  if(!name||!target){toast('Fill in name and target','error');return;}
+  const{data,error}=await sb.from('goals').insert({user_id:currentUser.id,name,category:cat,target,current_value:0,deadline:deadline||null}).select().single();
+  if(error){toast('Error saving','error');return;}
+  D.goals.push(data);hideGoalForm();
+  document.getElementById('gf-name').value='';document.getElementById('gf-target').value='';
+  renderGoalsPage();toast('Goal saved!');
+}
+
+async function addHabitPrompt(){
+  const name=prompt('Habit name:');if(!name)return;
+  const{data}=await sb.from('habits').insert({user_id:currentUser.id,name,color:'#4f8ef7'}).select().single();
+  D.habits.push(data);renderGoalsPage();toast('Habit added!');
+}
+
+async function toggleRoutineBlock(blockId){
+  const uid=currentUser.id;
+  const existing=(D.routineLogs||[]).find(l=>l.block_id===blockId);
+  if(existing){
+    const newDone=!existing.done;
+    await sb.from('routine_logs').update({done:newDone}).eq('id',existing.id);
+    existing.done=newDone;
   } else {
-    const { data } = await sb.from('routine_logs').insert({user_id:uid,block_id:blockId,log_date:today(),done:true}).select().single();
-    if (!appData.routineLogs) appData.routineLogs = [];
-    appData.routineLogs.push(data);
+    const{data}=await sb.from('routine_logs').insert({user_id:uid,block_id:blockId,log_date:today(),done:true}).select().single();
+    if(!D.routineLogs)D.routineLogs=[];D.routineLogs.push(data);
   }
-  renderRoutinePage();
+  renderRoutineList();
 }
 
-async function addRoutinePrompt() {
-  const name = prompt('Task name:');
-  const time = prompt('Time (e.g. 10:00):');
-  if (!name || !time) return;
-  const sort = appData.routine.length;
-  const { data } = await sb.from('routine_blocks').insert({user_id:currentUser.id,time_slot:time,name,color:'#4f8ef7',sort_order:sort}).select().single();
-  appData.routine.push(data);
-  appData.routine.sort((a,b) => a.time_slot.localeCompare(b.time_slot));
-  renderRoutinePage();
-  toast('Block added!');
+async function addRoutinePrompt(){
+  const name=prompt('Task name:');const time=prompt('Time (e.g. 10:00):');
+  if(!name||!time)return;
+  const sort=D.routine.length;
+  const{data}=await sb.from('routine_blocks').insert({user_id:currentUser.id,time_slot:time,name,color:'#4f8ef7',sort_order:sort}).select().single();
+  D.routine.push(data);D.routine.sort((a,b)=>a.time_slot.localeCompare(b.time_slot));
+  renderRoutineList();toast('Block added!');
 }
 
-/* ── SAVINGS ── */
-async function logSaving() {
-  const amt = parseFloat(document.getElementById('sav-amount').value);
-  const type = document.getElementById('sav-type').value;
-  const note = document.getElementById('sav-note').value;
-  if (!amt) { toast('Enter an amount','error'); return; }
-  const { data, error } = await sb.from('savings_entries').insert({
-    user_id: currentUser.id, amount: amt, entry_type: type, note: note||null, entry_date: today()
-  }).select().single();
-  if (error) { toast('Error saving entry','error'); return; }
-  appData.savingsEntries.unshift(data);
-  document.getElementById('sav-amount').value = '';
-  document.getElementById('sav-note').value = '';
-  renderSavingsLog();
-  renderSavingsTotals();
-  renderSavingsChart();
-  toast('Entry saved to Supabase!');
+/* SAVINGS */
+async function logSaving(){
+  const amt=parseFloat(document.getElementById('sav-amt').value);
+  const type=document.getElementById('sav-type').value;
+  const note=document.getElementById('sav-note').value;
+  if(!amt){toast('Enter an amount','error');return;}
+  const{data,error}=await sb.from('savings_entries').insert({user_id:currentUser.id,amount:amt,entry_type:type,note:note||null,entry_date:today()}).select().single();
+  if(error){toast('Error saving','error');return;}
+  D.savingsEntries.unshift(data);
+  document.getElementById('sav-amt').value='';document.getElementById('sav-note').value='';
+  renderSavingsLog();renderSavingsTotals();renderSavingsChart();
+  const ts_d=D.savingsEntries.filter(e=>e.entry_type!=='charity').reduce((a,b)=>a+parseFloat(b.amount||0),0);
+  document.getElementById('ds-saved').textContent='SAR '+ts_d.toLocaleString();
+  toast('Saved to Supabase!');
 }
 
-function renderSavingsTotals() {
-  const month = today().slice(0,7);
-  const me = appData.savingsEntries.filter(e => e.entry_date && e.entry_date.startsWith(month));
-  const ts = me.filter(e=>e.entry_type!=='charity').reduce((a,b)=>a+parseFloat(b.amount||0),0);
-  const tc = me.filter(e=>e.entry_type==='charity').reduce((a,b)=>a+parseFloat(b.amount||0),0);
-  document.getElementById('sav-total').textContent = 'SAR ' + ts.toLocaleString();
-  document.getElementById('sav-charity').textContent = 'SAR ' + tc.toLocaleString();
-  document.getElementById('ds-saved').textContent = 'SAR ' + ts.toLocaleString();
-  document.getElementById('ds-charity').textContent = 'SAR ' + tc.toLocaleString();
+function renderSavingsTotals(){
+  const month=today().slice(0,7);
+  const me=D.savingsEntries.filter(e=>e.entry_date&&e.entry_date.startsWith(month));
+  const ts=me.filter(e=>e.entry_type!=='charity').reduce((a,b)=>a+parseFloat(b.amount||0),0);
+  const tc=me.filter(e=>e.entry_type==='charity').reduce((a,b)=>a+parseFloat(b.amount||0),0);
+  document.getElementById('fin-saved').textContent='SAR '+ts.toLocaleString();
+  document.getElementById('fin-charity').textContent='SAR '+tc.toLocaleString();
 }
 
-function renderSavingsLog() {
-  const el = document.getElementById('sav-log');
-  const typeLabels = {fixed:'Daily Saving',pct:'% of Income',charity:'Sadaqah',nospend:'No-Spend Bonus'};
-  if (!appData.savingsEntries.length) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:10px 0">No entries yet.</div>'; return; }
-  el.innerHTML = appData.savingsEntries.slice(0,15).map(e =>
+function renderSavingsLog(){
+  const el=document.getElementById('sav-log');
+  const tl={fixed:'Daily Saving',pct:'% Income',charity:'Sadaqah',nospend:'No-Spend'};
+  if(!D.savingsEntries.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">No entries yet.</div>';return;}
+  el.innerHTML=D.savingsEntries.slice(0,12).map(e=>
     `<div class="row">
       <div>
-        <div style="font-size:13px">${typeLabels[e.entry_type]||e.entry_type}${e.note?' — '+e.note:''}</div>
+        <div style="font-size:13px">${tl[e.entry_type]||e.entry_type}${e.note?' — '+e.note:''}</div>
         <div style="font-size:11px;color:var(--text3)">${e.entry_date||''}</div>
       </div>
       <span style="font-weight:600;color:${e.entry_type==='charity'?'var(--gold)':'var(--green)'}">SAR ${parseFloat(e.amount||0).toLocaleString()}</span>
@@ -1167,153 +1069,116 @@ function renderSavingsLog() {
   ).join('');
 }
 
-let savChart = null;
-function renderSavingsChart() {
-  if (savChart) { savChart.destroy(); savChart = null; }
-  const c = document.getElementById('sav-chart'); if (!c) return;
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const vals = [0,0,0,0,0,0,0];
-  appData.savingsEntries.slice(0,20).forEach(e => {
-    if (!e.entry_date || e.entry_type==='charity') return;
-    const d = new Date(e.entry_date).getDay();
-    vals[d] += parseFloat(e.amount||0);
+let savChart=null;
+function renderSavingsChart(){
+  if(savChart){savChart.destroy();savChart=null;}
+  const c=document.getElementById('sav-chart');if(!c)return;
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const vals=[0,0,0,0,0,0,0];
+  D.savingsEntries.slice(0,20).forEach(e=>{
+    if(!e.entry_date||e.entry_type==='charity')return;
+    const d=new Date(e.entry_date).getDay();vals[d]+=parseFloat(e.amount||0);
   });
-  savChart = new Chart(c, {type:'bar',data:{labels:days,datasets:[{data:vals,backgroundColor:'#2dd4a0',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a5268',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#4a5268',font:{size:10}},grid:{color:'#1e222e'}}}}});
+  savChart=new Chart(c,{type:'bar',data:{labels:days,datasets:[{data:vals,backgroundColor:'#2dd4a0',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a5268',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#4a5268',font:{size:10}},grid:{color:'#1e222e'}}}}});
 }
 
-/* ── STOCKS ── */
-const STOCKS = [
+/* STOCKS */
+const STOCKS=[
   {name:'Saudi Aramco',code:'2222.SR',price:'28.45',change:'+1.2%',pos:true,signal:'BUY',tip:'Strong oil revenues, ~4% dividend yield. Ideal first stock for beginners.'},
-  {name:'Al Rajhi Bank',code:'1120.SR',price:'84.20',change:'+0.8%',pos:true,signal:'WATCH',tip:'Largest Islamic bank. Steady growth but P/E slightly elevated right now.'},
-  {name:'STC Group',code:'7010.SR',price:'46.80',change:'-0.4%',pos:false,signal:'WAIT',tip:'Telecom leader facing margin pressure. Better entry after Q2 earnings.'},
-  {name:'SABIC',code:'2010.SR',price:'74.30',change:'+0.5%',pos:true,signal:'BUY',tip:'Chemicals giant. Vision 2030 beneficiary with diversified revenue streams.'},
-  {name:'Saudi Electricity',code:'5110.SR',price:'18.90',change:'-0.2%',pos:false,signal:'WATCH',tip:'Stable utility. Low risk but slow growth — good for capital preservation.'}
+  {name:'Al Rajhi Bank',code:'1120.SR',price:'84.20',change:'+0.8%',pos:true,signal:'WATCH',tip:'Largest Islamic bank. Steady growth but P/E slightly elevated.'},
+  {name:'STC Group',code:'7010.SR',price:'46.80',change:'-0.4%',pos:false,signal:'WAIT',tip:'Facing margin pressure. Better entry after Q2 earnings.'},
+  {name:'SABIC',code:'2010.SR',price:'74.30',change:'+0.5%',pos:true,signal:'BUY',tip:'Vision 2030 beneficiary with diversified revenue.'},
+  {name:'Saudi Electricity',code:'5110.SR',price:'18.90',change:'-0.2%',pos:false,signal:'WATCH',tip:'Stable utility, low risk, slow growth.'}
 ];
-function renderStocksList() {
-  const el = document.getElementById('stocks-list'); if (!el) return;
-  el.innerHTML = STOCKS.map(s =>
-    `<div class="stock-row">
-      <div style="min-width:130px"><div class="stock-name">${s.name}</div><div class="stock-code">${s.code}</div></div>
-      <div style="flex:1;font-size:11px;color:var(--text3);padding:0 10px;line-height:1.4">${s.tip}</div>
-      <div style="text-align:right;min-width:80px"><div class="stock-price">SAR ${s.price}</div><div class="stock-chg ${s.pos?'c-green':'c-red'}">${s.change}</div></div>
-      <span class="signal ${s.signal==='BUY'?'sig-buy':s.signal==='WATCH'?'sig-watch':'sig-wait'}" style="margin-left:10px">${s.signal}</span>
+function renderStocksList(){
+  const el=document.getElementById('stocks-list');if(!el)return;
+  el.innerHTML=STOCKS.map(s=>
+    `<div class="srow">
+      <div style="flex:1;min-width:0">
+        <div class="sname">${s.name}</div>
+        <div class="scode">${s.code} · ${s.tip.slice(0,45)}...</div>
+      </div>
+      <div style="text-align:right;margin-right:8px">
+        <div class="sprice">SAR ${s.price}</div>
+        <div class="schg ${s.pos?'c-g':'c-r'}">${s.change}</div>
+      </div>
+      <span class="signal ${s.signal==='BUY'?'s-buy':s.signal==='WATCH'?'s-watch':'s-wait'}">${s.signal}</span>
     </div>`
   ).join('');
-
-  const dashEl = document.getElementById('dash-stocks'); if (!dashEl) return;
-  dashEl.innerHTML = STOCKS.slice(0,3).map(s =>
-    `<div class="stock-row" onclick="showPage('stocks')" style="cursor:pointer">
-      <div><div class="stock-name">${s.name}</div><div class="stock-code">${s.code}</div></div>
-      <div class="mchart" style="width:44px">${[60,75,65,85,70,90,80].map((h,i)=>`<div class="mbar${i===6?' hi':''}" style="height:${h}%"></div>`).join('')}</div>
-      <div><div class="stock-price">SAR ${s.price}</div><div class="stock-chg ${s.pos?'c-green':'c-red'}">${s.change}</div></div>
-      <span class="signal ${s.signal==='BUY'?'sig-buy':s.signal==='WATCH'?'sig-watch':'sig-wait'}">${s.signal}</span>
+  const dashEl=document.getElementById('dash-stocks');if(!dashEl)return;
+  dashEl.innerHTML=STOCKS.slice(0,3).map(s=>
+    `<div class="srow" onclick="showPage('stocks')">
+      <div style="flex:1;min-width:0"><div class="sname">${s.name}</div><div class="scode">${s.code}</div></div>
+      <div class="mchart" style="width:36px">${[60,75,65,85,70,90,80].map((h,i)=>`<div class="mbar${i===6?' hi':''}" style="height:${h}%"></div>`).join('')}</div>
+      <div style="text-align:right;margin-right:8px"><div class="sprice">SAR ${s.price}</div><div class="schg ${s.pos?'c-g':'c-r'}">${s.change}</div></div>
+      <span class="signal ${s.signal==='BUY'?'s-buy':s.signal==='WATCH'?'s-watch':'s-wait'}">${s.signal}</span>
     </div>`
   ).join('');
 }
 
-async function askStockAI() {
-  const inp = document.getElementById('stock-q');
-  const q = inp.value.trim(); if (!q) return;
-  const msgs = document.getElementById('stock-ai-msgs');
-  msgs.innerHTML += `<div class="ai-msg ai-user-msg"><strong>You:</strong> ${q}</div>`;
-  msgs.innerHTML += '<div class="thinking" id="stk-think"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
-  inp.value = ''; msgs.scrollTop = msgs.scrollHeight;
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:1000,
-        system:'You are an educational stock market advisor for the Saudi Stock Exchange (SAHM/Tadawul). The user is a complete beginner in Dammam, Saudi Arabia. Explain in simple, friendly language using SAR examples. Keep answers to 3-5 sentences. Always note this is educational, not financial advice. Reference Saudi companies when relevant.',
-        messages:[{role:'user',content:q}]
-      })
-    });
-    const d = await resp.json();
-    const reply = d.content?.[0]?.text || 'Great question! Keep learning — consistency builds great investors.';
+async function askStockAI(){
+  const inp=document.getElementById('stock-q');
+  const q=inp.value.trim();if(!q)return;
+  const msgs=document.getElementById('stock-ai-msgs');
+  msgs.innerHTML+=`<div class="ai-msg ai-user"><strong>You:</strong> ${q}</div>`;
+  msgs.innerHTML+='<div class="thinking" id="stk-think"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
+  inp.value='';msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'You are an educational stock market advisor for the Saudi Stock Exchange (SAHM/Tadawul). The user is a complete beginner in Dammam, Saudi Arabia. Explain in simple, friendly language using SAR. 3-5 sentences max. Educational only, not financial advice.',messages:[{role:'user',content:q}]})});
+    const d=await resp.json();
+    const reply=d.content?.[0]?.text||'Great question! Keep learning.';
     document.getElementById('stk-think')?.remove();
-    msgs.innerHTML += `<div class="ai-msg"><strong>AI Advisor:</strong><br>${reply.replace(/\n/g,'<br>')}</div>`;
-    msgs.scrollTop = msgs.scrollHeight;
-  } catch(e) {
-    document.getElementById('stk-think')?.remove();
-    msgs.innerHTML += `<div class="ai-msg"><strong>AI Advisor:</strong><br>Keep learning about SAHM — consistency in studying the market is what separates good investors.</div>`;
-  }
+    msgs.innerHTML+=`<div class="ai-msg"><strong>AI Advisor:</strong><br>${reply.replace(/\n/g,'<br>')}</div>`;
+    msgs.scrollTop=msgs.scrollHeight;
+  }catch(e){document.getElementById('stk-think')?.remove();msgs.innerHTML+=`<div class="ai-msg"><strong>AI Advisor:</strong><br>Keep learning — consistency in studying the market is what separates great investors.</div>`;}
 }
 
-/* ── PORTFOLIO CHART ── */
-let portChart = null;
-function renderPortfolioChart() {
-  if (portChart) { portChart.destroy(); portChart = null; }
-  setTimeout(() => {
-    const c = document.getElementById('port-chart'); if (!c) return;
-    portChart = new Chart(c, {
-      type:'doughnut',
-      data:{labels:['Aramco','Al Rajhi','STC'],datasets:[{data:[28450,4210,936],backgroundColor:['#4f8ef7','#2dd4a0','#f5c542'],borderWidth:0,hoverOffset:4}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'68%'}
-    });
-  }, 100);
+/* ZAKAT */
+function calcZakat(){
+  const get=id=>parseFloat(document.getElementById(id)?.value)||0;
+  const total=get('z-cash')+get('z-gold')+get('z-stk')+get('z-biz')+get('z-owed')-get('z-debts');
+  const nisab=21000;const due=total>nisab?total*0.025:0;
+  document.getElementById('z-total').textContent='SAR '+Math.max(0,total).toLocaleString();
+  document.getElementById('z-due').textContent='SAR '+due.toFixed(2);
+  const s=document.getElementById('z-status');
+  s.textContent=total>nisab?'Zakat is due on your wealth':'Below Nisab — no Zakat required yet';
+  s.style.color=total>nisab?'var(--gold)':'var(--text3)';
 }
 
-/* ── ZAKAT ── */
-function calcZakat() {
-  const get = id => parseFloat(document.getElementById(id)?.value)||0;
-  const total = get('z-cash')+get('z-gold')+get('z-stocks')+get('z-biz')+get('z-owed')-get('z-debts');
-  const nisab = 21000;
-  const due = total > nisab ? total * 0.025 : 0;
-  document.getElementById('z-total').textContent = 'SAR ' + Math.max(0,total).toLocaleString();
-  document.getElementById('z-due').textContent = 'SAR ' + due.toFixed(2);
-  const status = document.getElementById('z-status');
-  status.textContent = total > nisab ? 'Zakat is due on your wealth' : 'Below Nisab — no Zakat required yet';
-  status.style.color = total > nisab ? 'var(--gold)' : 'var(--text3)';
-}
-
-/* ── JOURNAL ── */
-let selectedMood = null;
-function setMood(btn, emoji, key) {
-  selectedMood = {emoji, key};
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
+/* JOURNAL */
+let selectedMood=null;
+function setMood(btn,emoji,key){
+  selectedMood={emoji,key};
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel');
 }
-
-async function submitJournal() {
-  const body = document.getElementById('journal-body').value.trim();
-  if (!body) { toast('Write something first','error'); return; }
-  const mood = selectedMood?.emoji || 'unspecified';
-  const aiEl = document.getElementById('journal-ai');
-  aiEl.innerHTML = '<div class="thinking"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
-  let reflection = '';
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:1000,
-        system:'You are a warm, wise personal coach and journal companion. The user is in Dammam, Saudi Arabia. Give a concise, empathetic reflection (3-4 sentences), then one practical suggestion. Gentle, supportive tone. Keep it brief.',
-        messages:[{role:'user',content:`Mood: ${mood}\n\nJournal: ${body}`}]
-      })
-    });
-    const d = await resp.json();
-    reflection = d.content?.[0]?.text || 'Reflecting daily builds real self-awareness. Keep going!';
-  } catch(e) { reflection = 'Thank you for reflecting. Daily journaling builds tremendous self-awareness over time.'; }
-
-  aiEl.innerHTML = `<div class="ai-msg"><strong>AI Reflection:</strong><br>${reflection.replace(/\n/g,'<br>')}</div>`;
-
-  const { data, error } = await sb.from('journal_entries').insert({
-    user_id: currentUser.id, mood: selectedMood?.key||'', body, ai_reflection: reflection, entry_date: today()
-  }).select().single();
-  if (!error && data) appData.journalEntries.unshift(data);
-  document.getElementById('journal-body').value = '';
-  selectedMood = null;
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
-  renderJournalHistory();
-  toast('Journal saved to Supabase!');
+async function submitJournal(){
+  const body=document.getElementById('journal-body').value.trim();
+  if(!body){toast('Write something first','error');return;}
+  const mood=selectedMood?.emoji||'unspecified';
+  const aiEl=document.getElementById('journal-ai');
+  aiEl.innerHTML='<div class="thinking"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
+  let reflection='';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'You are a warm personal coach and journal companion for a user in Dammam, Saudi Arabia. Give a concise empathetic reflection (3-4 sentences), then one practical suggestion. Gentle and brief.',messages:[{role:'user',content:`Mood: ${mood}\n\nJournal: ${body}`}]})});
+    const d=await resp.json();reflection=d.content?.[0]?.text||'Keep reflecting — it builds real self-awareness!';
+  }catch(e){reflection='Thank you for reflecting. Daily journaling builds tremendous self-awareness over time.';}
+  aiEl.innerHTML=`<div class="ai-msg" style="margin-bottom:12px"><strong>AI Reflection:</strong><br>${reflection.replace(/\n/g,'<br>')}</div>`;
+  const{data,error}=await sb.from('journal_entries').insert({user_id:currentUser.id,mood:selectedMood?.key||'',body,ai_reflection:reflection,entry_date:today()}).select().single();
+  if(!error&&data)D.journalEntries.unshift(data);
+  document.getElementById('journal-body').value='';selectedMood=null;
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
+  renderJournalHistory();toast('Journal saved!');
 }
 
-function renderJournalHistory() {
-  const el = document.getElementById('journal-history'); if (!el) return;
-  const moodEmoji = {sad:'😔',neutral:'😐',good:'🙂',happy:'😊',great:'🤩'};
-  if (!appData.journalEntries.length) { el.innerHTML = '<div style="color:var(--text3);font-size:12px">No past entries yet.</div>'; return; }
-  el.innerHTML = appData.journalEntries.slice(0,8).map(e =>
+function renderJournalHistory(){
+  const el=document.getElementById('journal-history');if(!el)return;
+  const me={sad:'😔',neutral:'😐',good:'🙂',happy:'😊',great:'🤩'};
+  if(!D.journalEntries.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">No past entries yet.</div>';return;}
+  el.innerHTML=D.journalEntries.slice(0,8).map(e=>
     `<div class="row" style="flex-direction:column;align-items:flex-start;gap:4px">
       <div style="display:flex;align-items:center;gap:8px;width:100%">
-        <span style="font-size:16px">${moodEmoji[e.mood]||'📝'}</span>
+        <span style="font-size:16px">${me[e.mood]||'📝'}</span>
         <span style="font-size:12px;color:var(--text3)">${e.entry_date||''}</span>
       </div>
       <div style="font-size:12px;color:var(--text2);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${e.body}</div>
@@ -1321,30 +1186,28 @@ function renderJournalHistory() {
   ).join('');
 }
 
-/* ── PRAYER FULL ── */
-function renderPrayerFull() {
-  const el = document.getElementById('prayer-full-list'); if (!el) return;
-  const hj = document.getElementById('prayer-hijri-full');
-  if (hj) hj.textContent = getHijriDate();
-  const times = getPrayerTimes();
-  const icons = {Fajr:'ti-moon',Sunrise:'ti-sunrise',Dhuhr:'ti-sun',Asr:'ti-sun-low',Maghrib:'ti-sunset-2',Isha:'ti-moon-stars'};
-  const next = getNextPrayer();
-  el.innerHTML = Object.entries(times).map(([name,t]) =>
-    `<div class="prayer-row${name===next?' prayer-next':''}">
-      <span style="display:flex;align-items:center;gap:10px;color:${name===next?'var(--accent)':'var(--text2)'}">
-        <i class="ti ${icons[name]||'ti-sun'}" style="font-size:15px" aria-hidden="true"></i>${name}
-        ${name===next?'<span class="badge badge-blue" style="font-size:10px">Next</span>':''}
+/* PRAYER FULL */
+function renderPrayerFull(){
+  const el=document.getElementById('prayer-full-list');if(!el)return;
+  const times=getPrayerTimes();
+  const icons={Fajr:'ti-moon',Sunrise:'ti-sunrise',Dhuhr:'ti-sun',Asr:'ti-sun-low',Maghrib:'ti-sunset-2',Isha:'ti-moon-stars'};
+  const next=getNextPrayer();
+  el.innerHTML=Object.entries(times).map(([name,t])=>
+    `<div class="prayer-r${name===next?' prayer-next-wrap':''}">
+      <span style="display:flex;align-items:center;gap:9px;color:${name===next?'var(--accent)':'var(--text2)'}">
+        <i class="ti ${icons[name]||'ti-sun'}" style="font-size:16px"></i>${name}
+        ${name===next?'<span class="badge b-a" style="font-size:10px">Next</span>':''}
       </span>
-      <span style="font-weight:600;font-family:var(--mono);font-size:15px;color:${name===next?'var(--accent)':'var(--text)'}">${t}</span>
+      <span style="font-weight:600;font-family:var(--mono);font-size:16px;color:${name===next?'var(--accent)':'var(--text)'}">${t}</span>
     </div>`
   ).join('');
 }
 
-/* ── POMODORO ── */
+/* POMODORO */
 let pomoInt=null,pomoOn=false,pomoSecs=25*60,pomoTotal=25*60,pomoSessions=0,pomoTotalMin=0;
 function togglePomo(){
-  if(pomoOn){clearInterval(pomoInt);pomoOn=false;document.getElementById('pomo-toggle-btn').innerHTML='<i class="ti ti-player-play"></i>Resume';}
-  else{pomoOn=true;document.getElementById('pomo-toggle-btn').innerHTML='<i class="ti ti-player-pause"></i>Pause';pomoInt=setInterval(tickPomo,1000);}
+  if(pomoOn){clearInterval(pomoInt);pomoOn=false;document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-play"></i>Start';}
+  else{pomoOn=true;document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-pause"></i>Pause';pomoInt=setInterval(tickPomo,1000);}
 }
 function tickPomo(){
   pomoSecs--;updatePomoDisplay();
@@ -1353,10 +1216,9 @@ function tickPomo(){
     pomoSessions++;pomoTotalMin+=Math.round(pomoTotal/60);
     document.getElementById('pomo-sess').textContent=pomoSessions;
     document.getElementById('pomo-total-lbl').textContent=pomoTotalMin+'m';
-    document.getElementById('pomo-toggle-btn').innerHTML='<i class="ti ti-player-play"></i>Start';
-    pomoSecs=pomoTotal;updatePomoDisplay();
-    toast('Session complete! Great focus.');
-    if(currentUser) sb.from('pomodoro_sessions').insert({user_id:currentUser.id,duration_min:Math.round(pomoTotal/60),mode:document.getElementById('pomo-mode-lbl').textContent});
+    document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-play"></i>Start';
+    pomoSecs=pomoTotal;updatePomoDisplay();toast('Session done! Great focus.');
+    if(currentUser)sb.from('pomodoro_sessions').insert({user_id:currentUser.id,duration_min:Math.round(pomoTotal/60),mode:document.getElementById('pomo-mode-lbl').textContent});
   }
 }
 function updatePomoDisplay(){
@@ -1365,10 +1227,9 @@ function updatePomoDisplay(){
   const arc=document.getElementById('pomo-arc');
   if(arc)arc.setAttribute('stroke-dashoffset',(565*(1-pomoSecs/pomoTotal)).toFixed(1));
 }
-function resetPomo(){clearInterval(pomoInt);pomoOn=false;pomoSecs=pomoTotal;updatePomoDisplay();document.getElementById('pomo-toggle-btn').innerHTML='<i class="ti ti-player-play"></i>Start';}
+function resetPomo(){clearInterval(pomoInt);pomoOn=false;pomoSecs=pomoTotal;updatePomoDisplay();document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-play"></i>Start';}
 function setPomoMode(min,label){pomoTotal=min*60;pomoSecs=pomoTotal;document.getElementById('pomo-mode-lbl').textContent=label;resetPomo();}
 
-/* ── START ── */
 init();
 </script>
 </body>
