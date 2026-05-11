@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Contacts — MyTracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:#0b0d12; --bg2:#111318; --bg3:#181b24; --bg4:#1e222e;
+  --border:#252a38; --border2:#2e3548;
+  --text:#e4e8f0; --text2:#8892aa; --text3:#4a5268;
+  --accent:#4f8ef7; --adim:rgba(79,142,247,.13);
+  --green:#2dd4a0; --gdim:rgba(45,212,160,.13);
+  --gold:#f5c542; --ydim:rgba(245,197,66,.13);
+  --red:#f06464; --rdim:rgba(240,100,100,.13);
+  --purple:#a78bfa; --teal:#38bdf8;
+  --font:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+  --r8:8px; --r12:12px; --r16:16px; --r20:20px;
+}
+body.light {
+  --bg:#f4f5f8; --bg2:#ffffff; --bg3:#f0f1f5; --bg4:#e8eaf0;
+  --border:#e2e4ec; --border2:#d0d4e0;
+  --text:#1a1d2e; --text2:#5a6180; --text3:#9aa0b8;
+}
+* { box-sizing:border-box; margin:0; padding:0 }
+html,body { min-height:100%; background:var(--bg); color:var(--text); font-family:var(--font); font-size:14px }
+
+/* ── LOADING ── */
+#loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:999 }
+.spin { width:28px; height:28px; border:3px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite }
+@keyframes spin { to { transform:rotate(360deg) } }
+
+/* ── AUTH ── */
+#auth-screen { position:fixed; inset:0; background:var(--bg); display:none; align-items:center; justify-content:center; padding:20px; z-index:900 }
+.auth-card { width:100%; max-width:380px; background:var(--bg2); border:1px solid var(--border2); border-radius:var(--r20); padding:32px }
+.auth-logo { display:flex; align-items:center; gap:12px; margin-bottom:24px }
+.auth-logo-icon { width:42px; height:42px; background:var(--accent); border-radius:11px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:19px }
+.auth-field { margin-bottom:13px }
+.auth-field label { display:block; font-size:12px; color:var(--text2); margin-bottom:5px; font-weight:500 }
+.auth-field input { width:100%; background:var(--bg3); border:1px solid var(--border2); border-radius:var(--r8); padding:11px 14px; color:var(--text); font-family:var(--font); font-size:16px; outline:none }
+.auth-field input:focus { border-color:var(--accent) }
+.auth-btn { width:100%; padding:12px; background:var(--accent); color:#fff; border:none; border-radius:var(--r8); font-size:14px; font-weight:600; cursor:pointer; font-family:var(--font) }
+.auth-err { background:var(--rdim); border:1px solid rgba(240,100,100,.2); border-radius:var(--r8); padding:10px 14px; font-size:13px; color:var(--red); margin-bottom:14px; display:none }
+
+/* ── LAYOUT ── */
+#app { display:none; min-height:100vh }
+.topbar { position:sticky; top:0; z-index:50; background:var(--bg2); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; align-items:center; gap:12px }
+.topbar-back { width:34px; height:34px; background:var(--bg3); border:1px solid var(--border2); border-radius:var(--r8); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text2); text-decoration:none; flex-shrink:0; font-size:16px }
+.topbar-back:hover { border-color:var(--accent); color:var(--accent) }
+.topbar-title { font-size:17px; font-weight:600; flex:1 }
+.topbar-right { display:flex; align-items:center; gap:8px }
+.content { padding:24px; max-width:1100px; margin:0 auto }
+
+/* ── BUTTONS ── */
+.btn { padding:9px 18px; border-radius:var(--r8); border:none; cursor:pointer; font-size:13px; font-weight:500; font-family:var(--font); display:inline-flex; align-items:center; gap:6px; transition:all .12s; text-decoration:none }
+.btn-a { background:var(--accent); color:#fff }
+.btn-a:hover { opacity:.88 }
+.btn-ghost { background:var(--bg3); color:var(--text2); border:1px solid var(--border2) }
+.btn-ghost:hover { background:var(--bg4) }
+.btn-r { background:var(--rdim); color:var(--red); border:1px solid rgba(240,100,100,.2) }
+.btn-sm { padding:6px 12px; font-size:12px; border-radius:7px }
+.btn-full { width:100%; justify-content:center }
+
+/* ── SEARCH ── */
+.search-wrap { position:relative; flex:1; max-width:300px }
+.search-wrap i { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); font-size:15px; pointer-events:none }
+.search-inp { width:100%; background:var(--bg3); border:1px solid var(--border2); border-radius:40px; padding:9px 16px 9px 36px; color:var(--text); font-family:var(--font); font-size:13px; outline:none; transition:border .15s }
+.search-inp:focus { border-color:var(--accent) }
+
+/* ── STATS ── */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px }
+.stat-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r12); padding:14px 16px }
+.stat-lbl { font-size:11px; color:var(--text3); margin-bottom:5px; font-weight:500 }
+.stat-val { font-size:22px; font-weight:700; letter-spacing:-.5px }
+
+/* ── FILTER CHIPS ── */
+.chips-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px }
+.chip { padding:5px 12px; border-radius:20px; font-size:12px; font-weight:500; cursor:pointer; border:1px solid var(--border2); background:var(--bg3); color:var(--text2); transition:all .12s }
+.chip.active { border-color:var(--accent); background:var(--adim); color:var(--accent) }
+
+/* ── CONTACT CARDS ── */
+.contacts-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px }
+.ct-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r16); padding:18px; cursor:pointer; transition:all .18s; position:relative; overflow:hidden }
+.ct-card::after { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:var(--r16) var(--r16) 0 0 }
+.ct-card.rel-cold::after { background:var(--text3) }
+.ct-card.rel-acquaintance::after { background:var(--gold) }
+.ct-card.rel-good::after { background:var(--teal) }
+.ct-card.rel-close::after { background:var(--green) }
+.ct-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,.2) }
+.ct-av { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; flex-shrink:0 }
+.ct-name { font-size:15px; font-weight:600; margin-bottom:2px }
+.ct-sub { font-size:12px; color:var(--text2); margin-bottom:3px }
+.ct-meta { font-size:11px; color:var(--text3) }
+.ct-tag { display:inline-flex; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:600; background:var(--adim); color:var(--accent); text-transform:uppercase; letter-spacing:.04em }
+.ct-due-badge { background:var(--ydim); color:var(--gold); border:1px solid rgba(245,197,66,.3); padding:2px 8px; border-radius:20px; font-size:10px; font-weight:600 }
+.action-btn { width:32px; height:32px; border-radius:8px; border:1px solid var(--border2); background:var(--bg3); color:var(--text2); display:flex; align-items:center; justify-content:center; cursor:pointer; text-decoration:none; font-size:14px; transition:all .12s; flex-shrink:0 }
+.action-btn:hover { transform:scale(1.1) }
+.action-btn.wa { background:var(--gdim); border-color:rgba(45,212,160,.3); color:var(--green) }
+.action-btn.call { background:var(--adim); border-color:rgba(79,142,247,.2); color:var(--accent) }
+.action-btn.mail { background:var(--pdim); border-color:rgba(167,139,250,.2); color:var(--purple) }
+
+/* ── EMPTY STATE ── */
+.empty { text-align:center; padding:64px 20px; color:var(--text3) }
+.empty i { font-size:56px; display:block; margin-bottom:16px; opacity:.25 }
+.empty h3 { font-size:16px; font-weight:600; color:var(--text2); margin-bottom:8px }
+.empty p { font-size:13px }
+
+/* ── DUE ALERTS ── */
+.due-alert { background:var(--ydim); border:1px solid rgba(245,197,66,.25); border-radius:var(--r12); padding:12px 16px; margin-bottom:10px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all .12s }
+.due-alert:hover { border-color:var(--gold) }
+
+/* ── MODAL ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:1000; display:none; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto }
+.modal-overlay.open { display:flex }
+.modal-box { background:var(--bg2); border:1px solid var(--border2); border-radius:var(--r20); width:100%; max-width:560px; margin:auto; box-shadow:0 24px 80px rgba(0,0,0,.5) }
+.modal-hd { padding:20px 24px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between }
+.modal-title { font-size:16px; font-weight:600; display:flex; align-items:center; gap:8px }
+.modal-close-btn { width:30px; height:30px; border-radius:8px; border:1px solid var(--border2); background:transparent; color:var(--text2); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:15px }
+.modal-close-btn:hover { border-color:var(--red); color:var(--red) }
+.modal-body { padding:22px 24px 24px }
+.modal-section { margin-bottom:20px }
+.modal-section-label { font-size:10px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px }
+
+/* ── FORM ── */
+.field-group { margin-bottom:13px }
+.field-label { display:block; font-size:12px; color:var(--text2); margin-bottom:5px; font-weight:500 }
+.field-inp { width:100%; background:var(--bg3); border:1px solid var(--border2); border-radius:var(--r8); padding:10px 13px; color:var(--text); font-family:var(--font); font-size:14px; outline:none; transition:border .12s }
+.field-inp:focus { border-color:var(--accent) }
+textarea.field-inp { resize:vertical; min-height:80px }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+
+/* ── TAG BUTTONS ── */
+.tag-btn { padding:6px 13px; border-radius:20px; font-size:12px; font-weight:500; cursor:pointer; border:1px solid var(--border2); background:var(--bg3); color:var(--text2); transition:all .12s; font-family:var(--font) }
+.tag-btn.on { border-color:var(--accent); background:var(--adim); color:var(--accent) }
+
+/* ── REL SELECTOR ── */
+.rel-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px }
+.rel-btn { padding:9px 4px; border-radius:var(--r8); border:1px solid var(--border2); background:var(--bg3); color:var(--text2); cursor:pointer; text-align:center; font-size:11px; font-weight:500; font-family:var(--font); transition:all .12s }
+.rel-btn.on { border-color:var(--accent); background:var(--adim); color:var(--accent) }
+
+/* ── AI BOX ── */
+.ai-box { background:var(--adim); border:1px solid rgba(79,142,247,.2); border-radius:var(--r8); padding:10px 14px; font-size:12px; color:var(--accent); margin-bottom:14px; display:none }
+
+/* ── TOAST ── */
+#toast { position:fixed; bottom:24px; right:24px; background:var(--bg2); border:1px solid var(--border2); border-radius:var(--r12); padding:11px 18px; font-size:13px; z-index:9999; transform:translateY(70px); opacity:0; transition:all .22s; display:flex; align-items:center; gap:8px; max-width:300px }
+#toast.show { transform:translateY(0); opacity:1 }
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px) {
+  .stats-row { grid-template-columns:1fr 1fr }
+  .contacts-grid { grid-template-columns:1fr }
+  .topbar { padding:12px 16px }
+  .content { padding:16px }
+  .two-col { grid-template-columns:1fr }
+  .rel-grid { grid-template-columns:repeat(2,1fr) }
+  .modal-box { border-radius:var(--r16) }
+  .topbar-right .btn span { display:none }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div style="width:46px;height:46px;background:var(--accent);border-radius:13px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px"><i class="ti ti-users"></i></div>
+  <div style="font-size:15px;font-weight:600">Contacts</div>
+  <div class="spin"></div>
+</div>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon"><i class="ti ti-users"></i></div>
+      <div><div style="font-size:18px;font-weight:600">MyTracker</div><div style="font-size:11px;color:var(--text3)">Contacts & People</div></div>
+    </div>
+    <div id="auth-err" class="auth-err"></div>
+    <div class="auth-field"><label>Email</label><input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email"></div>
+    <div class="auth-field"><label>Password</label><input type="password" id="auth-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="auth-btn" onclick="doLogin()" id="login-btn">Sign in</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a href="index.html" class="topbar-back" title="Back to MyTracker"><i class="ti ti-arrow-left"></i></a>
+    <div class="topbar-title">Contacts & People</div>
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input class="search-inp" id="search-inp" placeholder="Search..." oninput="renderList()">
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="exportCSV()"><i class="ti ti-download"></i><span>Export</span></button>
+      <button class="btn btn-a btn-sm" id="add-btn" onclick="openModal()"><i class="ti ti-user-plus"></i><span>Add Contact</span></button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleTheme()" id="theme-btn"><i class="ti ti-sun"></i></button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- Follow-up alerts -->
+    <div id="due-alerts"></div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-lbl">Total Contacts</div><div class="stat-val" id="stat-total" style="color:var(--accent)">0</div></div>
+      <div class="stat-card"><div class="stat-lbl">Follow-ups Due</div><div class="stat-val" id="stat-due" style="color:var(--gold)">0</div></div>
+      <div class="stat-card"><div class="stat-lbl">Close / Good</div><div class="stat-val" id="stat-close" style="color:var(--green)">0</div></div>
+      <div class="stat-card"><div class="stat-lbl">Met This Month</div><div class="stat-val" id="stat-month" style="color:var(--purple)">0</div></div>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="chips-row" id="chips-row">
+      <div class="chip active" onclick="setFilter('all',this)">All</div>
+      <div class="chip" onclick="setFilter('investor',this)">Investor</div>
+      <div class="chip" onclick="setFilter('mentor',this)">Mentor</div>
+      <div class="chip" onclick="setFilter('colleague',this)">Colleague</div>
+      <div class="chip" onclick="setFilter('friend',this)">Friend</div>
+      <div class="chip" onclick="setFilter('sahm',this)">SAHM Contact</div>
+      <div class="chip" onclick="setFilter('client',this)">Client</div>
+      <div class="chip" onclick="setFilter('due',this)"><i class="ti ti-clock" style="font-size:11px"></i> Due</div>
+    </div>
+
+    <!-- Contacts grid -->
+    <div class="contacts-grid" id="contacts-grid"></div>
+
+  </div>
+</div>
+
+<!-- ═══ ADD / EDIT MODAL ═══ -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <div class="modal-title" id="modal-title"><i class="ti ti-user-plus"></i> Add Contact</div>
+      <button class="modal-close-btn" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+
+      <div class="modal-section">
+        <div class="modal-section-label">Basic Info</div>
+        <div class="two-col">
+          <div class="field-group"><label class="field-label">Name *</label><input class="field-inp" id="f-name" placeholder="Full name"></div>
+          <div class="field-group"><label class="field-label">Phone</label><input class="field-inp" id="f-phone" type="tel" placeholder="+966 5x xxx xxxx"></div>
+        </div>
+        <div class="two-col">
+          <div class="field-group"><label class="field-label">Email</label><input class="field-inp" id="f-email" type="email" placeholder="email@example.com"></div>
+          <div class="field-group"><label class="field-label">Company</label><input class="field-inp" id="f-company" placeholder="Company name"></div>
+        </div>
+        <div class="two-col">
+          <div class="field-group"><label class="field-label">Role / Title</label><input class="field-inp" id="f-role" placeholder="CEO, Investor..."></div>
+          <div class="field-group"><label class="field-label">City</label><input class="field-inp" id="f-city" placeholder="Dammam, Riyadh..."></div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-label">How You Met</div>
+        <div class="two-col">
+          <div class="field-group"><label class="field-label">Context</label><input class="field-inp" id="f-how" placeholder="Conference, LinkedIn..."></div>
+          <div class="field-group"><label class="field-label">Date Met</label><input class="field-inp" id="f-met" type="date"></div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-label">Tags</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px" id="tags-row">
+          <button class="tag-btn" onclick="toggleTag(this,'investor')">Investor</button>
+          <button class="tag-btn" onclick="toggleTag(this,'mentor')">Mentor</button>
+          <button class="tag-btn" onclick="toggleTag(this,'colleague')">Colleague</button>
+          <button class="tag-btn" onclick="toggleTag(this,'friend')">Friend</button>
+          <button class="tag-btn" onclick="toggleTag(this,'sahm')">SAHM Contact</button>
+          <button class="tag-btn" onclick="toggleTag(this,'client')">Client</button>
+          <button class="tag-btn" onclick="toggleTag(this,'family')">Family</button>
+          <button class="tag-btn" onclick="toggleTag(this,'partner')">Partner</button>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-label">Relationship Strength</div>
+        <div class="rel-grid" id="rel-row">
+          <button class="rel-btn on" onclick="setRel(this,'cold')">🔵 Cold</button>
+          <button class="rel-btn" onclick="setRel(this,'acquaintance')">🟡 Acquaintance</button>
+          <button class="rel-btn" onclick="setRel(this,'good')">🔵 Good</button>
+          <button class="rel-btn" onclick="setRel(this,'close')">🟢 Close</button>
+        </div>
+        <input type="hidden" id="f-rel" value="cold">
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-label">Follow-up & Notes</div>
+        <div class="field-group"><label class="field-label">Follow-up Date</label><input class="field-inp" id="f-followup" type="date"></div>
+        <div class="field-group"><label class="field-label">Notes / Description</label><textarea class="field-inp" id="f-notes" rows="3" placeholder="What you discussed, key facts to remember..."></textarea></div>
+      </div>
+
+      <div class="ai-box" id="ai-box"></div>
+
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="genAI()" id="ai-btn"><i class="ti ti-robot"></i> AI Summary</button>
+        <button class="btn btn-a btn-full" onclick="save()" id="save-btn"><i class="ti ti-check"></i> Save Contact</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DETAIL MODAL ═══ -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-hd">
+      <div class="modal-title" id="detail-title">Contact</div>
+      <button class="modal-close-btn" onclick="closeDetail()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div id="detail-body"></div>
+      <div style="display:flex;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+        <button class="btn btn-ghost" onclick="editFromDetail()"><i class="ti ti-edit"></i> Edit</button>
+        <button class="btn btn-r" onclick="deleteContact()"><i class="ti ti-trash"></i> Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ── SUPABASE ──
+const SURL = 'https://qqxhfaleayormppicadp.supabase.co';
+const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxeGhmYWxlYXlvcm1wcGljYWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MjczMTksImV4cCI6MjA5NDAwMzMxOX0.vWEQbIbFoX9hYDuYv4pGyzfZRvPnFqiOK4mPyY5kga0';
+const sb = supabase.createClient(SURL, SKEY);
+
+// ── STATE ──
+let CU = null;
+let contacts = [];
+let currentFilter = 'all';
+let editingId = null;
+let selectedTags = [];
+const COLORS = ['#4f8ef7','#2dd4a0','#a78bfa','#f5c542','#f06464','#fb923c','#38bdf8','#ec4899'];
+
+// ── INIT ──
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  document.getElementById('loading').style.display = 'none';
+  // Apply saved theme
+  if (localStorage.getItem('mt-theme') === 'light') applyLight();
+  if (session) {
+    CU = session.user;
+    document.getElementById('app').style.display = 'block';
+    await load();
+    render();
+  } else {
+    document.getElementById('auth-screen').style.display = 'flex';
+  }
+}
+
+// ── AUTH ──
+async function doLogin() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pass = document.getElementById('auth-pass').value;
+  const errEl = document.getElementById('auth-err');
+  const btn = document.getElementById('login-btn');
+  errEl.style.display = 'none';
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.textContent = 'Sign in'; btn.disabled = false;
+  if (error) { errEl.textContent = 'Incorrect email or password.'; errEl.style.display = 'block'; return; }
+  CU = data.user;
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  await load(); render();
+}
+
+// ── LOAD DATA ──
+async function load() {
+  const { data, error } = await sb.from('contacts').select('*').eq('user_id', CU.id).order('created_at', { ascending: false });
+  if (error) { toast('Error loading contacts: ' + error.message, 'error'); return; }
+  contacts = data || [];
+}
+
+// ── THEME ──
+function toggleTheme() {
+  const isLight = document.body.classList.contains('light');
+  if (isLight) { document.body.classList.remove('light'); localStorage.setItem('mt-theme','dark'); document.getElementById('theme-btn').innerHTML='<i class="ti ti-sun"></i>'; }
+  else { applyLight(); }
+}
+function applyLight() { document.body.classList.add('light'); localStorage.setItem('mt-theme','light'); document.getElementById('theme-btn').innerHTML='<i class="ti ti-moon"></i>'; }
+
+// ── RENDER ──
+function render() {
+  renderStats();
+  renderAlerts();
+  renderList();
+}
+
+function renderStats() {
+  const now = new Date(); now.setHours(0,0,0,0);
+  const mo = new Date().toISOString().slice(0,7);
+  document.getElementById('stat-total').textContent = contacts.length;
+  document.getElementById('stat-due').textContent = contacts.filter(c => c.follow_up_date && new Date(c.follow_up_date) <= now).length;
+  document.getElementById('stat-close').textContent = contacts.filter(c => c.relationship === 'close' || c.relationship === 'good').length;
+  document.getElementById('stat-month').textContent = contacts.filter(c => c.met_date && c.met_date.startsWith(mo)).length;
+}
+
+function renderAlerts() {
+  const el = document.getElementById('due-alerts');
+  const now = new Date(); now.setHours(0,0,0,0);
+  const due = contacts.filter(c => c.follow_up_date && new Date(c.follow_up_date) <= now);
+  el.innerHTML = due.map(c => `
+    <div class="due-alert" onclick="openDetail('${c.id}')">
+      <i class="ti ti-clock" style="color:var(--gold);font-size:19px;flex-shrink:0"></i>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">Follow up with ${esc(c.name)}</div>
+        <div style="font-size:11px;color:var(--text2)">${esc(c.role||'')}${c.company?' @ '+esc(c.company):''} · Due ${c.follow_up_date}</div>
+      </div>
+      <i class="ti ti-chevron-right" style="color:var(--text3)"></i>
+    </div>`).join('');
+}
+
+function renderList() {
+  const el = document.getElementById('contacts-grid');
+  const q = (document.getElementById('search-inp').value || '').toLowerCase();
+  const now = new Date(); now.setHours(0,0,0,0);
+  let list = contacts;
+  if (currentFilter === 'due') list = list.filter(c => c.follow_up_date && new Date(c.follow_up_date) <= now);
+  else if (currentFilter !== 'all') list = list.filter(c => c.tags && c.tags.includes(currentFilter));
+  if (q) list = list.filter(c =>
+    (c.name||'').toLowerCase().includes(q) ||
+    (c.company||'').toLowerCase().includes(q) ||
+    (c.notes||'').toLowerCase().includes(q) ||
+    (c.role||'').toLowerCase().includes(q)
+  );
+  if (!list.length) {
+    el.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <i class="ti ti-users"></i>
+      <h3>${contacts.length ? 'No contacts match' : 'No contacts yet'}</h3>
+      <p>${contacts.length ? 'Try a different search or filter' : 'Click Add Contact to build your network'}</p>
+    </div>`;
+    return;
+  }
+  const relColors = { cold:'var(--text3)', acquaintance:'var(--gold)', good:'var(--teal)', close:'var(--green)' };
+  el.innerHTML = list.map(c => {
+    const col = COLORS[c.name.charCodeAt(0) % COLORS.length];
+    const due = c.follow_up_date && new Date(c.follow_up_date) <= now;
+    const wa = c.phone ? `<a href="https://wa.me/${c.phone.replace(/[^0-9]/g,'')}" target="_blank" onclick="event.stopPropagation()" class="action-btn wa" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></a>` : '';
+    const call = c.phone ? `<a href="tel:${c.phone}" onclick="event.stopPropagation()" class="action-btn call" title="Call"><i class="ti ti-phone"></i></a>` : '';
+    const mail = c.email ? `<a href="mailto:${c.email}" onclick="event.stopPropagation()" class="action-btn mail" title="Email"><i class="ti ti-mail"></i></a>` : '';
+    return `<div class="ct-card rel-${c.relationship||'cold'}" onclick="openDetail('${c.id}')">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div class="ct-av" style="background:${col}20;color:${col}">${c.name[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap">
+            <span class="ct-name">${esc(c.name)}</span>
+            ${due ? '<span class="ct-due-badge"><i class="ti ti-clock" style="font-size:10px"></i> Due</span>' : ''}
+          </div>
+          <div class="ct-sub">${esc(c.role||'')}${c.company ? ' <span style="color:var(--text3)">@</span> '+esc(c.company) : ''}</div>
+          <div class="ct-meta" style="display:flex;gap:8px;margin-top:2px">
+            ${c.location ? `<span><i class="ti ti-map-pin" style="font-size:10px"></i> ${esc(c.location)}</span>` : ''}
+            ${c.how_met ? `<span><i class="ti ti-link" style="font-size:10px"></i> ${esc(c.how_met)}</span>` : ''}
+          </div>
+          ${c.ai_summary ? `<div style="font-size:11px;color:var(--accent);margin-top:5px;opacity:.85;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">🤖 ${esc(c.ai_summary)}</div>` : ''}
+          ${c.tags && c.tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:7px">${c.tags.map(t=>`<span class="ct-tag">${t}</span>`).join('')}</div>` : ''}
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0">${wa}${call}${mail}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('#chips-row .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+}
+
+// ── MODAL ──
+function openModal(id) {
+  editingId = id || null;
+  selectedTags = [];
+  // Reset all fields
+  ['f-name','f-phone','f-email','f-company','f-role','f-city','f-how','f-notes'].forEach(fid => {
+    const el = document.getElementById(fid); if (el) el.value = '';
+  });
+  document.getElementById('f-met').value = '';
+  document.getElementById('f-followup').value = '';
+  document.getElementById('f-rel').value = 'cold';
+  document.getElementById('ai-box').style.display = 'none';
+  document.getElementById('ai-box').textContent = '';
+  document.querySelectorAll('#tags-row .tag-btn').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('#rel-row .rel-btn').forEach(b => b.classList.remove('on'));
+  document.querySelector('#rel-row .rel-btn').classList.add('on');
+  document.getElementById('modal-title').innerHTML = '<i class="ti ti-user-plus"></i> Add Contact';
+  document.getElementById('save-btn').innerHTML = '<i class="ti ti-check"></i> Save Contact';
+  document.getElementById('edit-id').value = '';
+
+  if (id) {
+    const ct = contacts.find(x => x.id === id);
+    if (!ct) return;
+    document.getElementById('edit-id').value = id;
+    document.getElementById('f-name').value = ct.name || '';
+    document.getElementById('f-phone').value = ct.phone || '';
+    document.getElementById('f-email').value = ct.email || '';
+    document.getElementById('f-company').value = ct.company || '';
+    document.getElementById('f-role').value = ct.role || '';
+    document.getElementById('f-city').value = ct.location || '';
+    document.getElementById('f-how').value = ct.how_met || '';
+    document.getElementById('f-notes').value = ct.notes || '';
+    document.getElementById('f-met').value = ct.met_date || '';
+    document.getElementById('f-followup').value = ct.follow_up_date || '';
+    document.getElementById('f-rel').value = ct.relationship || 'cold';
+    selectedTags = ct.tags ? [...ct.tags] : [];
+    selectedTags.forEach(tag => {
+      document.querySelectorAll('#tags-row .tag-btn').forEach(b => {
+        if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + tag + "'")) b.classList.add('on');
+      });
+    });
+    document.querySelectorAll('#rel-row .rel-btn').forEach(b => {
+      b.classList.remove('on');
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + (ct.relationship||'cold') + "'")) b.classList.add('on');
+    });
+    if (ct.ai_summary) {
+      document.getElementById('ai-box').textContent = '🤖 ' + ct.ai_summary;
+      document.getElementById('ai-box').style.display = 'block';
+    }
+    document.getElementById('modal-title').innerHTML = '<i class="ti ti-edit"></i> Edit Contact';
+    document.getElementById('save-btn').innerHTML = '<i class="ti ti-check"></i> Update Contact';
+  }
+
+  document.getElementById('add-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('add-modal').classList.remove('open');
+}
+
+function toggleTag(btn, tag) {
+  const i = selectedTags.indexOf(tag);
+  if (i >= 0) { selectedTags.splice(i, 1); btn.classList.remove('on'); }
+  else { selectedTags.push(tag); btn.classList.add('on'); }
+}
+
+function setRel(btn, val) {
+  document.querySelectorAll('#rel-row .rel-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('f-rel').value = val;
+}
+
+async function genAI() {
+  const name = document.getElementById('f-name').value.trim();
+  const notes = document.getElementById('f-notes').value.trim();
+  if (!name && !notes) { toast('Add name and notes first', 'error'); return; }
+  const btn = document.getElementById('ai-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Generating...';
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 120,
+        system: 'Write a 1-2 sentence contact summary. Who they are and why they matter. Very concise, no filler.',
+        messages: [{ role: 'user', content: `Name:${name} Role:${document.getElementById('f-role').value} Company:${document.getElementById('f-company').value} Notes:${notes}` }]
+      })
+    });
+    const d = await r.json();
+    const txt = d.content?.[0]?.text || '';
+    if (txt) {
+      document.getElementById('ai-box').textContent = '🤖 ' + txt;
+      document.getElementById('ai-box').style.display = 'block';
+    }
+  } catch(e) { toast('AI unavailable', 'error'); }
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-robot"></i> AI Summary';
+}
+
+async function save() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('Name is required', 'error'); document.getElementById('f-name').focus(); return; }
+  const aiTxt = document.getElementById('ai-box').textContent.replace('🤖 ', '').trim();
+  const payload = {
+    user_id: CU.id,
+    name,
+    phone: document.getElementById('f-phone').value.trim() || null,
+    email: document.getElementById('f-email').value.trim() || null,
+    company: document.getElementById('f-company').value.trim() || null,
+    role: document.getElementById('f-role').value.trim() || null,
+    location: document.getElementById('f-city').value.trim() || null,
+    how_met: document.getElementById('f-how').value.trim() || null,
+    met_date: document.getElementById('f-met').value || null,
+    tags: selectedTags.length ? selectedTags : null,
+    relationship: document.getElementById('f-rel').value || 'cold',
+    notes: document.getElementById('f-notes').value.trim() || null,
+    follow_up_date: document.getElementById('f-followup').value || null,
+    ai_summary: aiTxt || null,
+    updated_at: new Date().toISOString()
+  };
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Saving...';
+  const id = document.getElementById('edit-id').value;
+  let data, error;
+  if (id) {
+    ({ data, error } = await sb.from('contacts').update(payload).eq('id', id).select().single());
+    if (!error && data) { const i = contacts.findIndex(c => c.id === id); if (i >= 0) contacts[i] = data; }
+  } else {
+    ({ data, error } = await sb.from('contacts').insert(payload).select().single());
+    if (!error && data) contacts.unshift(data);
+  }
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> Save Contact';
+  if (error) { toast('Save failed: ' + error.message, 'error'); return; }
+  closeModal();
+  render();
+  toast(id ? 'Contact updated!' : 'Contact saved!');
+}
+
+// ── DETAIL ──
+function openDetail(id) {
+  editingId = id;
+  const c = contacts.find(x => x.id === id); if (!c) return;
+  const col = COLORS[c.name.charCodeAt(0) % COLORS.length];
+  const relMap = { cold:'🔵 Cold', acquaintance:'🟡 Acquaintance', good:'🔵 Good Contact', close:'🟢 Close' };
+  document.getElementById('detail-title').innerHTML = `<div class="ct-av" style="width:32px;height:32px;font-size:13px;background:${col}20;color:${col};display:inline-flex;align-items:center;justify-content:center;border-radius:50%;margin-right:8px">${c.name[0].toUpperCase()}</div>${esc(c.name)}`;
+  document.getElementById('detail-body').innerHTML = `
+    ${c.ai_summary ? `<div style="background:var(--adim);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--accent);margin-bottom:16px">🤖 ${esc(c.ai_summary)}</div>` : ''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      ${c.phone ? `<a href="tel:${c.phone}" class="btn btn-ghost" style="text-decoration:none;justify-content:flex-start;gap:8px"><i class="ti ti-phone" style="color:var(--green)"></i>${esc(c.phone)}</a>` : ''}
+      ${c.phone ? `<a href="https://wa.me/${c.phone.replace(/[^0-9]/g,'')}" target="_blank" class="btn" style="text-decoration:none;background:var(--gdim);color:var(--green);border:1px solid rgba(45,212,160,.2);justify-content:center;gap:8px"><i class="ti ti-brand-whatsapp"></i> WhatsApp</a>` : ''}
+      ${c.email ? `<a href="mailto:${c.email}" class="btn btn-ghost" style="text-decoration:none;justify-content:flex-start;gap:8px;grid-column:${!c.phone?'1/-1':'auto'}"><i class="ti ti-mail" style="color:var(--accent)"></i>${esc(c.email)}</a>` : ''}
+    </div>
+    <div style="font-size:13px;line-height:2.1;color:var(--text2)">
+      ${c.role || c.company ? `<div><span style="color:var(--text3)">Role:</span> ${esc(c.role||'')}${c.company?' @ '+esc(c.company):''}</div>` : ''}
+      ${c.location ? `<div><span style="color:var(--text3)">City:</span> ${esc(c.location)}</div>` : ''}
+      ${c.relationship ? `<div><span style="color:var(--text3)">Relationship:</span> ${relMap[c.relationship]||c.relationship}</div>` : ''}
+      ${c.how_met ? `<div><span style="color:var(--text3)">How met:</span> ${esc(c.how_met)}</div>` : ''}
+      ${c.met_date ? `<div><span style="color:var(--text3)">Date met:</span> ${c.met_date}</div>` : ''}
+      ${c.follow_up_date ? `<div><span style="color:var(--text3)">Follow-up:</span> <strong style="color:var(--gold)">${c.follow_up_date}</strong></div>` : ''}
+    </div>
+    ${c.notes ? `<div style="background:var(--bg3);border-radius:var(--r8);padding:12px 14px;font-size:12px;color:var(--text2);margin-top:12px;line-height:1.7">${esc(c.notes)}</div>` : ''}
+    ${c.tags && c.tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:12px">${c.tags.map(t=>`<span class="ct-tag">${t}</span>`).join('')}</div>` : ''}
+  `;
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function closeDetail() { document.getElementById('detail-modal').classList.remove('open'); }
+function editFromDetail() { closeDetail(); openModal(editingId); }
+
+async function deleteContact() {
+  if (!confirm('Delete this contact? This cannot be undone.')) return;
+  const { error } = await sb.from('contacts').delete().eq('id', editingId);
+  if (error) { toast('Delete failed: ' + error.message, 'error'); return; }
+  contacts = contacts.filter(c => c.id !== editingId);
+  closeDetail(); render(); toast('Contact deleted');
+}
+
+// ── EXPORT ──
+function exportCSV() {
+  if (!contacts.length) { toast('No contacts to export', 'error'); return; }
+  const h = ['Name','Phone','Email','Company','Role','City','How Met','Date Met','Tags','Relationship','Notes','Follow-up'];
+  const rows = contacts.map(c => [c.name,c.phone,c.email,c.company,c.role,c.location,c.how_met,c.met_date,(c.tags||[]).join(';'),c.relationship,c.notes,c.follow_up_date].map(v => `"${(v||'').replace(/"/g,'""')}"`));
+  const csv = [h, ...rows].map(r => r.join(',')).join('\n');
+  const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv); a.download = 'contacts.csv'; a.click();
+  toast('Contacts exported!');
+}
+
+// ── UTILS ──
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.innerHTML = `<i class="ti ti-${type==='error'?'alert-circle':'circle-check'}" style="color:${type==='error'?'var(--red)':'var(--green)'}"></i>${msg}`;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// Close modals on overlay click
+document.getElementById('add-modal').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+document.getElementById('detail-modal').addEventListener('click', function(e) { if(e.target===this) closeDetail(); });
+
+// Close on Escape
+document.addEventListener('keydown', e => { if(e.key==='Escape') { closeModal(); closeDetail(); } });
+
+init();
+</script>
+</body>
+</html>
