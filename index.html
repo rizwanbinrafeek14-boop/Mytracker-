@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MyTracker">
 <meta name="theme-color" content="#0b0d12">
-<title>MyTracker v6</title>
+<title>MyTracker v7</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -36,47 +36,61 @@ body.light{
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;overflow:hidden;transition:background .2s,color .2s}
-/* MOBILE RESPONSIVE */
+
+/* ── MOBILE NAV BAR (always in DOM, CSS-hidden on desktop) ── */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));z-index:300;justify-content:space-around;align-items:center}
+.mob-nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;cursor:pointer;color:var(--text3);font-size:10px;font-weight:500;border:none;background:none;font-family:var(--font);transition:color .12s;-webkit-tap-highlight-color:transparent}
+.mob-nav-btn.active{color:var(--accent)}
+.mob-nav-btn i{font-size:22px}
+
+/* ── MOBILE OVERLAY SIDEBAR ── */
+.mob-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400}
+.mob-sidebar-overlay.open{display:block}
+.mob-sidebar-panel{position:fixed;top:0;left:-280px;bottom:0;width:260px;background:var(--bg2);border-right:1px solid var(--border);z-index:410;transition:left .25s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+.mob-sidebar-panel.open{left:0}
+
+/* ── MOB MENU BUTTON (shown only on mobile) ── */
+.mob-menu-btn{display:none;width:36px;height:36px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text2);flex-shrink:0}
+
+/* ── RESPONSIVE BREAKPOINTS ── */
 @media(max-width:768px){
-  html,body{overflow:auto}
-  #app{height:auto!important;min-height:100vh}
-  .layout{flex-direction:column;height:auto}
-  .sidebar{width:100%!important;min-width:unset!important;height:auto;border-right:none;border-bottom:1px solid var(--border);display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;overflow-y:auto}
-  .sidebar.mob-open{display:flex}
-  .main{height:auto;overflow-y:auto}
-  .topbar{padding:10px 16px}
-  .content{padding:14px 16px}
-  .g2,.g3,.g4,.g5{grid-template-columns:1fr 1fr!important;gap:10px}
-  .g4,.g5{grid-template-columns:1fr 1fr!important}
+  html,body{overflow:auto;height:auto}
+  #app{min-height:100vh}
+  .layout{height:auto}
+  /* Hide the desktop sidebar on mobile */
+  .layout > .sidebar{display:none!important}
+  /* Show mobile elements */
+  .mob-nav{display:flex}
+  .mob-menu-btn{display:flex}
+  /* Content padding for bottom nav */
+  .main{padding-bottom:68px}
+  /* Grid adjustments */
+  .g3,.g4,.g5{grid-template-columns:1fr 1fr!important;gap:10px}
   .two-col,.three-col{grid-template-columns:1fr!important}
   .doc-grid{grid-template-columns:repeat(2,1fr)!important}
-  .modal{width:calc(100vw - 32px)!important;max-width:100%;margin:0 16px}
+  /* Modals */
+  .modal{width:calc(100vw - 24px)!important;max-width:100%;max-height:88vh}
   .auth-card{width:calc(100vw - 32px);padding:24px}
-  .mob-hide{display:none!important}
-  .mob-nav{display:flex!important}
-  .sparkline-wrap{width:70px}
+  /* Touch targets */
+  .btn{min-height:40px}
+  .inp{font-size:16px!important}/* prevents iOS zoom */
+  .content{padding:14px 14px}
+  .topbar{padding:10px 14px}
+  /* Trade cards */
   .trade-card{padding:12px}
+  /* Prevent body scroll when modal open */
+  body.modal-open{overflow:hidden}
 }
 @media(min-width:769px){
   .mob-nav{display:none!important}
   .mob-menu-btn{display:none!important}
-}
-/* MOBILE NAV BAR */
-.mob-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;display:none;justify-content:space-around}
-.mob-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;cursor:pointer;color:var(--text3);font-size:10px;font-weight:500;border-radius:var(--r8);transition:color .12s;border:none;background:none}
-.mob-nav-item.active{color:var(--accent)}
-.mob-nav-item i{font-size:20px}
-/* MOBILE TOP BAR */
-.mob-menu-btn{display:none;width:36px;height:36px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text2)}
-@media(max-width:768px){
-  .mob-menu-btn{display:flex}
-  body{padding-bottom:64px}
+  .mob-sidebar-overlay,.mob-sidebar-panel{display:none!important}
 }
 #loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px}
 .spin{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 /* AUTH */
-#auth-screen{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:1000}
+#auth-screen{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:1000;padding:16px}
 .auth-card{width:380px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r20);padding:36px}
 .auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
 .auth-logo-icon{width:44px;height:44px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
@@ -93,8 +107,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .auth-err{background:var(--rdim);border:1px solid rgba(240,100,100,.2);border-radius:var(--r8);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
 .auth-lock{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);margin-top:14px;justify-content:center}
 /* LAYOUT */
-#app{display:none;height:100vh;overflow:hidden}
-.layout{display:flex;height:100%}
+#app{display:none;height:100vh;overflow:hidden;position:relative}
+.layout{display:flex;height:100%;overflow:hidden}
 /* SIDEBAR */
 .sidebar{width:232px;min-width:232px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 .sb-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
@@ -118,7 +132,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .sb-logout{width:28px;height:28px;border-radius:7px;border:1px solid var(--border2);color:var(--text3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0;background:transparent}
 .sb-logout:hover{border-color:var(--red);color:var(--red)}
 /* MAIN */
-.main{flex:1;overflow-y:auto;background:var(--bg)}
+.main{flex:1;overflow-y:auto;background:var(--bg);min-width:0}
 .topbar{padding:13px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);position:sticky;top:0;z-index:10}
 .topbar-title{font-size:16px;font-weight:600}
 .topbar-sub{font-size:11px;color:var(--text3);margin-top:2px}
@@ -304,7 +318,7 @@ select.inp{appearance:none}
 
 <div id="loading">
   <div style="width:48px;height:48px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px"><i class="ti ti-chart-dots-3"></i></div>
-  <div style="font-size:16px;font-weight:600">MyTracker v6</div>
+  <div style="font-size:16px;font-weight:600">MyTracker v7</div>
   <div class="spin"></div>
 </div>
 
@@ -312,7 +326,7 @@ select.inp{appearance:none}
   <div class="auth-card">
     <div class="auth-logo">
       <div class="auth-logo-icon"><i class="ti ti-chart-dots-3"></i></div>
-      <div><div class="auth-logo-name">MyTracker</div><div class="auth-logo-sub">v6 · Private Dashboard</div></div>
+      <div><div class="auth-logo-name">MyTracker</div><div class="auth-logo-sub">v7 · Private Dashboard</div></div>
     </div>
     <div class="auth-title">Welcome back</div>
     <div class="auth-sub-txt">Private access only.</div>
@@ -331,7 +345,7 @@ select.inp{appearance:none}
 <div class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-icon"><i class="ti ti-chart-dots-3"></i></div>
-    <div><div class="sb-logo-text">MyTracker v4</div><div class="sb-logo-sub"><span class="sync-dot"></span>Live · Supabase</div></div>
+    <div><div class="sb-logo-text">MyTracker v7</div><div class="sb-logo-sub"><span class="sync-dot"></span>Live · Supabase</div></div>
   </div>
   <div class="sb-nav">
     <div class="sb-group">
@@ -391,7 +405,7 @@ select.inp{appearance:none}
 <!-- DASHBOARD -->
 <div id="page-dashboard" class="page active">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px"><button class="mob-menu-btn" onclick="toggleMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Dashboard</div><div class="topbar-sub" id="dash-date"></div></div></div>
+    <div style="display:flex;align-items:center;gap:10px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Dashboard</div><div class="topbar-sub" id="dash-date"></div></div></div>
     <div class="topbar-right">
       <span class="badge b-y" id="dash-hijri"></span>
       <span class="badge b-g"><i class="ti ti-flame" style="font-size:11px"></i>12 day streak</span>
@@ -441,7 +455,7 @@ select.inp{appearance:none}
 <!-- CASH FLOW -->
 <div id="page-cashflow" class="page">
   <div class="topbar">
-    <div><div class="topbar-title">Cash Flow</div><div class="topbar-sub">Income & Expense Tracker</div></div>
+    <div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Cash Flow</div><div class="topbar-sub">Income & Expense Tracker</div></div></div>
     <div class="topbar-right">
       <button class="btn btn-g btn-sm" onclick="openTxModal('inflow')"><i class="ti ti-arrow-down"></i>Add Inflow</button>
       <button class="btn btn-r btn-sm" onclick="openTxModal('outflow')"><i class="ti ti-arrow-up"></i>Add Outflow</button>
@@ -481,7 +495,7 @@ select.inp{appearance:none}
 
 <!-- SPENDING -->
 <div id="page-spending" class="page">
-  <div class="topbar"><div class="topbar-title">Spending Analysis</div></div>
+  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Spending Analysis</div></div></div>
   <div class="content">
     <div class="g4">
       <div class="stat"><div class="stat-lbl">Biggest Category</div><div class="stat-val c-r" id="sp-top">—</div></div>
@@ -509,7 +523,7 @@ select.inp{appearance:none}
 
 <!-- SAVINGS CALCULATOR -->
 <div id="page-savings-calc" class="page">
-  <div class="topbar"><div class="topbar-title">Savings Calculator</div></div>
+  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Savings Calculator</div></div></div>
   <div class="content">
     <div class="g2">
       <div class="card">
@@ -538,7 +552,7 @@ select.inp{appearance:none}
 
 <!-- SAVINGS & CHARITY -->
 <div id="page-savings" class="page">
-  <div class="topbar"><div class="topbar-title">Savings & Charity</div></div>
+  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Savings & Charity</div></div></div>
   <div class="content">
     <div class="g2">
       <div class="card">
@@ -560,7 +574,7 @@ select.inp{appearance:none}
 
 <!-- ZAKAT -->
 <div id="page-zakat" class="page">
-  <div class="topbar"><div class="topbar-title">Zakat Calculator</div></div>
+  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Zakat Calculator</div></div></div>
   <div class="content">
     <div class="g2">
       <div class="card">
@@ -591,7 +605,7 @@ select.inp{appearance:none}
 <!-- MY INVESTMENTS -->
 <div id="page-investments" class="page">
   <div class="topbar">
-    <div><div class="topbar-title">My Investments</div><div class="topbar-sub">SAHM Trade Journal</div></div>
+    <div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">My Investments</div><div class="topbar-sub">SAHM Trade Journal</div></div></div>
     <div class="topbar-right">
       <button class="btn btn-a btn-sm" onclick="openTradeModal()"><i class="ti ti-plus"></i>Log Trade</button>
     </div>
@@ -617,7 +631,7 @@ select.inp{appearance:none}
 <!-- SAHM AI ADVISOR -->
 <div id="page-stocks" class="page">
   <div class="topbar">
-    <div><div class="topbar-title">SAHM AI Advisor</div><div class="topbar-sub" id="stocks-last-update">Initializing real-time analysis...</div></div>
+    <div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">SAHM AI Advisor</div><div class="topbar-sub" id="stocks-last-update">Initializing real-time analysis...</div></div>
     <div class="topbar-right">
       <button class="btn btn-ghost btn-sm" onclick="runAIAnalysis(true)"><i class="ti ti-refresh"></i>Refresh Now</button>
       <span class="badge b-p">Educational Mode</span>
@@ -655,7 +669,7 @@ select.inp{appearance:none}
 
 <!-- GOALS & HABITS -->
 <div id="page-goals" class="page">
-  <div class="topbar"><div class="topbar-title">Goals & Habits</div><div class="topbar-right"><button class="btn btn-a btn-sm" onclick="showGoalForm()"><i class="ti ti-plus"></i>Add Goal</button></div></div>
+  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Goals & Habits</div></div><div class="topbar-right"><button class="btn btn-a btn-sm" onclick="showGoalForm()"><i class="ti ti-plus"></i>Add Goal</button></div></div>
   <div class="content">
     <div class="card" id="goal-form-card" style="display:none;margin-bottom:14px">
       <div class="card-hd"><div class="card-title"><i class="ti ti-plus"></i>New Goal</div><button class="btn btn-ghost btn-sm" onclick="hideGoalForm()">Cancel</button></div>
@@ -806,7 +820,7 @@ select.inp{appearance:none}
 
 <!-- PRAYER -->
 <div id="page-prayer" class="page">
-  <div class="topbar"><div class="topbar-title">Prayer Times — Dammam</div></div>
+  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Prayer Times — Dammam</div></div></div>
   <div class="content">
     <div class="card" style="max-width:480px;margin:0 auto">
       <div class="card-hd"><div class="card-title"><i class="ti ti-sun"></i>Today's Prayers</div><span class="badge b-y" id="prayer-hijri-full"></span></div>
@@ -819,7 +833,7 @@ select.inp{appearance:none}
 
 <!-- REPORTS -->
 <div id="page-reports" class="page">
-  <div class="topbar"><div class="topbar-title">PDF Reports</div></div>
+  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">PDF Reports</div></div></div>
   <div class="content">
     <div class="g2">
       <div class="card"><div class="card-hd"><div class="card-title"><i class="ti ti-file-description"></i>Finance Report</div></div><div class="ig"><label class="il">Month</label><input class="inp" id="rpt-month-fin" type="month"></div><button class="btn btn-a btn-full" onclick="generateReport('finance')"><i class="ti ti-download"></i>Download Finance PDF</button></div>
@@ -833,7 +847,7 @@ select.inp{appearance:none}
 <!-- CONTACTS & PEOPLE -->
 <div id="page-contacts" class="page">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px"><button class="mob-menu-btn" onclick="toggleMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Contacts & People</div><div class="topbar-sub">Your network — business & personal</div></div></div>
+    <div style="display:flex;align-items:center;gap:10px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Contacts & People</div><div class="topbar-sub">Your network — business & personal</div></div></div>
     <div class="topbar-right">
       <div class="doc-search-wrap" style="width:200px"><i class="ti ti-search doc-search-icon"></i><input class="doc-search" id="contact-search" placeholder="Search contacts..." oninput="renderContacts()"></div>
       <button class="btn btn-ghost btn-sm" onclick="exportContactsCSV()"><i class="ti ti-download"></i>Export CSV</button>
@@ -1074,9 +1088,20 @@ async function doLogout(){
 
 async function bootApp(){
   document.getElementById('app').style.display='block';
-  const e=CU.email;document.getElementById('sb-email').textContent=e;document.getElementById('sb-avatar').textContent=e[0].toUpperCase();
+  const e=CU.email;
+  document.getElementById('sb-email').textContent=e;
+  document.getElementById('sb-avatar').textContent=e[0].toUpperCase();
+  // Sync mobile sidebar
+  const mse=document.getElementById('mob-sb-email');if(mse)mse.textContent=e;
+  const msa=document.getElementById('mob-sb-avatar');if(msa)msa.textContent=e[0].toUpperCase();
   await loadAll();
   renderDashboard();
+  // Show PWA prompt after 3s if on mobile and not installed
+  setTimeout(showPWAPrompt, 3000);
+  // Online/offline detection
+  window.addEventListener('online',()=>{document.getElementById('offline-banner').style.display='none';});
+  window.addEventListener('offline',()=>{document.getElementById('offline-banner').style.display='block';});
+  if(!navigator.onLine){document.getElementById('offline-banner').style.display='block';}
 }
 
 async function loadAll(){
@@ -1139,8 +1164,55 @@ function getHijriDate(){
   const months=['Muharram','Safar','Rabi I','Rabi II','Jumada I','Jumada II',"Rajab","Sha'ban",'Ramadan','Shawwal',"Dhul Qa'dah","Dhul Hijjah"];
   return`${Math.floor(rem%29.5)+1} ${months[Math.min(Math.floor(rem/29.5),11)]} ${year} AH`;
 }
-function getPrayerTimes(){return{Fajr:'04:52',Sunrise:'06:12',Dhuhr:'12:15',Asr:'15:33',Maghrib:'18:35',Isha:'20:05'};}
-function getNextPrayer(){const now=new Date();const cur=now.getHours()*60+now.getMinutes();for(const[n,t]of Object.entries(getPrayerTimes())){if(n==='Sunrise')continue;const[h,m]=t.split(':').map(Number);if(h*60+m>cur)return n;}return'Fajr';}
+
+/* ── REAL PRAYER TIMES (Umm al-Qura, Dammam 26.4N 50.1E) ── */
+function calcPrayerTimes(dateObj){
+  const lat=26.4206,lng=50.0888,tz=3;
+  const d=dateObj||new Date();
+  // Julian date
+  const Y=d.getFullYear(),M=d.getMonth()+1,D=d.getDate();
+  const JD=Math.floor(365.25*(Y+4716))+Math.floor(30.6001*(M+1))+D-1524.5+
+    (M<=2?-Math.floor((Y-1)/100)+Math.floor((Y-1)/400)-Math.floor((Y-1)/4)+Math.floor((Y-1)/100)*0.75+2:
+    -Math.floor(Y/100)+Math.floor(Y/400)-Math.floor(Y/4)+Math.floor(Y/100)*0.75+2);
+  const T=(JD-2451545)/36525;
+  // Sun mean longitude & anomaly
+  const L0=(280.46646+36000.76983*T)%360;
+  const M0=(357.52911+35999.05029*T-0.0001537*T*T)*Math.PI/180;
+  const C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M0)+(0.019993-0.000101*T)*Math.sin(2*M0)+0.000289*Math.sin(3*M0);
+  const sunLon=(L0+C)*Math.PI/180;
+  // Sun declination & equation of time
+  const e=(23.439291-0.013004*T)*Math.PI/180;
+  const dec=Math.asin(Math.sin(e)*Math.sin(sunLon));
+  const RA=Math.atan2(Math.cos(e)*Math.sin(sunLon),Math.cos(sunLon))*180/Math.PI;
+  const EqT=(L0-0.0057183-RA+(-0.000014*T*36525))*4;
+  // Solar noon
+  const noon=12-(lng/15)-EqT/60+tz;
+  function hourAngle(alt){const a=alt*Math.PI/180;return Math.acos((Math.sin(a)-Math.sin(lat*Math.PI/180)*Math.sin(dec))/(Math.cos(lat*Math.PI/180)*Math.cos(dec)))*180/Math.PI/15;}
+  function toHHMM(h){const hh=Math.floor(h),mm=Math.round((h-hh)*60);return(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;}
+  // Fajr: -18° (Umm al-Qura), Sunrise: -0.833°, Dhuhr: solar noon, Asr: shadow=1, Maghrib: -0.833°, Isha: 90min after Maghrib
+  let fajrHA,sunriseHA,asrHA;
+  try{fajrHA=hourAngle(-18);}catch(e){fajrHA=1.5;}
+  try{sunriseHA=hourAngle(-0.833);}catch(e){sunriseHA=0.1;}
+  // Asr (Shafi'i shadow ratio=1): angle = atan(1/cot(|lat-dec|))
+  const asrAlt=Math.atan(1/(1+Math.tan(Math.abs(lat*Math.PI/180-dec))))*180/Math.PI;
+  try{asrHA=hourAngle(asrAlt);}catch(e){asrHA=3;}
+  const fajr=noon-fajrHA,sunrise=noon-sunriseHA,dhuhr=noon+1/60,asr=noon+asrHA,maghrib=noon+sunriseHA,isha=maghrib+1.5;
+  return{Fajr:toHHMM(fajr),Sunrise:toHHMM(sunrise),Dhuhr:toHHMM(dhuhr),Asr:toHHMM(asr),Maghrib:toHHMM(maghrib),Isha:toHHMM(isha)};
+}
+function getPrayerTimes(){return calcPrayerTimes(new Date());}
+function getNextPrayer(){
+  const now=new Date();
+  // Convert to Riyadh time (UTC+3)
+  const riyadh=new Date(now.getTime()+((3-(-now.getTimezoneOffset()/60))*60*60*1000));
+  const cur=riyadh.getHours()*60+riyadh.getMinutes();
+  const times=getPrayerTimes();
+  for(const[n,t]of Object.entries(times)){
+    if(n==='Sunrise')continue;
+    const[h,m]=t.split(':').map(Number);
+    if(h*60+m>cur)return n;
+  }
+  return'Fajr';
+}
 
 /* ── THEME ── */
 function toggleTheme(){applyTheme(document.body.classList.contains('light')?'dark':'light');}
@@ -2017,6 +2089,110 @@ function exportCVPDF(){
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════
+     MOBILE UI (separate from desktop layout)
+═══════════════════════════════════════════════ -->
+
+<!-- Mobile bottom nav bar -->
+<nav class="mob-nav" id="mob-nav">
+  <button class="mob-nav-btn active" id="mnb-dashboard" onclick="mobNav('dashboard',this)">
+    <i class="ti ti-home"></i>Home
+  </button>
+  <button class="mob-nav-btn" id="mnb-cashflow" onclick="mobNav('cashflow',this)">
+    <i class="ti ti-arrows-exchange"></i>Finance
+  </button>
+  <button class="mob-nav-btn" id="mnb-investments" onclick="mobNav('investments',this)">
+    <i class="ti ti-building-bank"></i>Stocks
+  </button>
+  <button class="mob-nav-btn" id="mnb-contacts" onclick="mobNav('contacts',this)">
+    <i class="ti ti-users"></i>People
+  </button>
+  <button class="mob-nav-btn" id="mnb-more" onclick="openMobSidebar()">
+    <i class="ti ti-menu-2"></i>More
+  </button>
+</nav>
+
+<!-- Mobile overlay -->
+<div class="mob-sidebar-overlay" id="mob-overlay" onclick="closeMobSidebar()"></div>
+
+<!-- Mobile slide-in sidebar panel -->
+<div class="mob-sidebar-panel" id="mob-sidebar-panel">
+  <div class="sb-logo" style="padding:16px 14px 12px;border-bottom:1px solid var(--border);flex-shrink:0">
+    <div class="sb-logo-icon"><i class="ti ti-chart-dots-3"></i></div>
+    <div style="flex:1"><div class="sb-logo-text">MyTracker v7</div><div class="sb-logo-sub"><span class="sync-dot"></span>Live · Supabase</div></div>
+    <button onclick="closeMobSidebar()" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="sb-nav" style="flex:1;overflow-y:auto;padding:10px 8px">
+    <div class="sb-group">
+      <div class="sb-group-label">Overview</div>
+      <div class="sb-item" onclick="mobNav('dashboard');closeMobSidebar()"><i class="ti ti-home"></i>Dashboard</div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Finance</div>
+      <div class="sb-item" onclick="mobNav('cashflow');closeMobSidebar()"><i class="ti ti-arrows-exchange"></i>Cash Flow</div>
+      <div class="sb-item" onclick="mobNav('spending');closeMobSidebar()"><i class="ti ti-chart-pie"></i>Spending Analysis</div>
+      <div class="sb-item" onclick="mobNav('savings-calc');closeMobSidebar()"><i class="ti ti-calculator"></i>Savings Calculator</div>
+      <div class="sb-item" onclick="mobNav('savings');closeMobSidebar()"><i class="ti ti-piggy-bank"></i>Savings & Charity</div>
+      <div class="sb-item" onclick="mobNav('zakat');closeMobSidebar()"><i class="ti ti-star"></i>Zakat</div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Investments</div>
+      <div class="sb-item" onclick="mobNav('investments');closeMobSidebar()"><i class="ti ti-building-bank"></i>My Investments</div>
+      <div class="sb-item" onclick="mobNav('stocks');closeMobSidebar()"><i class="ti ti-trending-up"></i>SAHM AI Advisor<span class="sb-badge">LIVE</span></div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Productivity</div>
+      <div class="sb-item" onclick="mobNav('goals');closeMobSidebar()"><i class="ti ti-target"></i>Goals & Habits</div>
+      <div class="sb-item" onclick="mobNav('routine');closeMobSidebar()"><i class="ti ti-calendar-time"></i>Routine</div>
+      <div class="sb-item" onclick="mobNav('focus');closeMobSidebar()"><i class="ti ti-clock"></i>Focus Timer</div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Study</div>
+      <div class="sb-item" onclick="mobNav('study');closeMobSidebar()"><i class="ti ti-books"></i>Study Tracker</div>
+      <div class="sb-item" onclick="mobNav('study-log');closeMobSidebar()"><i class="ti ti-pencil"></i>Log Session</div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">People</div>
+      <div class="sb-item" onclick="mobNav('contacts');closeMobSidebar()"><i class="ti ti-users"></i>Contacts</div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Personal</div>
+      <div class="sb-item" onclick="mobNav('vault');closeMobSidebar()"><i class="ti ti-lock"></i>Document Vault</div>
+      <div class="sb-item" onclick="mobNav('cv');closeMobSidebar()"><i class="ti ti-id-badge"></i>My CV</div>
+      <div class="sb-item" onclick="mobNav('journal');closeMobSidebar()"><i class="ti ti-notes"></i>AI Journal</div>
+      <div class="sb-item" onclick="mobNav('prayer');closeMobSidebar()"><i class="ti ti-sun"></i>Prayer Times</div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Reports</div>
+      <div class="sb-item" onclick="mobNav('reports');closeMobSidebar()"><i class="ti ti-file-description"></i>PDF Reports</div>
+    </div>
+  </div>
+  <div class="sb-bottom" style="flex-shrink:0">
+    <div class="sb-avatar" id="mob-sb-avatar">?</div>
+    <div style="flex:1;min-width:0"><div class="sb-email" id="mob-sb-email">—</div><div class="sb-role">Owner · Private</div></div>
+    <div class="sb-logout" onclick="doLogout()" title="Sign out"><i class="ti ti-logout"></i></div>
+  </div>
+</div>
+
+<!-- PWA install prompt -->
+<div id="pwa-banner" style="display:none;position:fixed;bottom:72px;left:12px;right:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r16);padding:14px 16px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.3)">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-chart-dots-3" style="color:#fff;font-size:20px"></i></div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:600">Install MyTracker</div>
+      <div style="font-size:11px;color:var(--text2)">Add to Home Screen for the best experience</div>
+    </div>
+    <button onclick="installPWA()" style="padding:7px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r8);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font)">Install</button>
+    <button onclick="dismissPWA()" style="padding:7px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);color:var(--text2);cursor:pointer;font-size:12px"><i class="ti ti-x"></i></button>
+  </div>
+</div>
+
+<!-- Offline banner -->
+<div id="offline-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:var(--rdim);border-bottom:1px solid rgba(240,100,100,.3);padding:8px 16px;z-index:600;text-align:center;font-size:12px;color:var(--red)">
+  <i class="ti ti-wifi-off"></i> You're offline — showing cached data
+</div>
+
 </body></html>`);
   w.document.close();
 }
@@ -2104,7 +2280,7 @@ function generateReport(type){
     <h2 style="font-size:16px;color:#1a1d2e;margin-bottom:12px">Session Log</h2>
     <table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="background:#f0f1f5"><th style="padding:6px;text-align:left">Date</th><th style="padding:6px;text-align:left">Subject</th><th style="padding:6px;text-align:left">Notes</th><th style="padding:6px;text-align:right">Hours</th></tr>${mSess.map(s=>{const sub=D.studySubjects.find(x=>x.id===s.subject_id);return`<tr><td style="padding:5px;border-bottom:1px solid #e8eaf0">${s.session_date}</td><td style="padding:5px;border-bottom:1px solid #e8eaf0">${sub?.name||'—'}</td><td style="padding:5px;border-bottom:1px solid #e8eaf0;color:#5a6180">${s.notes||'—'}</td><td style="padding:5px;border-bottom:1px solid #e8eaf0;text-align:right;font-weight:600">${Math.round(parseInt(s.duration_min||0)/60*10)/10}h</td></tr>`;}).join('')}</table>`;
   }
-  w.document.write(`<!DOCTYPE html><html><head><title>MyTracker Report — ${month}</title><style>body{font-family:sans-serif;padding:40px;color:#1a1d2e;max-width:920px;margin:0 auto;font-size:14px}h1{font-size:24px}h2{color:#5a6180;margin-top:20px}@media print{body{padding:20px}}</style></head><body>${html}<div style="margin-top:40px;border-top:1px solid #e8eaf0;padding-top:12px;font-size:11px;color:#9aa0b8;text-align:center">Generated by MyTracker v6 · Private Dashboard · ${now}</div><script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.write(`<!DOCTYPE html><html><head><title>MyTracker Report — ${month}</title><style>body{font-family:sans-serif;padding:40px;color:#1a1d2e;max-width:920px;margin:0 auto;font-size:14px}h1{font-size:24px}h2{color:#5a6180;margin-top:20px}@media print{body{padding:20px}}</style></head><body>${html}<div style="margin-top:40px;border-top:1px solid #e8eaf0;padding-top:12px;font-size:11px;color:#9aa0b8;text-align:center">Generated by MyTracker v7 · Private Dashboard · ${now}</div><script>window.onload=()=>window.print()<\/script></body></html>`);
   w.document.close();
 }
 
@@ -2112,14 +2288,68 @@ function generateReport(type){
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&aiRefreshTimer){clearInterval(aiRefreshTimer);aiRefreshTimer=null;}});
 
 /* ── MOBILE NAV ── */
-function toggleMobSidebar(){
-  const sb=document.getElementById('sidebar');
-  sb.classList.toggle('mob-open');
+function isMobile(){return window.innerWidth<=768;}
+
+function mobNav(pageId, btn){
+  showPage(pageId);
+  // Update bottom nav active state
+  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn){btn.classList.add('active');}
+  else{
+    // Auto-highlight matching bottom nav btn
+    const map={dashboard:'mnb-dashboard',cashflow:'mnb-cashflow',investments:'mnb-investments',contacts:'mnb-contacts'};
+    if(map[pageId]){const el=document.getElementById(map[pageId]);if(el)el.classList.add('active');}
+  }
+  // Also sync desktop sidebar
+  document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+pageId+"'"))n.classList.add('active');});
+  // Sync mobile panel sidebar
+  document.querySelectorAll('#mob-sidebar-panel .sb-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('#mob-sidebar-panel .sb-item').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+pageId+"'"))n.classList.add('active');});
 }
-function setMobActive(el){
-  document.querySelectorAll('.mob-nav-item').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  const sb=document.getElementById('sidebar');sb.classList.remove('mob-open');
+
+function openMobSidebar(){
+  document.getElementById('mob-overlay').classList.add('open');
+  document.getElementById('mob-sidebar-panel').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMobSidebar(){
+  document.getElementById('mob-overlay').classList.remove('open');
+  document.getElementById('mob-sidebar-panel').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// Swipe to close sidebar
+(function(){
+  let startX=0,startY=0;
+  document.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-startX;
+    const dy=Math.abs(e.changedTouches[0].clientY-startY);
+    // Swipe left >60px, not mostly vertical
+    if(dx<-60&&dy<40&&document.getElementById('mob-sidebar-panel').classList.contains('open')){
+      closeMobSidebar();
+    }
+    // Swipe down > 80px on main area = pull-to-refresh
+    if(e.changedTouches[0].clientY-startY>80&&startY<120&&!document.getElementById('mob-sidebar-panel').classList.contains('open')){
+      triggerPullRefresh();
+    }
+  },{passive:true});
+})();
+
+let _refreshing=false;
+async function triggerPullRefresh(){
+  if(_refreshing||!CU)return;
+  _refreshing=true;
+  toast('Refreshing data...');
+  await loadAll();
+  const activePage=document.querySelector('.page.active')?.id?.replace('page-','');
+  if(activePage){
+    const r={dashboard:renderDashboard,cashflow:renderCashFlow,spending:renderSpending,savings:()=>{renderSavingsLog();renderSavingsTotals();renderSavingsChart();},investments:renderInvestments,contacts:renderContactsPage,goals:renderGoalsPage,routine:renderRoutinePage,study:renderStudyPage,'study-log':renderStudyLog,vault:renderVaultPage,journal:renderJournalHistory};
+    r[activePage]?.();
+  }
+  toast('Up to date ✓');
+  _refreshing=false;
 }
 
 
@@ -2504,14 +2734,59 @@ function renderDashFollowups(){
   el.innerHTML=due.slice(0,3).map(c=>`<div class="row" style="cursor:pointer" onclick="showPage('contacts');openContactDetail('${c.id}')"><div style="display:flex;align-items:center;gap:8px;flex:1"><div style="width:28px;height:28px;border-radius:50%;background:var(--ydim);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">${c.name[0]}</div><div><div style="font-size:13px;font-weight:500">${c.name}</div><div style="font-size:11px;color:var(--text3)">${c.role||''}${c.company?' @ '+c.company:''}</div></div></div><span style="font-size:11px;color:var(--gold)">${c.follow_up_date}</span></div>`).join('');
 }
 
-/* ── PWA SERVICE WORKER REGISTRATION ── */
+
+/* ── PWA & OFFLINE ── */
+let _deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();_deferredPrompt=e;
+});
+function showPWAPrompt(){
+  if(!isMobile())return;
+  if(localStorage.getItem('pwa-dismissed'))return;
+  if(window.matchMedia('(display-mode: standalone)').matches)return;
+  if(_deferredPrompt){document.getElementById('pwa-banner').style.display='block';}
+  else{
+    // iOS Safari — show manual instructions
+    const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+    if(isIOS&&!navigator.standalone){document.getElementById('pwa-banner').style.display='block';}
+  }
+}
+async function installPWA(){
+  document.getElementById('pwa-banner').style.display='none';
+  if(_deferredPrompt){
+    _deferredPrompt.prompt();
+    const{outcome}=await _deferredPrompt.userChoice;
+    _deferredPrompt=null;
+  } else {
+    toast('Tap Share → Add to Home Screen in Safari');
+  }
+}
+function dismissPWA(){
+  document.getElementById('pwa-banner').style.display='none';
+  localStorage.setItem('pwa-dismissed','1');
+}
+
+/* ── SERVICE WORKER (inline blob) ── */
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    const sw=`self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>new Response('<h1>MyTracker</h1><p>Offline</p>',{headers:{'Content-Type':'text/html'}})));});`;
-    const blob=new Blob([sw],{type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+    const swCode=`
+const CACHE='mytracker-v6';
+const OFFLINE_HTML='<html><body style="font-family:sans-serif;background:#0b0d12;color:#e4e8f0;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;gap:16px"><div style="width:52px;height:52px;background:#4f8ef7;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px">📊</div><div style="font-size:20px;font-weight:600">MyTracker</div><div style="color:#8892aa;font-size:14px">You are offline</div><div style="font-size:12px;color:#4a5268;text-align:center;max-width:280px">Check your connection and pull down to refresh when back online</div></body></html>';
+self.addEventListener('install',e=>e.waitUntil(self.skipWaiting()));
+self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
+self.addEventListener('fetch',e=>{
+  if(e.request.mode==='navigate'){
+    e.respondWith(fetch(e.request).catch(()=>new Response(OFFLINE_HTML,{headers:{'Content-Type':'text/html'}})));
+  } else {
+    e.respondWith(fetch(e.request).catch(()=>new Response('',{status:503})));
+  }
+});`;
+    const blob=new Blob([swCode],{type:'application/javascript'});
+    const swURL=URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swURL).catch(()=>{});
   });
 }
+
 
 init();
 </script>
