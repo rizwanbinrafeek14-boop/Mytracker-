@@ -849,6 +849,40 @@ select.inp{appearance:none}
   </div>
 </div>
 
+
+<!-- ═══ CONTACTS PAGE ═══ -->
+<div id="page-contacts" class="page">
+  <div class="topbar">
+    <button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button>
+    <div class="topbar-title">Contacts & People</div>
+    <div class="topbar-right">
+      <div class="doc-search-wrap" style="width:180px"><i class="ti ti-search doc-search-icon"></i><input class="doc-search" id="ct-search" placeholder="Search..." oninput="renderContacts()"></div>
+      <button class="btn btn-ghost btn-sm" onclick="exportContactsCSV()"><i class="ti ti-download"></i>Export</button>
+      <button class="btn btn-a btn-sm" onclick="openContactModal()"><i class="ti ti-user-plus"></i>Add Contact</button>
+    </div>
+  </div>
+  <div class="content">
+    <div id="ct-followup-alerts"></div>
+    <div class="g4" style="margin-bottom:14px">
+      <div class="stat"><div class="stat-lbl">Total Contacts</div><div class="stat-val c-a" id="ct-total">0</div></div>
+      <div class="stat"><div class="stat-lbl">Follow-ups Due</div><div class="stat-val c-y" id="ct-due">0</div></div>
+      <div class="stat"><div class="stat-lbl">Close / Good</div><div class="stat-val c-g" id="ct-close">0</div></div>
+      <div class="stat"><div class="stat-lbl">Met This Month</div><div class="stat-val c-p" id="ct-month">0</div></div>
+    </div>
+    <div class="cats-row" id="ct-filter-row">
+      <div class="cat-chip active" onclick="filterContacts('all',this)">All</div>
+      <div class="cat-chip" onclick="filterContacts('investor',this)">Investor</div>
+      <div class="cat-chip" onclick="filterContacts('mentor',this)">Mentor</div>
+      <div class="cat-chip" onclick="filterContacts('colleague',this)">Colleague</div>
+      <div class="cat-chip" onclick="filterContacts('friend',this)">Friend</div>
+      <div class="cat-chip" onclick="filterContacts('sahm',this)">SAHM Contact</div>
+      <div class="cat-chip" onclick="filterContacts('followup',this)"><i class="ti ti-clock" style="font-size:11px"></i> Due</div>
+    </div>
+    <div id="ct-list"><div style="color:var(--text3);font-size:13px;padding:24px 0;text-align:center">No contacts yet. Click "Add Contact" to start building your network.</div></div>
+  </div>
+</div>
+
+
 </div><!-- /main -->
 </div><!-- /layout -->
 </div><!-- /app -->
@@ -1917,38 +1951,6 @@ function exportCVPDF(){
   const preview=document.getElementById('cv-preview').innerHTML;const name=document.getElementById('cv-name')?.value||'CV';
   const w=window.open('','_blank');
   w.document.write(`<!DOCTYPE html><html><head><title>${name} - CV</title><style>body{font-family:sans-serif;padding:40px;color:#1a1d2e;max-width:800px;margin:0 auto}@media print{body{padding:20px}}</style></head><body>${preview}<script>window.onload=()=>window.print()<\/script>
-<!-- ═══ CONTACTS PAGE ═══ -->
-<div id="page-contacts" class="page">
-  <div class="topbar">
-    <button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button>
-    <div class="topbar-title">Contacts & People</div>
-    <div class="topbar-right">
-      <div class="doc-search-wrap" style="width:180px"><i class="ti ti-search doc-search-icon"></i><input class="doc-search" id="ct-search" placeholder="Search..." oninput="renderContacts()"></div>
-      <button class="btn btn-ghost btn-sm" onclick="exportContactsCSV()"><i class="ti ti-download"></i>Export</button>
-      <button class="btn btn-a btn-sm" onclick="openContactModal()"><i class="ti ti-user-plus"></i>Add Contact</button>
-    </div>
-  </div>
-  <div class="content">
-    <div id="ct-followup-alerts"></div>
-    <div class="g4" style="margin-bottom:14px">
-      <div class="stat"><div class="stat-lbl">Total Contacts</div><div class="stat-val c-a" id="ct-total">0</div></div>
-      <div class="stat"><div class="stat-lbl">Follow-ups Due</div><div class="stat-val c-y" id="ct-due">0</div></div>
-      <div class="stat"><div class="stat-lbl">Close / Good</div><div class="stat-val c-g" id="ct-close">0</div></div>
-      <div class="stat"><div class="stat-lbl">Met This Month</div><div class="stat-val c-p" id="ct-month">0</div></div>
-    </div>
-    <div class="cats-row" id="ct-filter-row">
-      <div class="cat-chip active" onclick="filterContacts('all',this)">All</div>
-      <div class="cat-chip" onclick="filterContacts('investor',this)">Investor</div>
-      <div class="cat-chip" onclick="filterContacts('mentor',this)">Mentor</div>
-      <div class="cat-chip" onclick="filterContacts('colleague',this)">Colleague</div>
-      <div class="cat-chip" onclick="filterContacts('friend',this)">Friend</div>
-      <div class="cat-chip" onclick="filterContacts('sahm',this)">SAHM Contact</div>
-      <div class="cat-chip" onclick="filterContacts('followup',this)"><i class="ti ti-clock" style="font-size:11px"></i> Due</div>
-    </div>
-    <div id="ct-list"><div style="color:var(--text3);font-size:13px;padding:24px 0;text-align:center">No contacts yet. Click "Add Contact" to start building your network.</div></div>
-  </div>
-</div>
-
 <!-- ═══ MOBILE UI ═══ -->
 <nav id="mob-nav">
   <button class="mnb active" id="mnb-dash" onclick="mobGo('dashboard',this)"><i class="ti ti-home"></i>Home</button>
