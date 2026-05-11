@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MyTracker">
 <meta name="theme-color" content="#0b0d12">
-<title>MyTracker v7</title>
+<title>MyTracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -36,61 +36,11 @@ body.light{
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;overflow:hidden;transition:background .2s,color .2s}
-
-/* ── MOBILE NAV BAR (always in DOM, CSS-hidden on desktop) ── */
-.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));z-index:300;justify-content:space-around;align-items:center}
-.mob-nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;cursor:pointer;color:var(--text3);font-size:10px;font-weight:500;border:none;background:none;font-family:var(--font);transition:color .12s;-webkit-tap-highlight-color:transparent}
-.mob-nav-btn.active{color:var(--accent)}
-.mob-nav-btn i{font-size:22px}
-
-/* ── MOBILE OVERLAY SIDEBAR ── */
-.mob-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400}
-.mob-sidebar-overlay.open{display:block}
-.mob-sidebar-panel{position:fixed;top:0;left:-280px;bottom:0;width:260px;background:var(--bg2);border-right:1px solid var(--border);z-index:410;transition:left .25s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
-.mob-sidebar-panel.open{left:0}
-
-/* ── MOB MENU BUTTON (shown only on mobile) ── */
-.mob-menu-btn{display:none;width:36px;height:36px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text2);flex-shrink:0}
-
-/* ── RESPONSIVE BREAKPOINTS ── */
-@media(max-width:768px){
-  html,body{overflow:auto;height:auto}
-  #app{min-height:100vh}
-  .layout{height:auto}
-  /* Hide the desktop sidebar on mobile */
-  .layout > .sidebar{display:none!important}
-  /* Show mobile elements */
-  .mob-nav{display:flex}
-  .mob-menu-btn{display:flex}
-  /* Content padding for bottom nav */
-  .main{padding-bottom:68px}
-  /* Grid adjustments */
-  .g3,.g4,.g5{grid-template-columns:1fr 1fr!important;gap:10px}
-  .two-col,.three-col{grid-template-columns:1fr!important}
-  .doc-grid{grid-template-columns:repeat(2,1fr)!important}
-  /* Modals */
-  .modal{width:calc(100vw - 24px)!important;max-width:100%;max-height:88vh}
-  .auth-card{width:calc(100vw - 32px);padding:24px}
-  /* Touch targets */
-  .btn{min-height:40px}
-  .inp{font-size:16px!important}/* prevents iOS zoom */
-  .content{padding:14px 14px}
-  .topbar{padding:10px 14px}
-  /* Trade cards */
-  .trade-card{padding:12px}
-  /* Prevent body scroll when modal open */
-  body.modal-open{overflow:hidden}
-}
-@media(min-width:769px){
-  .mob-nav{display:none!important}
-  .mob-menu-btn{display:none!important}
-  .mob-sidebar-overlay,.mob-sidebar-panel{display:none!important}
-}
 #loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px}
 .spin{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 /* AUTH */
-#auth-screen{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:1000;padding:16px}
+#auth-screen{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:1000}
 .auth-card{width:380px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r20);padding:36px}
 .auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
 .auth-logo-icon{width:44px;height:44px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
@@ -107,8 +57,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .auth-err{background:var(--rdim);border:1px solid rgba(240,100,100,.2);border-radius:var(--r8);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
 .auth-lock{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);margin-top:14px;justify-content:center}
 /* LAYOUT */
-#app{display:none;height:100vh;overflow:hidden;position:relative}
-.layout{display:flex;height:100%;overflow:hidden}
+#app{display:none;height:100vh;overflow:hidden}
+.layout{display:flex;height:100%}
 /* SIDEBAR */
 .sidebar{width:232px;min-width:232px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 .sb-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
@@ -132,7 +82,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .sb-logout{width:28px;height:28px;border-radius:7px;border:1px solid var(--border2);color:var(--text3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0;background:transparent}
 .sb-logout:hover{border-color:var(--red);color:var(--red)}
 /* MAIN */
-.main{flex:1;overflow-y:auto;background:var(--bg);min-width:0}
+.main{flex:1;overflow-y:auto;background:var(--bg)}
 .topbar{padding:13px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);position:sticky;top:0;z-index:10}
 .topbar-title{font-size:16px;font-weight:600}
 .topbar-sub{font-size:11px;color:var(--text3);margin-top:2px}
@@ -304,21 +254,85 @@ select.inp{appearance:none}
 /* EXPIRY ALERT */
 .expiry-alert-card{background:var(--rdim);border:1px solid rgba(240,100,100,.2);border-radius:var(--r12);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
 
-/* CONTACTS */
-.contact-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r12);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border .12s}
-.contact-card:hover{border-color:var(--border2)}
-.contact-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex-shrink:0}
-.contact-tag{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;background:var(--adim);color:var(--accent)}
-.rel-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
-.rel-cold{background:var(--text3)}.rel-acquaintance{background:var(--gold)}.rel-good{background:var(--teal)}.rel-close{background:var(--green)}
-.followup-card{background:var(--ydim);border:1px solid rgba(245,197,66,.2);border-radius:var(--r12);padding:12px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer}
+/* ═══════════ MOBILE ═══════════ */
+/* Bottom nav - hidden on desktop, flex on mobile */
+#mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));
+  justify-content:space-around;align-items:center}
+.mnb{display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:5px 10px;border:none;background:none;color:var(--text3);
+  font-size:10px;font-weight:500;font-family:var(--font);cursor:pointer;
+  -webkit-tap-highlight-color:transparent;transition:color .12s}
+.mnb.active,.mnb:active{color:var(--accent)}
+.mnb i{font-size:22px}
+/* Slide-in panel */
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400}
+#mob-overlay.open{display:block}
+#mob-panel{position:fixed;top:0;left:-270px;bottom:0;width:260px;
+  background:var(--bg2);border-right:1px solid var(--border);
+  z-index:410;overflow-y:auto;display:flex;flex-direction:column;
+  transition:left .25s ease;will-change:left}
+#mob-panel.open{left:0}
+/* Hamburger btn - hidden on desktop */
+.mob-btn{display:none;width:34px;height:34px;background:var(--bg3);
+  border:1px solid var(--border2);border-radius:var(--r8);
+  align-items:center;justify-content:center;cursor:pointer;
+  font-size:16px;color:var(--text2);flex-shrink:0}
+/* Offline + PWA banners */
+#offline-bar{display:none;position:fixed;top:0;left:0;right:0;
+  background:var(--rdim);border-bottom:1px solid rgba(240,100,100,.3);
+  padding:7px 16px;z-index:600;text-align:center;font-size:12px;color:var(--red)}
+#pwa-bar{display:none;position:fixed;bottom:72px;left:12px;right:12px;
+  background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r16);
+  padding:12px 14px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.35)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  /* Show mobile elements */
+  #mob-nav{display:flex}
+  .mob-btn{display:flex}
+  /* Hide desktop sidebar */
+  .layout>.sidebar{display:none!important}
+  /* Body/layout flow */
+  html,body{height:auto;overflow:auto}
+  #app{min-height:100vh}
+  .layout{height:auto}
+  .main{height:auto;padding-bottom:70px}
+  /* Grids */
+  .g3,.g4,.g5{grid-template-columns:repeat(2,1fr)!important}
+  .two-col,.three-col{grid-template-columns:1fr!important}
+  .doc-grid{grid-template-columns:repeat(2,1fr)!important}
+  /* Touch */
+  .btn{min-height:42px}
+  .inp,.inp:focus{font-size:16px!important} /* no iOS zoom */
+  .content{padding:12px 14px}
+  .topbar{padding:10px 14px;flex-wrap:wrap;gap:6px}
+  /* Modals */
+  .modal{width:calc(100vw - 20px)!important;max-height:90vh;margin:0 10px}
+  .auth-card{width:calc(100vw - 32px);padding:24px 20px}
+}
+@media(min-width:769px){
+  #mob-nav,#mob-panel,#mob-overlay,.mob-btn{display:none!important}
+}
+
+/* ═══════════ CONTACTS ═══════════ */
+.ct-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r12);
+  padding:13px 15px;margin-bottom:10px;cursor:pointer;transition:border .12s}
+.ct-card:hover{border-color:var(--border2)}
+.ct-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:15px;font-weight:600;flex-shrink:0}
+.ct-tag{padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;
+  background:var(--adim);color:var(--accent)}
+.rel-bar{width:8px;height:8px;border-radius:50%;display:inline-block}
+
 </style>
 </head>
 <body>
 
 <div id="loading">
   <div style="width:48px;height:48px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px"><i class="ti ti-chart-dots-3"></i></div>
-  <div style="font-size:16px;font-weight:600">MyTracker v7</div>
+  <div style="font-size:16px;font-weight:600">MyTracker</div>
   <div class="spin"></div>
 </div>
 
@@ -326,7 +340,7 @@ select.inp{appearance:none}
   <div class="auth-card">
     <div class="auth-logo">
       <div class="auth-logo-icon"><i class="ti ti-chart-dots-3"></i></div>
-      <div><div class="auth-logo-name">MyTracker</div><div class="auth-logo-sub">v7 · Private Dashboard</div></div>
+      <div><div class="auth-logo-name">MyTracker</div><div class="auth-logo-sub">v6 · Private Dashboard</div></div>
     </div>
     <div class="auth-title">Welcome back</div>
     <div class="auth-sub-txt">Private access only.</div>
@@ -345,7 +359,7 @@ select.inp{appearance:none}
 <div class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-icon"><i class="ti ti-chart-dots-3"></i></div>
-    <div><div class="sb-logo-text">MyTracker v7</div><div class="sb-logo-sub"><span class="sync-dot"></span>Live · Supabase</div></div>
+    <div><div class="sb-logo-text">MyTracker</div><div class="sb-logo-sub"><span class="sync-dot"></span>Live · Supabase</div></div>
   </div>
   <div class="sb-nav">
     <div class="sb-group">
@@ -378,7 +392,7 @@ select.inp{appearance:none}
     </div>
     <div class="sb-group">
       <div class="sb-group-label">People</div>
-      <div class="sb-item" onclick="showPage('contacts')"><i class="ti ti-users"></i>Contacts<span class="sb-badge" id="followup-badge" style="display:none">!</span></div>
+      <div class="sb-item" onclick="showPage('contacts')"><i class="ti ti-users"></i>Contacts<span class="sb-badge" id="followup-badge" style="display:none"></span></div>
     </div>
     <div class="sb-group">
       <div class="sb-group-label">Personal</div>
@@ -405,7 +419,7 @@ select.inp{appearance:none}
 <!-- DASHBOARD -->
 <div id="page-dashboard" class="page active">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Dashboard</div><div class="topbar-sub" id="dash-date"></div></div></div>
+    <div style="display:flex;align-items:center;gap:8px"><button class="mob-btn" onclick="openPanel()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Dashboard</div><div class="topbar-sub" id="dash-date"></div></div></div>
     <div class="topbar-right">
       <span class="badge b-y" id="dash-hijri"></span>
       <span class="badge b-g"><i class="ti ti-flame" style="font-size:11px"></i>12 day streak</span>
@@ -441,21 +455,13 @@ select.inp{appearance:none}
         <div id="dash-habits"></div>
       </div>
     </div>
-    <div id="dash-followup-card" style="display:none">
-      <div class="card" style="margin-bottom:0">
-        <div class="card-hd"><div class="card-title"><i class="ti ti-users"></i>People to Follow Up</div><button class="btn btn-ghost btn-sm" onclick="showPage('contacts')">View All</button></div>
-        <div id="dash-followups"></div>
-      </div>
-    </div>
-
-    </div>
   </div>
 </div>
 
 <!-- CASH FLOW -->
 <div id="page-cashflow" class="page">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Cash Flow</div><div class="topbar-sub">Income & Expense Tracker</div></div></div>
+    <div style="display:flex;align-items:center;gap:8px"><button class="mob-btn" onclick="openPanel()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Cash Flow</div><div class="topbar-sub">Income & Expense Tracker</div></div></div>
     <div class="topbar-right">
       <button class="btn btn-g btn-sm" onclick="openTxModal('inflow')"><i class="ti ti-arrow-down"></i>Add Inflow</button>
       <button class="btn btn-r btn-sm" onclick="openTxModal('outflow')"><i class="ti ti-arrow-up"></i>Add Outflow</button>
@@ -495,7 +501,7 @@ select.inp{appearance:none}
 
 <!-- SPENDING -->
 <div id="page-spending" class="page">
-  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Spending Analysis</div></div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Spending Analysis</div></div>
   <div class="content">
     <div class="g4">
       <div class="stat"><div class="stat-lbl">Biggest Category</div><div class="stat-val c-r" id="sp-top">—</div></div>
@@ -523,7 +529,7 @@ select.inp{appearance:none}
 
 <!-- SAVINGS CALCULATOR -->
 <div id="page-savings-calc" class="page">
-  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Savings Calculator</div></div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Savings Calculator</div></div>
   <div class="content">
     <div class="g2">
       <div class="card">
@@ -552,7 +558,7 @@ select.inp{appearance:none}
 
 <!-- SAVINGS & CHARITY -->
 <div id="page-savings" class="page">
-  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Savings & Charity</div></div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Savings & Charity</div></div>
   <div class="content">
     <div class="g2">
       <div class="card">
@@ -574,7 +580,7 @@ select.inp{appearance:none}
 
 <!-- ZAKAT -->
 <div id="page-zakat" class="page">
-  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Zakat Calculator</div></div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Zakat Calculator</div></div>
   <div class="content">
     <div class="g2">
       <div class="card">
@@ -605,7 +611,7 @@ select.inp{appearance:none}
 <!-- MY INVESTMENTS -->
 <div id="page-investments" class="page">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">My Investments</div><div class="topbar-sub">SAHM Trade Journal</div></div></div>
+    <div style="display:flex;align-items:center;gap:8px"><button class="mob-btn" onclick="openPanel()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">My Investments</div><div class="topbar-sub">SAHM Trade Journal</div></div></div>
     <div class="topbar-right">
       <button class="btn btn-a btn-sm" onclick="openTradeModal()"><i class="ti ti-plus"></i>Log Trade</button>
     </div>
@@ -631,7 +637,7 @@ select.inp{appearance:none}
 <!-- SAHM AI ADVISOR -->
 <div id="page-stocks" class="page">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">SAHM AI Advisor</div><div class="topbar-sub" id="stocks-last-update">Initializing real-time analysis...</div></div>
+    <div style="display:flex;align-items:center;gap:8px"><button class="mob-btn" onclick="openPanel()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">SAHM AI Advisor</div><div class="topbar-sub" id="stocks-last-update">Initializing real-time analysis...</div></div></div>
     <div class="topbar-right">
       <button class="btn btn-ghost btn-sm" onclick="runAIAnalysis(true)"><i class="ti ti-refresh"></i>Refresh Now</button>
       <span class="badge b-p">Educational Mode</span>
@@ -669,7 +675,7 @@ select.inp{appearance:none}
 
 <!-- GOALS & HABITS -->
 <div id="page-goals" class="page">
-  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Goals & Habits</div></div><div class="topbar-right"><button class="btn btn-a btn-sm" onclick="showGoalForm()"><i class="ti ti-plus"></i>Add Goal</button></div></div>
+  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-btn" onclick="openPanel()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Goals & Habits</div></div><div class="topbar-right"><button class="btn btn-a btn-sm" onclick="showGoalForm()"><i class="ti ti-plus"></i>Add Goal</button></div></div>
   <div class="content">
     <div class="card" id="goal-form-card" style="display:none;margin-bottom:14px">
       <div class="card-hd"><div class="card-title"><i class="ti ti-plus"></i>New Goal</div><button class="btn btn-ghost btn-sm" onclick="hideGoalForm()">Cancel</button></div>
@@ -692,7 +698,7 @@ select.inp{appearance:none}
 
 <!-- FOCUS -->
 <div id="page-focus" class="page">
-  <div class="topbar"><div class="topbar-title">Focus Timer</div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Focus Timer</div></div>
   <div class="content">
     <div class="card" style="max-width:420px;margin:0 auto;text-align:center">
       <div class="card-hd" style="justify-content:center"><div class="card-title"><i class="ti ti-clock"></i>Pomodoro Timer</div></div>
@@ -707,7 +713,7 @@ select.inp{appearance:none}
 
 <!-- STUDY TRACKER -->
 <div id="page-study" class="page">
-  <div class="topbar"><div class="topbar-title">Study Tracker</div><div class="topbar-right"><button class="btn btn-a btn-sm" onclick="openStudyModal()"><i class="ti ti-plus"></i>Add Subject</button></div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Study Tracker</div><div class="topbar-right"><button class="btn btn-a btn-sm" onclick="openStudyModal()"><i class="ti ti-plus"></i>Add Subject</button></div></div>
   <div class="content">
     <div class="g4">
       <div class="stat"><div class="stat-lbl">Hours This Month</div><div class="stat-val c-a" id="st-hours">0h</div></div>
@@ -723,7 +729,7 @@ select.inp{appearance:none}
 
 <!-- STUDY LOG -->
 <div id="page-study-log" class="page">
-  <div class="topbar"><div class="topbar-title">Log Study Session</div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Log Study Session</div></div>
   <div class="content">
     <div class="g2">
       <div class="card">
@@ -742,7 +748,7 @@ select.inp{appearance:none}
 <!-- DOCUMENT VAULT -->
 <div id="page-vault" class="page" style="position:relative">
   <div class="topbar">
-    <div><div class="topbar-title">Document Vault</div><div class="topbar-sub">Encrypted · Private · Supabase Storage</div></div>
+    <div style="display:flex;align-items:center;gap:8px"><button class="mob-btn" onclick="openPanel()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Document Vault</div><div class="topbar-sub">Encrypted · Private · Supabase Storage</div></div></div>
     <div class="topbar-right">
       <button class="btn btn-a btn-sm" onclick="openUploadModal()"><i class="ti ti-upload"></i>Upload Document</button>
     </div>
@@ -767,7 +773,7 @@ select.inp{appearance:none}
 
 <!-- CV -->
 <div id="page-cv" class="page">
-  <div class="topbar"><div class="topbar-title">My CV</div><div class="topbar-sub">Built-in editor — auto-saves</div><div class="topbar-right"><button class="btn btn-a btn-sm" onclick="saveCV()"><i class="ti ti-device-floppy"></i>Save</button><button class="btn btn-ghost btn-sm" onclick="exportCVPDF()"><i class="ti ti-download"></i>Export PDF</button></div></div>
+  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-btn" onclick="openPanel()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">My CV</div><div class="topbar-sub">Built-in editor — auto-saves</div></div></div><div class="topbar-right"><button class="btn btn-a btn-sm" onclick="saveCV()"><i class="ti ti-device-floppy"></i>Save</button><button class="btn btn-ghost btn-sm" onclick="exportCVPDF()"><i class="ti ti-download"></i>Export PDF</button></div></div>
   <div class="content">
     <div class="g2">
       <div>
@@ -792,7 +798,7 @@ select.inp{appearance:none}
 
 <!-- JOURNAL -->
 <div id="page-journal" class="page">
-  <div class="topbar"><div class="topbar-title">AI Journal</div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">AI Journal</div></div>
   <div class="content">
     <div class="g2">
       <div class="card">
@@ -820,7 +826,7 @@ select.inp{appearance:none}
 
 <!-- PRAYER -->
 <div id="page-prayer" class="page">
-  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Prayer Times — Dammam</div></div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">Prayer Times — Dammam</div></div>
   <div class="content">
     <div class="card" style="max-width:480px;margin:0 auto">
       <div class="card-hd"><div class="card-title"><i class="ti ti-sun"></i>Today's Prayers</div><span class="badge b-y" id="prayer-hijri-full"></span></div>
@@ -833,7 +839,7 @@ select.inp{appearance:none}
 
 <!-- REPORTS -->
 <div id="page-reports" class="page">
-  <div class="topbar"><div style="display:flex;align-items:center;gap:8px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div class="topbar-title">PDF Reports</div></div></div>
+  <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">PDF Reports</div></div>
   <div class="content">
     <div class="g2">
       <div class="card"><div class="card-hd"><div class="card-title"><i class="ti ti-file-description"></i>Finance Report</div></div><div class="ig"><label class="il">Month</label><input class="inp" id="rpt-month-fin" type="month"></div><button class="btn btn-a btn-full" onclick="generateReport('finance')"><i class="ti ti-download"></i>Download Finance PDF</button></div>
@@ -843,40 +849,6 @@ select.inp{appearance:none}
   </div>
 </div>
 
-
-<!-- CONTACTS & PEOPLE -->
-<div id="page-contacts" class="page">
-  <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px"><button class="mob-menu-btn" onclick="openMobSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="topbar-title">Contacts & People</div><div class="topbar-sub">Your network — business & personal</div></div></div>
-    <div class="topbar-right">
-      <div class="doc-search-wrap" style="width:200px"><i class="ti ti-search doc-search-icon"></i><input class="doc-search" id="contact-search" placeholder="Search contacts..." oninput="renderContacts()"></div>
-      <button class="btn btn-ghost btn-sm" onclick="exportContactsCSV()"><i class="ti ti-download"></i>Export CSV</button>
-      <button class="btn btn-a btn-sm" onclick="openContactModal()"><i class="ti ti-user-plus"></i>Add Contact</button>
-    </div>
-  </div>
-  <div class="content">
-    <!-- Follow-up alerts -->
-    <div id="contact-followup-alerts"></div>
-    <!-- Stats row -->
-    <div class="g4" style="margin-bottom:14px">
-      <div class="stat"><div class="stat-lbl">Total Contacts</div><div class="stat-val c-a" id="ct-total">0</div></div>
-      <div class="stat"><div class="stat-lbl">Follow-ups Due</div><div class="stat-val c-y" id="ct-followup">0</div></div>
-      <div class="stat"><div class="stat-lbl">Close Contacts</div><div class="stat-val c-g" id="ct-close">0</div></div>
-      <div class="stat"><div class="stat-lbl">This Month Met</div><div class="stat-val c-p" id="ct-thismonth">0</div></div>
-    </div>
-    <!-- Tag filter -->
-    <div class="cats-row" id="contact-filter-row">
-      <div class="cat-chip active" onclick="filterContacts('all',this)">All</div>
-      <div class="cat-chip" onclick="filterContacts('investor',this)">Investor</div>
-      <div class="cat-chip" onclick="filterContacts('mentor',this)">Mentor</div>
-      <div class="cat-chip" onclick="filterContacts('colleague',this)">Colleague</div>
-      <div class="cat-chip" onclick="filterContacts('friend',this)">Friend</div>
-      <div class="cat-chip" onclick="filterContacts('sahm',this)">SAHM Contact</div>
-      <div class="cat-chip" onclick="filterContacts('followup',this)"><i class="ti ti-clock" style="font-size:11px"></i>Follow-up Due</div>
-    </div>
-    <div id="contacts-list"><div style="color:var(--text3);font-size:13px;padding:20px 0;text-align:center">No contacts yet. Click "Add Contact" to get started.</div></div>
-  </div>
-</div>
 </div><!-- /main -->
 </div><!-- /layout -->
 </div><!-- /app -->
@@ -1050,7 +1022,7 @@ const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 const sb=supabase.createClient(SURL,SKEY);
 let CU=null;
 let D={goals:[],habits:[],habitLogs:[],routine:[],routineLogs:[],savingsEntries:[],journalEntries:[],transactions:[],budgets:[],subscriptions:[],documents:[],studySubjects:[],studySessions:[],studyTargets:[],cvData:null,trades:[],contacts:[]};
-let txFilter='all',docFilter='all',contactFilter='all',currentDocId=null,currentContactId=null,currentEntryType=null,currentEntryId=null;
+let txFilter='all',docFilter='all',ctFilter='all',currentDocId=null,currentCtId=null,currentEntryType=null,currentEntryId=null;
 let aiRefreshTimer=null,aiLastRefresh=null;
 let scChartI=null,cfChartI=null,pieChartI=null,portChartI=null,savChartI=null,studyChartI=null;
 let sparklineCharts={};
@@ -1088,25 +1060,19 @@ async function doLogout(){
 
 async function bootApp(){
   document.getElementById('app').style.display='block';
-  const e=CU.email;
-  document.getElementById('sb-email').textContent=e;
-  document.getElementById('sb-avatar').textContent=e[0].toUpperCase();
-  // Sync mobile sidebar
-  const mse=document.getElementById('mob-sb-email');if(mse)mse.textContent=e;
-  const msa=document.getElementById('mob-sb-avatar');if(msa)msa.textContent=e[0].toUpperCase();
+  const e=CU.email;document.getElementById('sb-email').textContent=e;document.getElementById('sb-avatar').textContent=e[0].toUpperCase();
+  const mel=document.getElementById('mob-em');if(mel)mel.textContent=e;
+  const mav=document.getElementById('mob-av');if(mav)mav.textContent=e[0].toUpperCase();
+  setTimeout(showPWAPrompt,3000);
+  window.addEventListener('online',()=>{document.getElementById('offline-bar').style.display='none';});
+  window.addEventListener('offline',()=>{document.getElementById('offline-bar').style.display='block';});
   await loadAll();
   renderDashboard();
-  // Show PWA prompt after 3s if on mobile and not installed
-  setTimeout(showPWAPrompt, 3000);
-  // Online/offline detection
-  window.addEventListener('online',()=>{document.getElementById('offline-banner').style.display='none';});
-  window.addEventListener('offline',()=>{document.getElementById('offline-banner').style.display='block';});
-  if(!navigator.onLine){document.getElementById('offline-banner').style.display='block';}
 }
 
 async function loadAll(){
   const uid=CU.id;
-  const[g,h,hl,r,rl,s,j,tx,bud,subs,docs,ss,ssess,st,cv,trades,contacts_res]=await Promise.all([
+  const[g,h,hl,r,rl,s,j,tx,bud,subs,docs,ss,ssess,st,cv,trades,ctRes]=await Promise.all([
     sb.from('goals').select('*').eq('user_id',uid).order('created_at'),
     sb.from('habits').select('*').eq('user_id',uid).order('created_at'),
     sb.from('habit_logs').select('*').eq('user_id',uid).eq('log_date',today()),
@@ -1130,7 +1096,7 @@ async function loadAll(){
   D.savingsEntries=s.data||[];D.journalEntries=j.data||[];
   D.transactions=tx.data||[];D.budgets=bud.data||[];D.subscriptions=subs.data||[];
   D.documents=docs.data||[];D.studySubjects=ss.data||[];D.studySessions=ssess.data||[];
-  D.studyTargets=st.data||[];D.cvData=cv.data||null;D.trades=trades.data||[];D.contacts=contacts_res.data||[];
+  D.studyTargets=st.data||[];D.cvData=cv.data||null;D.trades=trades.data||[];D.contacts=ctRes.data||[];
   if(!D.routine.length)await seedRoutine();
   if(!D.habits.length)await seedHabits();
   checkExpiryAlerts();
@@ -1164,55 +1130,8 @@ function getHijriDate(){
   const months=['Muharram','Safar','Rabi I','Rabi II','Jumada I','Jumada II',"Rajab","Sha'ban",'Ramadan','Shawwal',"Dhul Qa'dah","Dhul Hijjah"];
   return`${Math.floor(rem%29.5)+1} ${months[Math.min(Math.floor(rem/29.5),11)]} ${year} AH`;
 }
-
-/* ── REAL PRAYER TIMES (Umm al-Qura, Dammam 26.4N 50.1E) ── */
-function calcPrayerTimes(dateObj){
-  const lat=26.4206,lng=50.0888,tz=3;
-  const d=dateObj||new Date();
-  // Julian date
-  const Y=d.getFullYear(),M=d.getMonth()+1,D=d.getDate();
-  const JD=Math.floor(365.25*(Y+4716))+Math.floor(30.6001*(M+1))+D-1524.5+
-    (M<=2?-Math.floor((Y-1)/100)+Math.floor((Y-1)/400)-Math.floor((Y-1)/4)+Math.floor((Y-1)/100)*0.75+2:
-    -Math.floor(Y/100)+Math.floor(Y/400)-Math.floor(Y/4)+Math.floor(Y/100)*0.75+2);
-  const T=(JD-2451545)/36525;
-  // Sun mean longitude & anomaly
-  const L0=(280.46646+36000.76983*T)%360;
-  const M0=(357.52911+35999.05029*T-0.0001537*T*T)*Math.PI/180;
-  const C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M0)+(0.019993-0.000101*T)*Math.sin(2*M0)+0.000289*Math.sin(3*M0);
-  const sunLon=(L0+C)*Math.PI/180;
-  // Sun declination & equation of time
-  const e=(23.439291-0.013004*T)*Math.PI/180;
-  const dec=Math.asin(Math.sin(e)*Math.sin(sunLon));
-  const RA=Math.atan2(Math.cos(e)*Math.sin(sunLon),Math.cos(sunLon))*180/Math.PI;
-  const EqT=(L0-0.0057183-RA+(-0.000014*T*36525))*4;
-  // Solar noon
-  const noon=12-(lng/15)-EqT/60+tz;
-  function hourAngle(alt){const a=alt*Math.PI/180;return Math.acos((Math.sin(a)-Math.sin(lat*Math.PI/180)*Math.sin(dec))/(Math.cos(lat*Math.PI/180)*Math.cos(dec)))*180/Math.PI/15;}
-  function toHHMM(h){const hh=Math.floor(h),mm=Math.round((h-hh)*60);return(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;}
-  // Fajr: -18° (Umm al-Qura), Sunrise: -0.833°, Dhuhr: solar noon, Asr: shadow=1, Maghrib: -0.833°, Isha: 90min after Maghrib
-  let fajrHA,sunriseHA,asrHA;
-  try{fajrHA=hourAngle(-18);}catch(e){fajrHA=1.5;}
-  try{sunriseHA=hourAngle(-0.833);}catch(e){sunriseHA=0.1;}
-  // Asr (Shafi'i shadow ratio=1): angle = atan(1/cot(|lat-dec|))
-  const asrAlt=Math.atan(1/(1+Math.tan(Math.abs(lat*Math.PI/180-dec))))*180/Math.PI;
-  try{asrHA=hourAngle(asrAlt);}catch(e){asrHA=3;}
-  const fajr=noon-fajrHA,sunrise=noon-sunriseHA,dhuhr=noon+1/60,asr=noon+asrHA,maghrib=noon+sunriseHA,isha=maghrib+1.5;
-  return{Fajr:toHHMM(fajr),Sunrise:toHHMM(sunrise),Dhuhr:toHHMM(dhuhr),Asr:toHHMM(asr),Maghrib:toHHMM(maghrib),Isha:toHHMM(isha)};
-}
-function getPrayerTimes(){return calcPrayerTimes(new Date());}
-function getNextPrayer(){
-  const now=new Date();
-  // Convert to Riyadh time (UTC+3)
-  const riyadh=new Date(now.getTime()+((3-(-now.getTimezoneOffset()/60))*60*60*1000));
-  const cur=riyadh.getHours()*60+riyadh.getMinutes();
-  const times=getPrayerTimes();
-  for(const[n,t]of Object.entries(times)){
-    if(n==='Sunrise')continue;
-    const[h,m]=t.split(':').map(Number);
-    if(h*60+m>cur)return n;
-  }
-  return'Fajr';
-}
+function getPrayerTimes(){return{Fajr:'04:52',Sunrise:'06:12',Dhuhr:'12:15',Asr:'15:33',Maghrib:'18:35',Isha:'20:05'};}
+function getNextPrayer(){const now=new Date();const cur=now.getHours()*60+now.getMinutes();for(const[n,t]of Object.entries(getPrayerTimes())){if(n==='Sunrise')continue;const[h,m]=t.split(':').map(Number);if(h*60+m>cur)return n;}return'Fajr';}
 
 /* ── THEME ── */
 function toggleTheme(){applyTheme(document.body.classList.contains('light')?'dark':'light');}
@@ -1228,7 +1147,6 @@ function showPage(id){
   document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id)?.classList.add('active');
   document.querySelectorAll('.sb-item').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+id+"'"))n.classList.add('active');});
-  document.getElementById('sidebar')?.classList.remove('mob-open');
   const r={dashboard:renderDashboard,cashflow:renderCashFlow,spending:renderSpending,'savings-calc':calcSavings,savings:()=>{renderSavingsLog();renderSavingsTotals();renderSavingsChart();},zakat:()=>{},investments:renderInvestments,stocks:initStocksPage,goals:renderGoalsPage,routine:renderRoutinePage,study:renderStudyPage,'study-log':renderStudyLog,vault:renderVaultPage,cv:renderCV,journal:renderJournalHistory,prayer:renderPrayerFull,reports:()=>{},contacts:renderContactsPage};
   r[id]?.();
 }
@@ -1274,7 +1192,7 @@ function renderDashboard(){
   const pnl=totalValue-totalCost;
   document.getElementById('ds-portfolio-pnl').textContent=(pnl>=0?'+':'')+fmt(pnl)+' P&L';
   document.getElementById('ds-portfolio-pnl').className='stat-sub '+(pnl>=0?'c-g':'c-r');
-  renderDashPrayers();renderDashRoutine();renderDashHabits();renderDashInvestments();renderDashFollowups();
+  renderDashPrayers();renderDashRoutine();renderDashHabits();renderDashInvestments();
   checkExpiryAlerts();
 }
 function calcPortfolioTotals(){
@@ -1386,7 +1304,7 @@ function renderInvestments(){
   },100);
   // Trade history
   const hist=document.getElementById('trade-history');
-  hist.innerHTML=D.trades.slice(0,20).map(t=>{const cost=parseFloat(t.shares||0)*parseFloat(t.buy_price||0);const val=parseFloat(t.shares||0)*parseFloat(t.current_price||t.buy_price||0);const pnl=val-cost;return`<div class="row" style="cursor:pointer" onclick="openEntryDetail('trade','${t.id}')"><div><div style="font-size:13px;font-weight:600;font-family:var(--mono)">${t.ticker}</div><div style="font-size:11px;color:var(--text3)">${t.trade_date||''} · ${t.shares} shares @ SAR ${parseFloat(t.buy_price||0).toFixed(2)}${t.broker?' · '+t.broker:''}</div>${t.notes?`<div style="font-size:11px;color:var(--text3)">${t.notes}</div>`:''}</div><div style="text-align:right"><div style="font-size:13px;font-weight:600">${fmt(cost)}</div><div class="${pnl>=0?'pnl-badge-pos':'pnl-badge-neg'}">${pnl>=0?'+':''}${fmt(pnl)}</div></div></div>`;}).join('');
+  hist.innerHTML=D.trades.slice(0,20).map(t=>{const cost=parseFloat(t.shares||0)*parseFloat(t.buy_price||0);const val=parseFloat(t.shares||0)*parseFloat(t.current_price||t.buy_price||0);const pnl=val-cost;return`<div class="row" style="cursor:pointer" onclick="openEntry('trade','${t.id}')"><div><div style="font-size:13px;font-weight:600;font-family:var(--mono)">${t.ticker}</div><div style="font-size:11px;color:var(--text3)">${t.trade_date||''} · ${t.shares} shares @ SAR ${parseFloat(t.buy_price||0).toFixed(2)}${t.broker?' · '+t.broker:''}</div>${t.notes?`<div style="font-size:11px;color:var(--text3)">${t.notes}</div>`:''}</div><div style="text-align:right"><div style="font-size:13px;font-weight:600">${fmt(cost)}</div><div class="${pnl>=0?'pnl-badge-pos':'pnl-badge-neg'}">${pnl>=0?'+':''}${fmt(pnl)}</div></div></div>`;}).join('');
 }
 function openTradeModal(){
   ['tr-ticker','tr-shares','tr-buy-price','tr-current-price','tr-broker','tr-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1616,7 +1534,7 @@ function renderTxList(){
   document.getElementById('tx-count').textContent=filtered.length+' transactions';
   const catColors={'Food & Dining':'#fb923c','Transport':'#38bdf8','Rent & Utilities':'#a78bfa','Health':'#2dd4a0','Entertainment':'#f06464','Shopping':'#f5c542','Education':'#4f8ef7','Family & Gifts':'#ec4899','Subscriptions':'#8b5cf6','Other':'#6b7280'};
   if(!filtered.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:10px 0">No transactions found.</div>';return;}
-  el.innerHTML=filtered.slice(0,60).map(t=>{const c=catColors[t.category]||'#6b7280';const isIn=t.type==='inflow';return`<div class="tx-row" style="cursor:pointer" onclick="openEntryDetail('transaction','${t.id}')"><div style="width:32px;height:32px;border-radius:9px;background:${isIn?'rgba(45,212,160,.15)':'rgba(240,100,100,.15)'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ${isIn?'ti-arrow-down':'ti-arrow-up'}" style="color:${isIn?'var(--green)':'var(--red)'}"></i></div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500">${t.label}${t.category?` <span style="font-size:10px;color:${c};background:${c}22;padding:1px 6px;border-radius:10px">${t.category}</span>`:''}</div><div style="font-size:11px;color:var(--text3)">${t.note||''}</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600;color:${isIn?'var(--green)':'var(--red)'}">${isIn?'+':'-'}${fmt(t.amount)}</div><div style="font-size:10px;color:var(--text3)">${t.tx_date||''}</div></div></div>`;}).join('');
+  el.innerHTML=filtered.slice(0,60).map(t=>{const c=catColors[t.category]||'#6b7280';const isIn=t.type==='inflow';return`<div class="tx-row" style="cursor:pointer" onclick="openEntry('tx','${t.id}')"><div style="width:32px;height:32px;border-radius:9px;background:${isIn?'rgba(45,212,160,.15)':'rgba(240,100,100,.15)'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ${isIn?'ti-arrow-down':'ti-arrow-up'}" style="color:${isIn?'var(--green)':'var(--red)'}"></i></div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500">${t.label}${t.category?` <span style="font-size:10px;color:${c};background:${c}22;padding:1px 6px;border-radius:10px">${t.category}</span>`:''}</div><div style="font-size:11px;color:var(--text3)">${t.note||''}</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600;color:${isIn?'var(--green)':'var(--red)'}">${isIn?'+':'-'}${fmt(t.amount)}</div><div style="font-size:10px;color:var(--text3)">${t.tx_date||''}</div></div></div>`;}).join('');
 }
 function filterTx(val,el){txFilter=val;document.querySelectorAll('#tx-filter-row .cat-chip').forEach(c=>c.classList.remove('active'));el?.classList.add('active');renderTxList();}
 function renderCFChart(){
@@ -1734,7 +1652,7 @@ function renderSavingsLog(){
   const el=document.getElementById('sav-log');if(!el)return;
   const tl={fixed:'Daily Saving',pct:'% Income',charity:'Sadaqah',nospend:'No-Spend'};
   if(!D.savingsEntries.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">No entries yet.</div>';return;}
-  el.innerHTML=D.savingsEntries.slice(0,15).map(e=>`<div class="row"><div><div style="font-size:13px">${tl[e.entry_type]||e.entry_type}${e.note?' — '+e.note:''}</div><div style="font-size:11px;color:var(--text3)">${e.entry_date||''}</div></div><span style="font-weight:600;color:${e.entry_type==='charity'?'var(--gold)':'var(--green)'}">${fmt(e.amount)}</span></div>`).join('');
+  el.innerHTML=D.savingsEntries.slice(0,15).map(e=>`<div class="row" style="cursor:pointer" onclick="openEntry('saving','${e.id}')"><div><div style="font-size:13px">${tl[e.entry_type]||e.entry_type}${e.note?' — '+e.note:''}</div><div style="font-size:11px;color:var(--text3)">${e.entry_date||''}</div></div><span style="font-weight:600;color:${e.entry_type==='charity'?'var(--gold)':'var(--green)'}">${fmt(e.amount)}</span></div>`).join('');
 }
 function renderSavingsChart(){
   if(savChartI){savChartI.destroy();savChartI=null;}
@@ -1840,7 +1758,7 @@ async function saveStudySubject(){
 function renderStudyLog(){
   const el=document.getElementById('study-sessions-list');if(!el)return;
   if(!D.studySessions.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">No sessions yet.</div>';return;}
-  el.innerHTML=D.studySessions.slice(0,15).map(s=>{const sub=D.studySubjects.find(x=>x.id===s.subject_id);return`<div class="row" style="cursor:pointer" onclick="openEntryDetail('study','${s.id}')"><div style="flex:1"><div style="font-weight:500">${sub?.name||'—'}</div><div style="font-size:11px;color:var(--text3)">${s.session_date||''} · ${s.notes||''}</div></div><span style="font-weight:600;color:var(--accent)">${Math.round(parseInt(s.duration_min||0)/60*10)/10}h</span></div>`;}).join('');
+  el.innerHTML=D.studySessions.slice(0,15).map(s=>{const sub=D.studySubjects.find(x=>x.id===s.subject_id);return`<div class="row" style="cursor:pointer" onclick="openEntry('study','${s.id}')"><div style="flex:1"><div style="font-weight:500">${sub?.name||'—'}</div><div style="font-size:11px;color:var(--text3)">${s.session_date||''} · ${s.notes||''}</div></div><span style="font-weight:600;color:var(--accent)">${Math.round(parseInt(s.duration_min||0)/60*10)/10}h</span></div>`;}).join('');
   const sl=document.getElementById('sl-subject');if(sl&&D.studySubjects.length)sl.innerHTML='<option value="">Select subject...</option>'+D.studySubjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
 }
 async function logStudySession(){
@@ -1999,198 +1917,192 @@ function exportCVPDF(){
   const preview=document.getElementById('cv-preview').innerHTML;const name=document.getElementById('cv-name')?.value||'CV';
   const w=window.open('','_blank');
   w.document.write(`<!DOCTYPE html><html><head><title>${name} - CV</title><style>body{font-family:sans-serif;padding:40px;color:#1a1d2e;max-width:800px;margin:0 auto}@media print{body{padding:20px}}</style></head><body>${preview}<script>window.onload=()=>window.print()<\/script>
-<!-- Contact Add/Edit Modal -->
-<div class="modal-bg" id="contact-modal">
-  <div class="modal" style="max-width:560px">
-    <div class="modal-title" id="contact-modal-title"><i class="ti ti-user-plus"></i>Add Contact</div>
-    <button class="modal-close" onclick="closeModal('contact-modal')"><i class="ti ti-x"></i></button>
+<!-- ═══ CONTACTS PAGE ═══ -->
+<div id="page-contacts" class="page">
+  <div class="topbar">
+    <button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button>
+    <div class="topbar-title">Contacts & People</div>
+    <div class="topbar-right">
+      <div class="doc-search-wrap" style="width:180px"><i class="ti ti-search doc-search-icon"></i><input class="doc-search" id="ct-search" placeholder="Search..." oninput="renderContacts()"></div>
+      <button class="btn btn-ghost btn-sm" onclick="exportContactsCSV()"><i class="ti ti-download"></i>Export</button>
+      <button class="btn btn-a btn-sm" onclick="openContactModal()"><i class="ti ti-user-plus"></i>Add Contact</button>
+    </div>
+  </div>
+  <div class="content">
+    <div id="ct-followup-alerts"></div>
+    <div class="g4" style="margin-bottom:14px">
+      <div class="stat"><div class="stat-lbl">Total Contacts</div><div class="stat-val c-a" id="ct-total">0</div></div>
+      <div class="stat"><div class="stat-lbl">Follow-ups Due</div><div class="stat-val c-y" id="ct-due">0</div></div>
+      <div class="stat"><div class="stat-lbl">Close / Good</div><div class="stat-val c-g" id="ct-close">0</div></div>
+      <div class="stat"><div class="stat-lbl">Met This Month</div><div class="stat-val c-p" id="ct-month">0</div></div>
+    </div>
+    <div class="cats-row" id="ct-filter-row">
+      <div class="cat-chip active" onclick="filterContacts('all',this)">All</div>
+      <div class="cat-chip" onclick="filterContacts('investor',this)">Investor</div>
+      <div class="cat-chip" onclick="filterContacts('mentor',this)">Mentor</div>
+      <div class="cat-chip" onclick="filterContacts('colleague',this)">Colleague</div>
+      <div class="cat-chip" onclick="filterContacts('friend',this)">Friend</div>
+      <div class="cat-chip" onclick="filterContacts('sahm',this)">SAHM Contact</div>
+      <div class="cat-chip" onclick="filterContacts('followup',this)"><i class="ti ti-clock" style="font-size:11px"></i> Due</div>
+    </div>
+    <div id="ct-list"><div style="color:var(--text3);font-size:13px;padding:24px 0;text-align:center">No contacts yet. Click "Add Contact" to start building your network.</div></div>
+  </div>
+</div>
+
+<!-- ═══ MOBILE UI ═══ -->
+<nav id="mob-nav">
+  <button class="mnb active" id="mnb-dash" onclick="mobGo('dashboard',this)"><i class="ti ti-home"></i>Home</button>
+  <button class="mnb" id="mnb-cash" onclick="mobGo('cashflow',this)"><i class="ti ti-arrows-exchange"></i>Finance</button>
+  <button class="mnb" id="mnb-inv" onclick="mobGo('investments',this)"><i class="ti ti-building-bank"></i>Stocks</button>
+  <button class="mnb" id="mnb-ct" onclick="mobGo('contacts',this)"><i class="ti ti-users"></i>People</button>
+  <button class="mnb" id="mnb-more" onclick="openPanel()"><i class="ti ti-menu-2"></i>More</button>
+</nav>
+<div id="mob-overlay" onclick="closePanel()"></div>
+<div id="mob-panel">
+  <div style="padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0">
+    <div style="width:32px;height:32px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px"><i class="ti ti-chart-dots-3"></i></div>
+    <div style="flex:1"><div style="font-size:14px;font-weight:600">MyTracker</div><div style="font-size:10px;color:var(--text3)">v6 · Private</div></div>
+    <button onclick="closePanel()" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="sb-nav" style="flex:1;overflow-y:auto;padding:8px 8px">
+    <div class="sb-group"><div class="sb-group-label">Finance</div>
+      <div class="sb-item" onclick="mobGo('cashflow');closePanel()"><i class="ti ti-arrows-exchange"></i>Cash Flow</div>
+      <div class="sb-item" onclick="mobGo('spending');closePanel()"><i class="ti ti-chart-pie"></i>Spending Analysis</div>
+      <div class="sb-item" onclick="mobGo('savings-calc');closePanel()"><i class="ti ti-calculator"></i>Savings Calculator</div>
+      <div class="sb-item" onclick="mobGo('savings');closePanel()"><i class="ti ti-piggy-bank"></i>Savings & Charity</div>
+      <div class="sb-item" onclick="mobGo('zakat');closePanel()"><i class="ti ti-star"></i>Zakat</div>
+    </div>
+    <div class="sb-group"><div class="sb-group-label">Investments</div>
+      <div class="sb-item" onclick="mobGo('investments');closePanel()"><i class="ti ti-building-bank"></i>My Investments</div>
+      <div class="sb-item" onclick="mobGo('stocks');closePanel()"><i class="ti ti-trending-up"></i>SAHM AI Advisor</div>
+    </div>
+    <div class="sb-group"><div class="sb-group-label">Productivity</div>
+      <div class="sb-item" onclick="mobGo('goals');closePanel()"><i class="ti ti-target"></i>Goals & Habits</div>
+      <div class="sb-item" onclick="mobGo('routine');closePanel()"><i class="ti ti-calendar-time"></i>Routine</div>
+      <div class="sb-item" onclick="mobGo('focus');closePanel()"><i class="ti ti-clock"></i>Focus Timer</div>
+    </div>
+    <div class="sb-group"><div class="sb-group-label">Study</div>
+      <div class="sb-item" onclick="mobGo('study');closePanel()"><i class="ti ti-books"></i>Study Tracker</div>
+      <div class="sb-item" onclick="mobGo('study-log');closePanel()"><i class="ti ti-pencil"></i>Log Session</div>
+    </div>
+    <div class="sb-group"><div class="sb-group-label">People</div>
+      <div class="sb-item" onclick="mobGo('contacts');closePanel()"><i class="ti ti-users"></i>Contacts</div>
+    </div>
+    <div class="sb-group"><div class="sb-group-label">Personal</div>
+      <div class="sb-item" onclick="mobGo('vault');closePanel()"><i class="ti ti-lock"></i>Document Vault</div>
+      <div class="sb-item" onclick="mobGo('cv');closePanel()"><i class="ti ti-id-badge"></i>My CV</div>
+      <div class="sb-item" onclick="mobGo('journal');closePanel()"><i class="ti ti-notes"></i>AI Journal</div>
+      <div class="sb-item" onclick="mobGo('prayer');closePanel()"><i class="ti ti-sun"></i>Prayer Times</div>
+    </div>
+    <div class="sb-group"><div class="sb-group-label">Reports</div>
+      <div class="sb-item" onclick="mobGo('reports');closePanel()"><i class="ti ti-file-description"></i>PDF Reports</div>
+    </div>
+  </div>
+  <div class="sb-bottom" style="flex-shrink:0">
+    <div class="sb-avatar" id="mob-av">?</div>
+    <div style="flex:1;min-width:0"><div class="sb-email" id="mob-em">—</div><div class="sb-role">Owner · Private</div></div>
+    <div class="sb-logout" onclick="doLogout()"><i class="ti ti-logout"></i></div>
+  </div>
+</div>
+
+<!-- PWA prompt -->
+<div id="pwa-bar">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-chart-dots-3" style="color:#fff;font-size:18px"></i></div>
+    <div style="flex:1"><div style="font-size:13px;font-weight:600">Install MyTracker</div><div style="font-size:11px;color:var(--text2)">Add to Home Screen for best experience</div></div>
+    <button onclick="doPWA()" style="padding:7px 12px;background:var(--accent);color:#fff;border:none;border-radius:var(--r8);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font)">Install</button>
+    <button onclick="noPWA()" style="padding:7px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);color:var(--text2);cursor:pointer;font-size:13px"><i class="ti ti-x"></i></button>
+  </div>
+</div>
+<div id="offline-bar"><i class="ti ti-wifi-off"></i> Offline — showing cached data</div>
+
+<!-- Contact modal -->
+<div class="modal-bg" id="ct-modal">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-title" id="ct-modal-title"><i class="ti ti-user-plus"></i>Add Contact</div>
+    <button class="modal-close" onclick="closeModal('ct-modal')"><i class="ti ti-x"></i></button>
     <input type="hidden" id="cm-id">
     <div class="two-col">
       <div class="ig"><label class="il">Name *</label><input class="inp" id="cm-name" placeholder="Full name"></div>
       <div class="ig"><label class="il">Phone</label><input class="inp" id="cm-phone" placeholder="+966 5x xxx xxxx" type="tel"></div>
     </div>
     <div class="two-col">
-      <div class="ig"><label class="il">Email</label><input class="inp" id="cm-email" placeholder="email@example.com" type="email"></div>
-      <div class="ig"><label class="il">Company / Organization</label><input class="inp" id="cm-company" placeholder="Company name"></div>
+      <div class="ig"><label class="il">Email</label><input class="inp" id="cm-email" type="email" placeholder="email@example.com"></div>
+      <div class="ig"><label class="il">Company</label><input class="inp" id="cm-company" placeholder="Company name"></div>
     </div>
     <div class="two-col">
-      <div class="ig"><label class="il">Role / Title</label><input class="inp" id="cm-role" placeholder="e.g. CEO, Investor, Friend"></div>
-      <div class="ig"><label class="il">Location (City)</label><input class="inp" id="cm-location" placeholder="e.g. Dammam, Riyadh"></div>
+      <div class="ig"><label class="il">Role / Title</label><input class="inp" id="cm-role" placeholder="CEO, Investor, Friend..."></div>
+      <div class="ig"><label class="il">City</label><input class="inp" id="cm-location" placeholder="Dammam, Riyadh..."></div>
     </div>
     <div class="two-col">
-      <div class="ig"><label class="il">How we met</label><input class="inp" id="cm-how-met" placeholder="e.g. Conference, LinkedIn, Mutual friend"></div>
-      <div class="ig"><label class="il">Date met</label><input class="inp" id="cm-met-date" type="date"></div>
+      <div class="ig"><label class="il">How we met</label><input class="inp" id="cm-how" placeholder="Conference, LinkedIn..."></div>
+      <div class="ig"><label class="il">Date met</label><input class="inp" id="cm-met" type="date"></div>
     </div>
     <div class="ig"><label class="il">Tags</label>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 0" id="cm-tags-row">
-        <div class="cat-chip" onclick="toggleContactTag(this,'investor')">Investor</div>
-        <div class="cat-chip" onclick="toggleContactTag(this,'mentor')">Mentor</div>
-        <div class="cat-chip" onclick="toggleContactTag(this,'colleague')">Colleague</div>
-        <div class="cat-chip" onclick="toggleContactTag(this,'friend')">Friend</div>
-        <div class="cat-chip" onclick="toggleContactTag(this,'sahm')">SAHM Contact</div>
-        <div class="cat-chip" onclick="toggleContactTag(this,'family')">Family</div>
-        <div class="cat-chip" onclick="toggleContactTag(this,'client')">Client</div>
-        <div class="cat-chip" onclick="toggleContactTag(this,'vendor')">Vendor</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px" id="cm-tags-row">
+        <div class="cat-chip" onclick="toggleCtTag(this,'investor')">Investor</div>
+        <div class="cat-chip" onclick="toggleCtTag(this,'mentor')">Mentor</div>
+        <div class="cat-chip" onclick="toggleCtTag(this,'colleague')">Colleague</div>
+        <div class="cat-chip" onclick="toggleCtTag(this,'friend')">Friend</div>
+        <div class="cat-chip" onclick="toggleCtTag(this,'sahm')">SAHM Contact</div>
+        <div class="cat-chip" onclick="toggleCtTag(this,'client')">Client</div>
+        <div class="cat-chip" onclick="toggleCtTag(this,'family')">Family</div>
       </div>
     </div>
     <div class="two-col">
-      <div class="ig"><label class="il">Relationship Strength</label>
+      <div class="ig"><label class="il">Relationship</label>
         <select class="inp" id="cm-rel">
           <option value="cold">🔵 Cold — Just met</option>
-          <option value="acquaintance">🟡 Acquaintance — Familiar</option>
-          <option value="good">🔵 Good Contact — Know well</option>
-          <option value="close">🟢 Close — Strong relationship</option>
+          <option value="acquaintance">🟡 Acquaintance</option>
+          <option value="good">🔵 Good Contact</option>
+          <option value="close">🟢 Close</option>
         </select>
       </div>
       <div class="ig"><label class="il">Follow-up Date</label><input class="inp" id="cm-followup" type="date"></div>
     </div>
-    <div class="ig"><label class="il">Notes / Description</label><textarea class="inp" id="cm-notes" placeholder="Where they work, what you discussed, key facts to remember..." rows="3"></textarea></div>
-    <div id="cm-ai-summary" style="display:none;background:var(--adim);border:1px solid rgba(79,142,247,.2);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--accent);margin-bottom:12px"></div>
+    <div class="ig"><label class="il">Notes / Description</label><textarea class="inp" id="cm-notes" placeholder="What you discussed, key facts to remember..." rows="3"></textarea></div>
+    <div id="cm-ai-box" style="display:none;background:var(--adim);border:1px solid rgba(79,142,247,.2);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--accent);margin-bottom:12px"></div>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-ghost" onclick="generateContactSummary()" id="cm-ai-btn" style="flex-shrink:0"><i class="ti ti-robot"></i>AI Summary</button>
-      <button class="btn btn-a btn-full" onclick="saveContact()" id="cm-save-btn"><i class="ti ti-check"></i>Save Contact</button>
+      <button class="btn btn-ghost" onclick="genCtAI()" id="cm-ai-btn"><i class="ti ti-robot"></i>AI Summary</button>
+      <button class="btn btn-a btn-full" onclick="saveContact()"><i class="ti ti-check"></i>Save Contact</button>
     </div>
   </div>
 </div>
 
-<!-- Contact Detail/View Modal -->
-<div class="modal-bg" id="contact-detail-modal">
-  <div class="modal" style="max-width:560px">
-    <div class="modal-title" id="cdm-title"><i class="ti ti-user"></i>Contact</div>
-    <button class="modal-close" onclick="closeModal('contact-detail-modal')"><i class="ti ti-x"></i></button>
-    <div id="cdm-body"></div>
-    <div style="display:flex;gap:8px;margin-top:16px">
-      <button class="btn btn-ghost" onclick="editContactFromDetail()"><i class="ti ti-edit"></i>Edit</button>
+<!-- Contact detail modal -->
+<div class="modal-bg" id="ct-detail-modal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title" id="ct-detail-title"><i class="ti ti-user"></i>Contact</div>
+    <button class="modal-close" onclick="closeModal('ct-detail-modal')"><i class="ti ti-x"></i></button>
+    <div id="ct-detail-body"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-ghost" onclick="editContact()"><i class="ti ti-edit"></i>Edit</button>
       <button class="btn btn-r" onclick="deleteContact()"><i class="ti ti-trash"></i>Delete</button>
     </div>
   </div>
 </div>
 
-<!-- Entry Detail Modal (for savings, transactions, study sessions, etc.) -->
-<div class="modal-bg" id="entry-detail-modal">
+<!-- Entry detail/delete modal -->
+<div class="modal-bg" id="entry-modal">
   <div class="modal" style="width:400px">
-    <div class="modal-title" id="edm-title"><i class="ti ti-info-circle"></i>Entry Details</div>
-    <button class="modal-close" onclick="closeModal('entry-detail-modal')"><i class="ti ti-x"></i></button>
-    <div id="edm-body" style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:16px"></div>
+    <div class="modal-title" id="entry-modal-title"><i class="ti ti-info-circle"></i>Entry Details</div>
+    <button class="modal-close" onclick="closeModal('entry-modal')"><i class="ti ti-x"></i></button>
+    <div id="entry-modal-body" style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:16px"></div>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-ghost" onclick="editEntryFromDetail()" id="edm-edit-btn"><i class="ti ti-edit"></i>Edit</button>
-      <button class="btn btn-r btn-full" onclick="deleteEntry()"><i class="ti ti-trash"></i>Delete this entry</button>
+      <button class="btn btn-ghost" onclick="editEntry()" id="entry-edit-btn"><i class="ti ti-edit"></i>Edit</button>
+      <button class="btn btn-r btn-full" onclick="deleteEntry()"><i class="ti ti-trash"></i>Delete Entry</button>
     </div>
   </div>
 </div>
 
-<!-- Edit Entry Modal (savings / transaction / trade inline edit) -->
-<div class="modal-bg" id="edit-entry-modal">
+<!-- Entry edit modal -->
+<div class="modal-bg" id="entry-edit-modal">
   <div class="modal" style="width:420px">
-    <div class="modal-title" id="eem-title"><i class="ti ti-edit"></i>Edit Entry</div>
-    <button class="modal-close" onclick="closeModal('edit-entry-modal')"><i class="ti ti-x"></i></button>
-    <div id="eem-fields"></div>
-    <button class="btn btn-a btn-full" onclick="saveEditedEntry()"><i class="ti ti-check"></i>Save Changes</button>
+    <div class="modal-title" id="entry-edit-title"><i class="ti ti-edit"></i>Edit Entry</div>
+    <button class="modal-close" onclick="closeModal('entry-edit-modal')"><i class="ti ti-x"></i></button>
+    <div id="entry-edit-fields"></div>
+    <button class="btn btn-a btn-full" onclick="saveEditEntry()"><i class="ti ti-check"></i>Save Changes</button>
   </div>
-</div>
-
-
-<!-- ═══════════════════════════════════════════════
-     MOBILE UI (separate from desktop layout)
-═══════════════════════════════════════════════ -->
-
-<!-- Mobile bottom nav bar -->
-<nav class="mob-nav" id="mob-nav">
-  <button class="mob-nav-btn active" id="mnb-dashboard" onclick="mobNav('dashboard',this)">
-    <i class="ti ti-home"></i>Home
-  </button>
-  <button class="mob-nav-btn" id="mnb-cashflow" onclick="mobNav('cashflow',this)">
-    <i class="ti ti-arrows-exchange"></i>Finance
-  </button>
-  <button class="mob-nav-btn" id="mnb-investments" onclick="mobNav('investments',this)">
-    <i class="ti ti-building-bank"></i>Stocks
-  </button>
-  <button class="mob-nav-btn" id="mnb-contacts" onclick="mobNav('contacts',this)">
-    <i class="ti ti-users"></i>People
-  </button>
-  <button class="mob-nav-btn" id="mnb-more" onclick="openMobSidebar()">
-    <i class="ti ti-menu-2"></i>More
-  </button>
-</nav>
-
-<!-- Mobile overlay -->
-<div class="mob-sidebar-overlay" id="mob-overlay" onclick="closeMobSidebar()"></div>
-
-<!-- Mobile slide-in sidebar panel -->
-<div class="mob-sidebar-panel" id="mob-sidebar-panel">
-  <div class="sb-logo" style="padding:16px 14px 12px;border-bottom:1px solid var(--border);flex-shrink:0">
-    <div class="sb-logo-icon"><i class="ti ti-chart-dots-3"></i></div>
-    <div style="flex:1"><div class="sb-logo-text">MyTracker v7</div><div class="sb-logo-sub"><span class="sync-dot"></span>Live · Supabase</div></div>
-    <button onclick="closeMobSidebar()" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center"><i class="ti ti-x"></i></button>
-  </div>
-  <div class="sb-nav" style="flex:1;overflow-y:auto;padding:10px 8px">
-    <div class="sb-group">
-      <div class="sb-group-label">Overview</div>
-      <div class="sb-item" onclick="mobNav('dashboard');closeMobSidebar()"><i class="ti ti-home"></i>Dashboard</div>
-    </div>
-    <div class="sb-group">
-      <div class="sb-group-label">Finance</div>
-      <div class="sb-item" onclick="mobNav('cashflow');closeMobSidebar()"><i class="ti ti-arrows-exchange"></i>Cash Flow</div>
-      <div class="sb-item" onclick="mobNav('spending');closeMobSidebar()"><i class="ti ti-chart-pie"></i>Spending Analysis</div>
-      <div class="sb-item" onclick="mobNav('savings-calc');closeMobSidebar()"><i class="ti ti-calculator"></i>Savings Calculator</div>
-      <div class="sb-item" onclick="mobNav('savings');closeMobSidebar()"><i class="ti ti-piggy-bank"></i>Savings & Charity</div>
-      <div class="sb-item" onclick="mobNav('zakat');closeMobSidebar()"><i class="ti ti-star"></i>Zakat</div>
-    </div>
-    <div class="sb-group">
-      <div class="sb-group-label">Investments</div>
-      <div class="sb-item" onclick="mobNav('investments');closeMobSidebar()"><i class="ti ti-building-bank"></i>My Investments</div>
-      <div class="sb-item" onclick="mobNav('stocks');closeMobSidebar()"><i class="ti ti-trending-up"></i>SAHM AI Advisor<span class="sb-badge">LIVE</span></div>
-    </div>
-    <div class="sb-group">
-      <div class="sb-group-label">Productivity</div>
-      <div class="sb-item" onclick="mobNav('goals');closeMobSidebar()"><i class="ti ti-target"></i>Goals & Habits</div>
-      <div class="sb-item" onclick="mobNav('routine');closeMobSidebar()"><i class="ti ti-calendar-time"></i>Routine</div>
-      <div class="sb-item" onclick="mobNav('focus');closeMobSidebar()"><i class="ti ti-clock"></i>Focus Timer</div>
-    </div>
-    <div class="sb-group">
-      <div class="sb-group-label">Study</div>
-      <div class="sb-item" onclick="mobNav('study');closeMobSidebar()"><i class="ti ti-books"></i>Study Tracker</div>
-      <div class="sb-item" onclick="mobNav('study-log');closeMobSidebar()"><i class="ti ti-pencil"></i>Log Session</div>
-    </div>
-    <div class="sb-group">
-      <div class="sb-group-label">People</div>
-      <div class="sb-item" onclick="mobNav('contacts');closeMobSidebar()"><i class="ti ti-users"></i>Contacts</div>
-    </div>
-    <div class="sb-group">
-      <div class="sb-group-label">Personal</div>
-      <div class="sb-item" onclick="mobNav('vault');closeMobSidebar()"><i class="ti ti-lock"></i>Document Vault</div>
-      <div class="sb-item" onclick="mobNav('cv');closeMobSidebar()"><i class="ti ti-id-badge"></i>My CV</div>
-      <div class="sb-item" onclick="mobNav('journal');closeMobSidebar()"><i class="ti ti-notes"></i>AI Journal</div>
-      <div class="sb-item" onclick="mobNav('prayer');closeMobSidebar()"><i class="ti ti-sun"></i>Prayer Times</div>
-    </div>
-    <div class="sb-group">
-      <div class="sb-group-label">Reports</div>
-      <div class="sb-item" onclick="mobNav('reports');closeMobSidebar()"><i class="ti ti-file-description"></i>PDF Reports</div>
-    </div>
-  </div>
-  <div class="sb-bottom" style="flex-shrink:0">
-    <div class="sb-avatar" id="mob-sb-avatar">?</div>
-    <div style="flex:1;min-width:0"><div class="sb-email" id="mob-sb-email">—</div><div class="sb-role">Owner · Private</div></div>
-    <div class="sb-logout" onclick="doLogout()" title="Sign out"><i class="ti ti-logout"></i></div>
-  </div>
-</div>
-
-<!-- PWA install prompt -->
-<div id="pwa-banner" style="display:none;position:fixed;bottom:72px;left:12px;right:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r16);padding:14px 16px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.3)">
-  <div style="display:flex;align-items:center;gap:12px">
-    <div style="width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-chart-dots-3" style="color:#fff;font-size:20px"></i></div>
-    <div style="flex:1">
-      <div style="font-size:13px;font-weight:600">Install MyTracker</div>
-      <div style="font-size:11px;color:var(--text2)">Add to Home Screen for the best experience</div>
-    </div>
-    <button onclick="installPWA()" style="padding:7px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r8);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font)">Install</button>
-    <button onclick="dismissPWA()" style="padding:7px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);color:var(--text2);cursor:pointer;font-size:12px"><i class="ti ti-x"></i></button>
-  </div>
-</div>
-
-<!-- Offline banner -->
-<div id="offline-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:var(--rdim);border-bottom:1px solid rgba(240,100,100,.3);padding:8px 16px;z-index:600;text-align:center;font-size:12px;color:var(--red)">
-  <i class="ti ti-wifi-off"></i> You're offline — showing cached data
 </div>
 
 </body></html>`);
@@ -2280,513 +2192,375 @@ function generateReport(type){
     <h2 style="font-size:16px;color:#1a1d2e;margin-bottom:12px">Session Log</h2>
     <table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="background:#f0f1f5"><th style="padding:6px;text-align:left">Date</th><th style="padding:6px;text-align:left">Subject</th><th style="padding:6px;text-align:left">Notes</th><th style="padding:6px;text-align:right">Hours</th></tr>${mSess.map(s=>{const sub=D.studySubjects.find(x=>x.id===s.subject_id);return`<tr><td style="padding:5px;border-bottom:1px solid #e8eaf0">${s.session_date}</td><td style="padding:5px;border-bottom:1px solid #e8eaf0">${sub?.name||'—'}</td><td style="padding:5px;border-bottom:1px solid #e8eaf0;color:#5a6180">${s.notes||'—'}</td><td style="padding:5px;border-bottom:1px solid #e8eaf0;text-align:right;font-weight:600">${Math.round(parseInt(s.duration_min||0)/60*10)/10}h</td></tr>`;}).join('')}</table>`;
   }
-  w.document.write(`<!DOCTYPE html><html><head><title>MyTracker Report — ${month}</title><style>body{font-family:sans-serif;padding:40px;color:#1a1d2e;max-width:920px;margin:0 auto;font-size:14px}h1{font-size:24px}h2{color:#5a6180;margin-top:20px}@media print{body{padding:20px}}</style></head><body>${html}<div style="margin-top:40px;border-top:1px solid #e8eaf0;padding-top:12px;font-size:11px;color:#9aa0b8;text-align:center">Generated by MyTracker v7 · Private Dashboard · ${now}</div><script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.write(`<!DOCTYPE html><html><head><title>MyTracker Report — ${month}</title><style>body{font-family:sans-serif;padding:40px;color:#1a1d2e;max-width:920px;margin:0 auto;font-size:14px}h1{font-size:24px}h2{color:#5a6180;margin-top:20px}@media print{body{padding:20px}}</style></head><body>${html}<div style="margin-top:40px;border-top:1px solid #e8eaf0;padding-top:12px;font-size:11px;color:#9aa0b8;text-align:center">Generated by MyTracker v6 · Private Dashboard · ${now}</div><script>window.onload=()=>window.print()<\/script></body></html>`);
   w.document.close();
 }
 
 // Stop AI refresh when leaving stocks page
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&aiRefreshTimer){clearInterval(aiRefreshTimer);aiRefreshTimer=null;}});
 
-/* ── MOBILE NAV ── */
-function isMobile(){return window.innerWidth<=768;}
-
-function mobNav(pageId, btn){
-  showPage(pageId);
-  // Update bottom nav active state
-  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.remove('active'));
-  if(btn){btn.classList.add('active');}
-  else{
-    // Auto-highlight matching bottom nav btn
-    const map={dashboard:'mnb-dashboard',cashflow:'mnb-cashflow',investments:'mnb-investments',contacts:'mnb-contacts'};
-    if(map[pageId]){const el=document.getElementById(map[pageId]);if(el)el.classList.add('active');}
-  }
-  // Also sync desktop sidebar
-  document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('.sb-item').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+pageId+"'"))n.classList.add('active');});
-  // Sync mobile panel sidebar
-  document.querySelectorAll('#mob-sidebar-panel .sb-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('#mob-sidebar-panel .sb-item').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+pageId+"'"))n.classList.add('active');});
-}
-
-function openMobSidebar(){
+/* ══════════════════════════════════════════
+   MOBILE NAV
+══════════════════════════════════════════ */
+function openPanel(){
   document.getElementById('mob-overlay').classList.add('open');
-  document.getElementById('mob-sidebar-panel').classList.add('open');
+  document.getElementById('mob-panel').classList.add('open');
   document.body.style.overflow='hidden';
 }
-function closeMobSidebar(){
+function closePanel(){
   document.getElementById('mob-overlay').classList.remove('open');
-  document.getElementById('mob-sidebar-panel').classList.remove('open');
+  document.getElementById('mob-panel').classList.remove('open');
   document.body.style.overflow='';
 }
-
-// Swipe to close sidebar
+function mobGo(id,btn){
+  showPage(id);
+  if(btn){
+    document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+// Swipe left to close panel, swipe down to refresh
 (function(){
-  let startX=0,startY=0;
-  document.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;},{passive:true});
+  let sx=0,sy=0;
+  document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
   document.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-startX;
-    const dy=Math.abs(e.changedTouches[0].clientY-startY);
-    // Swipe left >60px, not mostly vertical
-    if(dx<-60&&dy<40&&document.getElementById('mob-sidebar-panel').classList.contains('open')){
-      closeMobSidebar();
-    }
-    // Swipe down > 80px on main area = pull-to-refresh
-    if(e.changedTouches[0].clientY-startY>80&&startY<120&&!document.getElementById('mob-sidebar-panel').classList.contains('open')){
-      triggerPullRefresh();
-    }
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy=e.changedTouches[0].clientY-sy;
+    if(dx<-60&&Math.abs(dy)<50&&document.getElementById('mob-panel').classList.contains('open'))closePanel();
+    if(dy>90&&sy<100&&!document.getElementById('mob-panel').classList.contains('open'))pullRefresh();
   },{passive:true});
 })();
-
 let _refreshing=false;
-async function triggerPullRefresh(){
-  if(_refreshing||!CU)return;
-  _refreshing=true;
-  toast('Refreshing data...');
-  await loadAll();
-  const activePage=document.querySelector('.page.active')?.id?.replace('page-','');
-  if(activePage){
-    const r={dashboard:renderDashboard,cashflow:renderCashFlow,spending:renderSpending,savings:()=>{renderSavingsLog();renderSavingsTotals();renderSavingsChart();},investments:renderInvestments,contacts:renderContactsPage,goals:renderGoalsPage,routine:renderRoutinePage,study:renderStudyPage,'study-log':renderStudyLog,vault:renderVaultPage,journal:renderJournalHistory};
-    r[activePage]?.();
-  }
-  toast('Up to date ✓');
-  _refreshing=false;
+async function pullRefresh(){
+  if(_refreshing||!CU)return;_refreshing=true;
+  toast('Syncing...');await loadAll();
+  const pg=document.querySelector('.page.active')?.id?.replace('page-','');
+  const fns={dashboard:renderDashboard,cashflow:renderCashFlow,spending:renderSpending,savings:()=>{renderSavingsLog();renderSavingsTotals();renderSavingsChart();},investments:renderInvestments,contacts:renderContactsPage,goals:renderGoalsPage,routine:renderRoutinePage,study:renderStudyPage,'study-log':renderStudyLog,vault:renderVaultPage,journal:renderJournalHistory};
+  fns[pg]?.();toast('Up to date ✓');_refreshing=false;
 }
 
+/* ══════════════════════════════════════════
+   PWA + OFFLINE
+══════════════════════════════════════════ */
+let _pwaPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_pwaPrompt=e;});
+function showPWAPrompt(){
+  if(window.innerWidth>768)return;
+  if(localStorage.getItem('pwa-no'))return;
+  if(window.matchMedia('(display-mode:standalone)').matches)return;
+  if(_pwaPrompt||/iPad|iPhone|iPod/.test(navigator.userAgent)){
+    document.getElementById('pwa-bar').style.display='block';
+  }
+}
+async function doPWA(){
+  document.getElementById('pwa-bar').style.display='none';
+  if(_pwaPrompt){_pwaPrompt.prompt();await _pwaPrompt.userChoice;_pwaPrompt=null;}
+  else toast('Safari: tap Share → Add to Home Screen');
+}
+function noPWA(){document.getElementById('pwa-bar').style.display='none';localStorage.setItem('pwa-no','1');}
+// Service worker
+if('serviceWorker' in navigator){
+  const sw=`self.addEventListener('install',e=>self.skipWaiting());
+self.addEventListener('activate',e=>self.clients.claim());
+self.addEventListener('fetch',e=>{
+  if(e.request.mode==='navigate'){
+    e.respondWith(fetch(e.request).catch(()=>new Response(
+      '<html><body style="font-family:sans-serif;background:#0b0d12;color:#e4e8f0;display:flex;height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:12px;margin:0"><div style="font-size:40px">📊</div><b style="font-size:18px">MyTracker</b><span style="color:#8892aa">You are offline</span><span style="font-size:12px;color:#4a5268">Pull down to refresh when back online</span></body></html>',
+      {headers:{"Content-Type":"text/html"}}
+    )));
+  }
+});`;
+  const blob=new Blob([sw],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
 
-/* ── ENTRY DETAIL / DELETE / EDIT ── */
-function openEntryDetail(type, id){
+/* ══════════════════════════════════════════
+   ENTRY DETAIL / EDIT / DELETE
+══════════════════════════════════════════ */
+function openEntry(type,id){
   currentEntryType=type;currentEntryId=id;
   let entry,title,fields;
   if(type==='saving'){
-    entry=D.savingsEntries.find(e=>e.id===id);
-    if(!entry)return;
+    entry=D.savingsEntries.find(e=>e.id===id);if(!entry)return;
     title='Savings Entry';
-    fields=`<div><span style="color:var(--text3)">Type:</span> <strong>${entry.entry_type==='charity'?'Sadaqah / Charity':entry.entry_type==='nospend'?'No-Spend Day':entry.entry_type==='pct'?'% of Income':'Fixed Daily Saving'}</strong></div>
-    <div><span style="color:var(--text3)">Amount:</span> <strong style="color:var(--green)">${fmt(entry.amount)}</strong></div>
-    ${entry.note?`<div><span style="color:var(--text3)">Note:</span> ${entry.note}</div>`:''}
-    <div><span style="color:var(--text3)">Date:</span> ${entry.created_at?.slice(0,10)||'—'}</div>`;
-    document.getElementById('edm-edit-btn').style.display='flex';
-  } else if(type==='transaction'){
-    entry=D.transactions.find(t=>t.id===id);
-    if(!entry)return;
-    title=(entry.type==='inflow'?'Income':'Expense')+' — '+entry.label;
-    fields=`<div><span style="color:var(--text3)">Label:</span> <strong>${entry.label}</strong></div>
-    <div><span style="color:var(--text3)">Amount:</span> <strong style="color:${entry.type==='inflow'?'var(--green)':'var(--red)'}">${entry.type==='inflow'?'+':'-'}${fmt(entry.amount)}</strong></div>
-    ${entry.category?`<div><span style="color:var(--text3)">Category:</span> ${entry.category}</div>`:''}
-    ${entry.note?`<div><span style="color:var(--text3)">Note:</span> ${entry.note}</div>`:''}
-    <div><span style="color:var(--text3)">Date:</span> ${entry.tx_date||'—'}</div>`;
-    document.getElementById('edm-edit-btn').style.display='flex';
-  } else if(type==='study'){
-    entry=D.studySessions.find(s=>s.id===id);
-    if(!entry)return;
-    const sub=D.studySubjects.find(x=>x.id===entry.subject_id);
-    title='Study Session';
-    fields=`<div><span style="color:var(--text3)">Subject:</span> <strong>${sub?.name||'—'}</strong></div>
-    <div><span style="color:var(--text3)">Duration:</span> <strong style="color:var(--accent)">${Math.round(parseInt(entry.duration_min||0)/60*10)/10}h (${entry.duration_min} min)</strong></div>
-    ${entry.notes?`<div><span style="color:var(--text3)">Notes:</span> ${entry.notes}</div>`:''}
-    <div><span style="color:var(--text3)">Date:</span> ${entry.session_date||'—'}</div>`;
-    document.getElementById('edm-edit-btn').style.display='none';
+    fields=`<div><span style="color:var(--text3)">Type:</span> <b>${entry.entry_type==='charity'?'Sadaqah':entry.entry_type==='nospend'?'No-Spend Day':entry.entry_type==='pct'?'% of Income':'Fixed Saving'}</b></div>
+<div><span style="color:var(--text3)">Amount:</span> <b style="color:var(--green)">${fmt(entry.amount)}</b></div>
+${entry.note?`<div><span style="color:var(--text3)">Note:</span> ${entry.note}</div>`:''}
+<div><span style="color:var(--text3)">Date:</span> ${entry.created_at?.slice(0,10)||'—'}</div>`;
+  } else if(type==='tx'){
+    entry=D.transactions.find(t=>t.id===id);if(!entry)return;
+    title=entry.label;
+    fields=`<div><span style="color:var(--text3)">Amount:</span> <b style="color:${entry.type==='inflow'?'var(--green)':'var(--red)'}">${entry.type==='inflow'?'+':'-'}${fmt(entry.amount)}</b></div>
+${entry.category?`<div><span style="color:var(--text3)">Category:</span> ${entry.category}</div>`:''}
+${entry.note?`<div><span style="color:var(--text3)">Note:</span> ${entry.note}</div>`:''}
+<div><span style="color:var(--text3)">Date:</span> ${entry.tx_date||'—'}</div>`;
   } else if(type==='trade'){
-    entry=D.trades.find(t=>t.id===id);
-    if(!entry)return;
+    entry=D.trades.find(t=>t.id===id);if(!entry)return;
     const cost=parseFloat(entry.shares||0)*parseFloat(entry.buy_price||0);
     const val=parseFloat(entry.shares||0)*parseFloat(entry.current_price||entry.buy_price||0);
     const pnl=val-cost;
     title='Trade — '+entry.ticker;
-    fields=`<div><span style="color:var(--text3)">Ticker:</span> <strong style="font-family:var(--mono)">${entry.ticker}</strong></div>
-    <div><span style="color:var(--text3)">Shares:</span> <strong>${entry.shares}</strong></div>
-    <div><span style="color:var(--text3)">Buy Price:</span> SAR ${parseFloat(entry.buy_price||0).toFixed(2)}</div>
-    <div><span style="color:var(--text3)">Current Price:</span> SAR ${parseFloat(entry.current_price||entry.buy_price||0).toFixed(2)}</div>
-    <div><span style="color:var(--text3)">Cost Basis:</span> ${fmt(cost)}</div>
-    <div><span style="color:var(--text3)">P&L:</span> <strong style="color:${pnl>=0?'var(--green)':'var(--red)'}">${pnl>=0?'+':''}${fmt(pnl)}</strong></div>
-    ${entry.broker?`<div><span style="color:var(--text3)">Broker:</span> ${entry.broker}</div>`:''}
-    ${entry.notes?`<div><span style="color:var(--text3)">Notes:</span> ${entry.notes}</div>`:''}
-    <div><span style="color:var(--text3)">Date:</span> ${entry.trade_date||'—'}</div>`;
-    document.getElementById('edm-edit-btn').style.display='flex';
+    fields=`<div><span style="color:var(--text3)">Ticker:</span> <b style="font-family:var(--mono)">${entry.ticker}</b></div>
+<div><span style="color:var(--text3)">Shares:</span> ${entry.shares}</div>
+<div><span style="color:var(--text3)">Buy Price:</span> SAR ${parseFloat(entry.buy_price||0).toFixed(2)}</div>
+<div><span style="color:var(--text3)">P&L:</span> <b style="color:${pnl>=0?'var(--green)':'var(--red)'}">${pnl>=0?'+':''}${fmt(pnl)}</b></div>
+${entry.notes?`<div><span style="color:var(--text3)">Notes:</span> ${entry.notes}</div>`:''}
+<div><span style="color:var(--text3)">Date:</span> ${entry.trade_date||'—'}</div>`;
+  } else if(type==='study'){
+    entry=D.studySessions.find(s=>s.id===id);if(!entry)return;
+    const sub=D.studySubjects.find(x=>x.id===entry.subject_id);
+    title='Study Session';
+    fields=`<div><span style="color:var(--text3)">Subject:</span> <b>${sub?.name||'—'}</b></div>
+<div><span style="color:var(--text3)">Duration:</span> <b style="color:var(--accent)">${Math.round(parseInt(entry.duration_min||0)/60*10)/10}h</b></div>
+${entry.notes?`<div><span style="color:var(--text3)">Notes:</span> ${entry.notes}</div>`:''}
+<div><span style="color:var(--text3)">Date:</span> ${entry.session_date||'—'}</div>`;
+    document.getElementById('entry-edit-btn').style.display='none';
   }
-  document.getElementById('edm-title').innerHTML=`<i class="ti ti-info-circle"></i>${title}`;
-  document.getElementById('edm-body').innerHTML=fields;
-  openModal('entry-detail-modal');
+  if(type!=='study') document.getElementById('entry-edit-btn').style.display='flex';
+  document.getElementById('entry-modal-title').innerHTML=`<i class="ti ti-info-circle"></i>${title}`;
+  document.getElementById('entry-modal-body').innerHTML=fields;
+  openModal('entry-modal');
 }
-
-function editEntryFromDetail(){
-  closeModal('entry-detail-modal');
+function editEntry(){
+  closeModal('entry-modal');
   const type=currentEntryType,id=currentEntryId;
-  let entry,fields='',title='';
+  let entry,fields,title;
   if(type==='saving'){
     entry=D.savingsEntries.find(e=>e.id===id);if(!entry)return;
-    title='Edit Savings Entry';
-    fields=`<div class="ig"><label class="il">Amount (SAR)</label><input class="inp" id="eem-amount" type="number" value="${entry.amount}"></div>
-    <div class="ig"><label class="il">Type</label><select class="inp" id="eem-type"><option value="fixed"${entry.entry_type==='fixed'?' selected':''}>Fixed Daily Saving</option><option value="pct"${entry.entry_type==='pct'?' selected':''}>% of Income</option><option value="charity"${entry.entry_type==='charity'?' selected':''}>Sadaqah / Charity</option><option value="nospend"${entry.entry_type==='nospend'?' selected':''}>No-Spend Day</option></select></div>
-    <div class="ig"><label class="il">Note</label><input class="inp" id="eem-note" value="${entry.note||''}"></div>`;
-  } else if(type==='transaction'){
+    title='Edit Saving';
+    fields=`<div class="ig"><label class="il">Amount (SAR)</label><input class="inp" id="ee-amount" type="number" value="${entry.amount}"></div>
+<div class="ig"><label class="il">Type</label><select class="inp" id="ee-type"><option value="fixed"${entry.entry_type==='fixed'?' selected':''}>Fixed Saving</option><option value="pct"${entry.entry_type==='pct'?' selected':''}>% of Income</option><option value="charity"${entry.entry_type==='charity'?' selected':''}>Sadaqah</option><option value="nospend"${entry.entry_type==='nospend'?' selected':''}>No-Spend Day</option></select></div>
+<div class="ig"><label class="il">Note</label><input class="inp" id="ee-note" value="${entry.note||''}"></div>`;
+  } else if(type==='tx'){
     entry=D.transactions.find(t=>t.id===id);if(!entry)return;
     title='Edit Transaction';
-    fields=`<div class="ig"><label class="il">Label</label><input class="inp" id="eem-label" value="${entry.label||''}"></div>
-    <div class="ig"><label class="il">Amount (SAR)</label><input class="inp" id="eem-amount" type="number" value="${entry.amount}"></div>
-    <div class="ig"><label class="il">Category</label><select class="inp" id="eem-category"><option value="">No category</option><option${entry.category==='Food & Dining'?' selected':''}>Food & Dining</option><option${entry.category==='Transport'?' selected':''}>Transport</option><option${entry.category==='Rent & Utilities'?' selected':''}>Rent & Utilities</option><option${entry.category==='Health'?' selected':''}>Health</option><option${entry.category==='Entertainment'?' selected':''}>Entertainment</option><option${entry.category==='Shopping'?' selected':''}>Shopping</option><option${entry.category==='Education'?' selected':''}>Education</option><option${entry.category==='Family & Gifts'?' selected':''}>Family & Gifts</option><option${entry.category==='Subscriptions'?' selected':''}>Subscriptions</option><option${entry.category==='Other'?' selected':''}>Other</option></select></div>
-    <div class="ig"><label class="il">Note</label><input class="inp" id="eem-note" value="${entry.note||''}"></div>
-    <div class="ig"><label class="il">Date</label><input class="inp" id="eem-date" type="date" value="${entry.tx_date||''}"></div>`;
+    fields=`<div class="ig"><label class="il">Label</label><input class="inp" id="ee-label" value="${entry.label||''}"></div>
+<div class="ig"><label class="il">Amount (SAR)</label><input class="inp" id="ee-amount" type="number" value="${entry.amount}"></div>
+<div class="ig"><label class="il">Category</label><select class="inp" id="ee-cat"><option value="">—</option><option${entry.category==='Food & Dining'?' selected':''}>Food & Dining</option><option${entry.category==='Transport'?' selected':''}>Transport</option><option${entry.category==='Rent & Utilities'?' selected':''}>Rent & Utilities</option><option${entry.category==='Health'?' selected':''}>Health</option><option${entry.category==='Entertainment'?' selected':''}>Entertainment</option><option${entry.category==='Shopping'?' selected':''}>Shopping</option><option${entry.category==='Education'?' selected':''}>Education</option><option${entry.category==='Family & Gifts'?' selected':''}>Family & Gifts</option><option${entry.category==='Subscriptions'?' selected':''}>Subscriptions</option><option${entry.category==='Other'?' selected':''}>Other</option></select></div>
+<div class="ig"><label class="il">Note</label><input class="inp" id="ee-note" value="${entry.note||''}"></div>
+<div class="ig"><label class="il">Date</label><input class="inp" id="ee-date" type="date" value="${entry.tx_date||''}"></div>`;
   } else if(type==='trade'){
     entry=D.trades.find(t=>t.id===id);if(!entry)return;
     title='Edit Trade';
-    fields=`<div class="ig"><label class="il">Ticker</label><input class="inp" id="eem-ticker" value="${entry.ticker||''}" style="font-family:var(--mono);font-weight:600"></div>
-    <div class="ig"><label class="il">Shares</label><input class="inp" id="eem-shares" type="number" value="${entry.shares}"></div>
-    <div class="ig"><label class="il">Buy Price (SAR)</label><input class="inp" id="eem-buy-price" type="number" step="0.01" value="${entry.buy_price}"></div>
-    <div class="ig"><label class="il">Current Price (SAR)</label><input class="inp" id="eem-current-price" type="number" step="0.01" value="${entry.current_price||entry.buy_price}"></div>
-    <div class="ig"><label class="il">Notes</label><input class="inp" id="eem-notes" value="${entry.notes||''}"></div>`;
+    fields=`<div class="ig"><label class="il">Ticker</label><input class="inp" id="ee-ticker" value="${entry.ticker||''}" style="font-family:var(--mono);font-weight:600"></div>
+<div class="ig"><label class="il">Shares</label><input class="inp" id="ee-shares" type="number" value="${entry.shares}"></div>
+<div class="ig"><label class="il">Buy Price (SAR)</label><input class="inp" id="ee-buy" type="number" step="0.01" value="${entry.buy_price}"></div>
+<div class="ig"><label class="il">Current Price (SAR)</label><input class="inp" id="ee-cur" type="number" step="0.01" value="${entry.current_price||entry.buy_price}"></div>
+<div class="ig"><label class="il">Notes</label><input class="inp" id="ee-notes" value="${entry.notes||''}"></div>`;
   }
-  document.getElementById('eem-title').innerHTML=`<i class="ti ti-edit"></i>${title}`;
-  document.getElementById('eem-fields').innerHTML=fields;
-  openModal('edit-entry-modal');
+  document.getElementById('entry-edit-title').innerHTML=`<i class="ti ti-edit"></i>${title}`;
+  document.getElementById('entry-edit-fields').innerHTML=fields;
+  openModal('entry-edit-modal');
 }
-
-async function saveEditedEntry(){
+async function saveEditEntry(){
   const type=currentEntryType,id=currentEntryId;
-  let updates={},table='';
+  let table,updates;
   if(type==='saving'){
     table='savings_entries';
-    updates={amount:parseFloat(document.getElementById('eem-amount').value)||0,entry_type:document.getElementById('eem-type').value,note:document.getElementById('eem-note').value};
-    const idx=D.savingsEntries.findIndex(e=>e.id===id);
-    if(idx>=0)Object.assign(D.savingsEntries[idx],updates);
-  } else if(type==='transaction'){
+    updates={amount:parseFloat(document.getElementById('ee-amount').value)||0,entry_type:document.getElementById('ee-type').value,note:document.getElementById('ee-note').value};
+    const i=D.savingsEntries.findIndex(e=>e.id===id);if(i>=0)Object.assign(D.savingsEntries[i],updates);
+  } else if(type==='tx'){
     table='transactions';
-    updates={label:document.getElementById('eem-label').value,amount:parseFloat(document.getElementById('eem-amount').value)||0,category:document.getElementById('eem-category').value||null,note:document.getElementById('eem-note').value,tx_date:document.getElementById('eem-date').value};
-    const idx=D.transactions.findIndex(t=>t.id===id);
-    if(idx>=0)Object.assign(D.transactions[idx],updates);
+    updates={label:document.getElementById('ee-label').value,amount:parseFloat(document.getElementById('ee-amount').value)||0,category:document.getElementById('ee-cat').value||null,note:document.getElementById('ee-note').value,tx_date:document.getElementById('ee-date').value};
+    const i=D.transactions.findIndex(t=>t.id===id);if(i>=0)Object.assign(D.transactions[i],updates);
   } else if(type==='trade'){
     table='investment_trades';
-    updates={ticker:document.getElementById('eem-ticker').value.trim().toUpperCase(),shares:parseFloat(document.getElementById('eem-shares').value)||0,buy_price:parseFloat(document.getElementById('eem-buy-price').value)||0,current_price:parseFloat(document.getElementById('eem-current-price').value)||0,notes:document.getElementById('eem-notes').value};
-    const idx=D.trades.findIndex(t=>t.id===id);
-    if(idx>=0)Object.assign(D.trades[idx],updates);
+    updates={ticker:document.getElementById('ee-ticker').value.trim().toUpperCase(),shares:parseFloat(document.getElementById('ee-shares').value)||0,buy_price:parseFloat(document.getElementById('ee-buy').value)||0,current_price:parseFloat(document.getElementById('ee-cur').value)||0,notes:document.getElementById('ee-notes').value};
+    const i=D.trades.findIndex(t=>t.id===id);if(i>=0)Object.assign(D.trades[i],updates);
   }
   const{error}=await sb.from(table).update(updates).eq('id',id);
-  if(error){toast('Error saving: '+error.message,'error');return;}
-  closeModal('edit-entry-modal');
-  if(type==='saving'){renderSavingsLog();renderSavingsTotals();renderSavingsChart();}
-  else if(type==='transaction'){renderCashFlow();}
+  if(error){toast('Error: '+error.message,'error');return;}
+  closeModal('entry-edit-modal');
+  if(type==='saving'){renderSavingsLog();renderSavingsTotals();}
+  else if(type==='tx'){renderCashFlow();}
   else if(type==='trade'){renderInvestments();renderDashboard();}
   toast('Updated!');
 }
-
 async function deleteEntry(){
-  const type=currentEntryType,id=currentEntryId;
-  if(!id)return;
-  if(!confirm('Delete this entry? This cannot be undone.'))return;
-  let table='',re=null;
+  const type=currentEntryType,id=currentEntryId;if(!id)return;
+  if(!confirm('Delete this entry? Cannot be undone.'))return;
+  let table;
   if(type==='saving'){table='savings_entries';D.savingsEntries=D.savingsEntries.filter(e=>e.id!==id);}
-  else if(type==='transaction'){table='transactions';D.transactions=D.transactions.filter(t=>t.id!==id);}
+  else if(type==='tx'){table='transactions';D.transactions=D.transactions.filter(t=>t.id!==id);}
   else if(type==='trade'){table='investment_trades';D.trades=D.trades.filter(t=>t.id!==id);}
   else if(type==='study'){table='study_sessions';D.studySessions=D.studySessions.filter(s=>s.id!==id);}
   const{error}=await sb.from(table).delete().eq('id',id);
   if(error){toast('Delete failed: '+error.message,'error');return;}
-  closeModal('entry-detail-modal');
-  if(type==='saving'){renderSavingsLog();renderSavingsTotals();renderSavingsChart();}
-  else if(type==='transaction'){renderCashFlow();renderDashboard();}
+  closeModal('entry-modal');
+  if(type==='saving'){renderSavingsLog();renderSavingsTotals();}
+  else if(type==='tx'){renderCashFlow();renderDashboard();}
   else if(type==='trade'){renderInvestments();renderDashboard();}
   else if(type==='study'){renderStudyLog();renderStudyPage();}
-  toast('Deleted','success');
+  toast('Deleted');
 }
 
-/* ── CONTACTS ── */
-let cmSelectedTags=[];
+/* ══════════════════════════════════════════
+   CONTACTS
+══════════════════════════════════════════ */
+let _ctTags=[];
+const CT_COLORS=['#4f8ef7','#2dd4a0','#a78bfa','#f5c542','#f06464','#fb923c','#38bdf8'];
 
-function openContactModal(id=null){
-  cmSelectedTags=[];
+function openContactModal(id){
+  _ctTags=[];
   document.querySelectorAll('#cm-tags-row .cat-chip').forEach(c=>c.classList.remove('active'));
-  ['cm-name','cm-phone','cm-email','cm-company','cm-role','cm-location','cm-how-met','cm-notes'].forEach(f=>{const el=document.getElementById(f);if(el)el.value='';});
+  ['cm-name','cm-phone','cm-email','cm-company','cm-role','cm-location','cm-how','cm-notes'].forEach(f=>{const el=document.getElementById(f);if(el)el.value='';});
   document.getElementById('cm-rel').value='cold';
   document.getElementById('cm-followup').value='';
-  document.getElementById('cm-met-date').value='';
+  document.getElementById('cm-met').value='';
   document.getElementById('cm-id').value='';
-  document.getElementById('cm-ai-summary').style.display='none';
-  document.getElementById('contact-modal-title').innerHTML='<i class="ti ti-user-plus"></i>Add Contact';
-  document.getElementById('cm-save-btn').innerHTML='<i class="ti ti-check"></i>Save Contact';
+  document.getElementById('cm-ai-box').style.display='none';
+  document.getElementById('ct-modal-title').innerHTML='<i class="ti ti-user-plus"></i>Add Contact';
   if(id){
-    const c=D.contacts.find(x=>x.id===id);if(!c)return;
-    currentContactId=id;
+    const ct=D.contacts.find(x=>x.id===id);if(!ct)return;
+    currentCtId=id;
     document.getElementById('cm-id').value=id;
-    document.getElementById('cm-name').value=c.name||'';
-    document.getElementById('cm-phone').value=c.phone||'';
-    document.getElementById('cm-email').value=c.email||'';
-    document.getElementById('cm-company').value=c.company||'';
-    document.getElementById('cm-role').value=c.role||'';
-    document.getElementById('cm-location').value=c.location||'';
-    document.getElementById('cm-how-met').value=c.how_met||'';
-    document.getElementById('cm-notes').value=c.notes||'';
-    document.getElementById('cm-rel').value=c.relationship||'cold';
-    document.getElementById('cm-followup').value=c.follow_up_date||'';
-    document.getElementById('cm-met-date').value=c.met_date||'';
-    cmSelectedTags=c.tags||[];
-    cmSelectedTags.forEach(tag=>{
-      document.querySelectorAll('#cm-tags-row .cat-chip').forEach(chip=>{if(chip.getAttribute('onclick')?.includes("'"+tag+"'"))chip.classList.add('active');});
-    });
-    if(c.ai_summary){document.getElementById('cm-ai-summary').textContent='🤖 '+c.ai_summary;document.getElementById('cm-ai-summary').style.display='block';}
-    document.getElementById('contact-modal-title').innerHTML='<i class="ti ti-edit"></i>Edit Contact';
-    document.getElementById('cm-save-btn').innerHTML='<i class="ti ti-check"></i>Update Contact';
+    ['name','phone','email','company','role','location'].forEach(f=>{const el=document.getElementById('cm-'+f);if(el)el.value=ct[f]||'';});
+    document.getElementById('cm-how').value=ct.how_met||'';
+    document.getElementById('cm-notes').value=ct.notes||'';
+    document.getElementById('cm-rel').value=ct.relationship||'cold';
+    document.getElementById('cm-followup').value=ct.follow_up_date||'';
+    document.getElementById('cm-met').value=ct.met_date||'';
+    _ctTags=ct.tags||[];
+    _ctTags.forEach(tag=>{document.querySelectorAll('#cm-tags-row .cat-chip').forEach(chip=>{if(chip.getAttribute('onclick')?.includes("'"+tag+"'"))chip.classList.add('active');});});
+    if(ct.ai_summary){document.getElementById('cm-ai-box').textContent='🤖 '+ct.ai_summary;document.getElementById('cm-ai-box').style.display='block';}
+    document.getElementById('ct-modal-title').innerHTML='<i class="ti ti-edit"></i>Edit Contact';
   }
-  openModal('contact-modal');
+  openModal('ct-modal');
 }
-
-function toggleContactTag(el,tag){
-  const idx=cmSelectedTags.indexOf(tag);
-  if(idx>=0){cmSelectedTags.splice(idx,1);el.classList.remove('active');}
-  else{cmSelectedTags.push(tag);el.classList.add('active');}
+function toggleCtTag(el,tag){
+  const i=_ctTags.indexOf(tag);
+  if(i>=0){_ctTags.splice(i,1);el.classList.remove('active');}
+  else{_ctTags.push(tag);el.classList.add('active');}
 }
-
-async function generateContactSummary(){
+async function genCtAI(){
   const name=document.getElementById('cm-name').value.trim();
   const notes=document.getElementById('cm-notes').value.trim();
-  const role=document.getElementById('cm-role').value.trim();
-  const company=document.getElementById('cm-company').value.trim();
-  const howMet=document.getElementById('cm-how-met').value.trim();
-  if(!name&&!notes){toast('Enter name and notes first','error');return;}
+  if(!name&&!notes){toast('Add name and notes first','error');return;}
   const btn=document.getElementById('cm-ai-btn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i>Generating...';
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,system:'You write ultra-concise 1-2 sentence contact summaries. Focus on who they are and why they matter. No fluff.',messages:[{role:'user',content:`Name: ${name}. Role: ${role||'unknown'}. Company: ${company||'unknown'}. How met: ${howMet||'unknown'}. Notes: ${notes||'none'}.`}]})});
-    const d=await resp.json();
-    const summary=d.content?.[0]?.text||'';
-    if(summary){
-      document.getElementById('cm-ai-summary').textContent='🤖 '+summary;
-      document.getElementById('cm-ai-summary').style.display='block';
-    }
-  }catch(e){toast('AI unavailable','error');}
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:150,system:'Write a 1-2 sentence contact summary. Who are they and why are they relevant. Be concise.',messages:[{role:'user',content:`Name:${name} Role:${document.getElementById('cm-role').value} Company:${document.getElementById('cm-company').value} Notes:${notes}`}]})});
+    const d=await r.json();const txt=d.content?.[0]?.text||'';
+    if(txt){document.getElementById('cm-ai-box').textContent='🤖 '+txt;document.getElementById('cm-ai-box').style.display='block';}
+  }catch(e){toast('AI error','error');}
   btn.disabled=false;btn.innerHTML='<i class="ti ti-robot"></i>AI Summary';
 }
-
 async function saveContact(){
   const id=document.getElementById('cm-id').value;
   const name=document.getElementById('cm-name').value.trim();
-  if(!name){toast('Name is required','error');return;}
-  const payload={
-    user_id:CU.id,name,
-    phone:document.getElementById('cm-phone').value.trim()||null,
-    email:document.getElementById('cm-email').value.trim()||null,
-    company:document.getElementById('cm-company').value.trim()||null,
-    role:document.getElementById('cm-role').value.trim()||null,
-    location:document.getElementById('cm-location').value.trim()||null,
-    how_met:document.getElementById('cm-how-met').value.trim()||null,
-    met_date:document.getElementById('cm-met-date').value||null,
-    tags:cmSelectedTags.length?cmSelectedTags:null,
-    relationship:document.getElementById('cm-rel').value||'cold',
-    notes:document.getElementById('cm-notes').value.trim()||null,
-    follow_up_date:document.getElementById('cm-followup').value||null,
-    ai_summary:document.getElementById('cm-ai-summary').textContent.replace('🤖 ','')||null,
-    updated_at:new Date().toISOString()
-  };
+  if(!name){toast('Name required','error');return;}
+  const p={user_id:CU.id,name,phone:document.getElementById('cm-phone').value.trim()||null,email:document.getElementById('cm-email').value.trim()||null,company:document.getElementById('cm-company').value.trim()||null,role:document.getElementById('cm-role').value.trim()||null,location:document.getElementById('cm-location').value.trim()||null,how_met:document.getElementById('cm-how').value.trim()||null,met_date:document.getElementById('cm-met').value||null,tags:_ctTags.length?_ctTags:null,relationship:document.getElementById('cm-rel').value||'cold',notes:document.getElementById('cm-notes').value.trim()||null,follow_up_date:document.getElementById('cm-followup').value||null,ai_summary:document.getElementById('cm-ai-box').textContent.replace('🤖 ','')||null,updated_at:new Date().toISOString()};
   let data,error;
-  if(id){
-    ({data,error}=await sb.from('contacts').update(payload).eq('id',id).select().single());
-    if(!error&&data){const idx=D.contacts.findIndex(c=>c.id===id);if(idx>=0)D.contacts[idx]=data;}
-  } else {
-    ({data,error}=await sb.from('contacts').insert(payload).select().single());
-    if(!error&&data)D.contacts.unshift(data);
-  }
+  if(id){({data,error}=await sb.from('contacts').update(p).eq('id',id).select().single());if(!error&&data){const i=D.contacts.findIndex(c=>c.id===id);if(i>=0)D.contacts[i]=data;}}
+  else{({data,error}=await sb.from('contacts').insert(p).select().single());if(!error&&data)D.contacts.unshift(data);}
   if(error){toast('Error: '+error.message,'error');return;}
-  closeModal('contact-modal');renderContactsPage();renderDashboard();toast(id?'Contact updated!':'Contact saved!');
+  closeModal('ct-modal');renderContactsPage();renderDashboard();toast(id?'Updated!':'Contact saved!');
 }
-
 function openContactDetail(id){
-  currentContactId=id;
-  const c=D.contacts.find(x=>x.id===id);if(!c)return;
-  const relLabels={cold:'🔵 Cold',acquaintance:'🟡 Acquaintance',good:'🔵 Good Contact',close:'🟢 Close'};
-  const avatarColors=['#4f8ef7','#2dd4a0','#a78bfa','#f5c542','#f06464','#fb923c','#38bdf8'];
-  const colorIdx=c.name.charCodeAt(0)%avatarColors.length;
-  document.getElementById('cdm-title').innerHTML=`<i class="ti ti-user"></i>${c.name}`;
-  document.getElementById('cdm-body').innerHTML=`
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div class="contact-avatar" style="width:52px;height:52px;background:${avatarColors[colorIdx]}22;color:${avatarColors[colorIdx]};font-size:20px">${c.name[0].toUpperCase()}</div>
-      <div>
-        <div style="font-size:16px;font-weight:600">${c.name}</div>
-        <div style="font-size:13px;color:var(--text2)">${c.role||''}${c.company?' @ '+c.company:''}</div>
-        <div style="font-size:12px;color:var(--text3)">${c.location||''}</div>
-      </div>
+  currentCtId=id;
+  const ct=D.contacts.find(x=>x.id===id);if(!ct)return;
+  const col=CT_COLORS[ct.name.charCodeAt(0)%CT_COLORS.length];
+  const relLabel={cold:'🔵 Cold',acquaintance:'🟡 Acquaintance',good:'🔵 Good Contact',close:'🟢 Close'}[ct.relationship||'cold'];
+  document.getElementById('ct-detail-title').innerHTML=`<i class="ti ti-user"></i>${ct.name}`;
+  document.getElementById('ct-detail-body').innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div class="ct-av" style="width:48px;height:48px;font-size:19px;background:${col}22;color:${col}">${ct.name[0].toUpperCase()}</div>
+      <div><div style="font-size:15px;font-weight:600">${ct.name}</div><div style="font-size:12px;color:var(--text2)">${ct.role||''}${ct.company?' @ '+ct.company:''}</div><div style="font-size:11px;color:var(--text3)">${ct.location||''}</div></div>
     </div>
-    ${c.ai_summary?`<div style="background:var(--adim);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--accent);margin-bottom:12px">🤖 ${c.ai_summary}</div>`:''}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-      ${c.phone?`<a href="tel:${c.phone}" style="background:var(--bg3);border-radius:var(--r8);padding:10px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text)"><i class="ti ti-phone" style="color:var(--green)"></i><div><div style="font-size:10px;color:var(--text3)">Phone</div><div style="font-size:13px">${c.phone}</div></div></a>`:''}
-      ${c.phone?`<a href="https://wa.me/${c.phone.replace(/[^0-9]/g,'')}" target="_blank" style="background:var(--gdim);border-radius:var(--r8);padding:10px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--green)"><i class="ti ti-brand-whatsapp" style="font-size:18px"></i><div><div style="font-size:10px;opacity:.7">WhatsApp</div><div style="font-size:13px">Open Chat</div></div></a>`:''}
-      ${c.email?`<a href="mailto:${c.email}" style="background:var(--bg3);border-radius:var(--r8);padding:10px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text)"><i class="ti ti-mail" style="color:var(--accent)"></i><div><div style="font-size:10px;color:var(--text3)">Email</div><div style="font-size:13px">${c.email}</div></div></a>`:''}
+    ${ct.ai_summary?`<div style="background:var(--adim);border-radius:var(--r8);padding:9px 12px;font-size:12px;color:var(--accent);margin-bottom:12px">🤖 ${ct.ai_summary}</div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      ${ct.phone?`<a href="tel:${ct.phone}" style="background:var(--bg3);border-radius:var(--r8);padding:9px;display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--text)"><i class="ti ti-phone" style="color:var(--green);font-size:16px"></i><div><div style="font-size:10px;color:var(--text3)">Call</div><div style="font-size:12px">${ct.phone}</div></div></a>`:''}
+      ${ct.phone?`<a href="https://wa.me/${ct.phone.replace(/[^0-9]/g,'')}" target="_blank" style="background:var(--gdim);border-radius:var(--r8);padding:9px;display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--green)"><i class="ti ti-brand-whatsapp" style="font-size:18px"></i><div><div style="font-size:10px;opacity:.7">WhatsApp</div><div style="font-size:12px">Open</div></div></a>`:''}
+      ${ct.email?`<a href="mailto:${ct.email}" style="background:var(--bg3);border-radius:var(--r8);padding:9px;display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--text)" style="grid-column:${ct.phone?'auto':'1/-1'}"><i class="ti ti-mail" style="color:var(--accent);font-size:16px"></i><div><div style="font-size:10px;color:var(--text3)">Email</div><div style="font-size:12px">${ct.email}</div></div></a>`:''}
     </div>
     <div style="font-size:13px;line-height:1.9">
-      ${c.relationship?`<div><span style="color:var(--text3)">Relationship:</span> ${relLabels[c.relationship]||c.relationship}</div>`:''}
-      ${c.how_met?`<div><span style="color:var(--text3)">How we met:</span> ${c.how_met}</div>`:''}
-      ${c.met_date?`<div><span style="color:var(--text3)">Date met:</span> ${c.met_date}</div>`:''}
-      ${c.follow_up_date?`<div><span style="color:var(--text3)">Follow-up:</span> <strong style="color:var(--gold)">${c.follow_up_date}</strong></div>`:''}
-      ${c.notes?`<div style="margin-top:8px;background:var(--bg3);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--text2)">${c.notes}</div>`:''}
+      ${ct.relationship?`<div><span style="color:var(--text3)">Relationship:</span> ${relLabel}</div>`:''}
+      ${ct.how_met?`<div><span style="color:var(--text3)">How met:</span> ${ct.how_met}</div>`:''}
+      ${ct.met_date?`<div><span style="color:var(--text3)">Date met:</span> ${ct.met_date}</div>`:''}
+      ${ct.follow_up_date?`<div><span style="color:var(--text3)">Follow-up:</span> <b style="color:var(--gold)">${ct.follow_up_date}</b></div>`:''}
+      ${ct.notes?`<div style="margin-top:8px;background:var(--bg3);border-radius:var(--r8);padding:10px;font-size:12px;color:var(--text2)">${ct.notes}</div>`:''}
     </div>
-    ${c.tags?.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:12px">${c.tags.map(t=>`<span class="contact-tag">${t}</span>`).join('')}</div>`:''}
+    ${ct.tags?.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px">${ct.tags.map(t=>`<span class="ct-tag">${t}</span>`).join('')}</div>`:''}
   `;
-  openModal('contact-detail-modal');
+  openModal('ct-detail-modal');
 }
-
-function editContactFromDetail(){
-  closeModal('contact-detail-modal');
-  openContactModal(currentContactId);
-}
-
+function editContact(){closeModal('ct-detail-modal');openContactModal(currentCtId);}
 async function deleteContact(){
-  if(!currentContactId)return;
   if(!confirm('Delete this contact?'))return;
-  const{error}=await sb.from('contacts').delete().eq('id',currentContactId);
-  if(error){toast('Error: '+error.message,'error');return;}
-  D.contacts=D.contacts.filter(c=>c.id!==currentContactId);
-  closeModal('contact-detail-modal');renderContactsPage();renderDashboard();toast('Contact deleted');
+  const{error}=await sb.from('contacts').delete().eq('id',currentCtId);
+  if(error){toast('Error','error');return;}
+  D.contacts=D.contacts.filter(c=>c.id!==currentCtId);
+  closeModal('ct-detail-modal');renderContactsPage();toast('Deleted');
 }
-
 function filterContacts(f,el){
-  contactFilter=f;
-  document.querySelectorAll('#contact-filter-row .cat-chip').forEach(c=>c.classList.remove('active'));
-  el?.classList.add('active');
-  renderContacts();
+  ctFilter=f;
+  document.querySelectorAll('#ct-filter-row .cat-chip').forEach(c=>c.classList.remove('active'));
+  el?.classList.add('active');renderContacts();
 }
-
 function renderContactsPage(){
-  renderContactStats();
-  renderContactFollowupAlerts();
-  renderContacts();
-  renderFollowupBadge();
+  renderContactStats();renderContactAlerts();renderContacts();renderFollowupBadge();
 }
-
 function renderContactStats(){
   document.getElementById('ct-total').textContent=D.contacts.length;
-  const today_=new Date();today_.setHours(0,0,0,0);
-  const dueCount=D.contacts.filter(c=>c.follow_up_date&&new Date(c.follow_up_date)<=today_).length;
-  document.getElementById('ct-followup').textContent=dueCount;
+  const now=new Date();now.setHours(0,0,0,0);
+  document.getElementById('ct-due').textContent=D.contacts.filter(c=>c.follow_up_date&&new Date(c.follow_up_date)<=now).length;
   document.getElementById('ct-close').textContent=D.contacts.filter(c=>c.relationship==='close'||c.relationship==='good').length;
-  const month=today().slice(0,7);
-  document.getElementById('ct-thismonth').textContent=D.contacts.filter(c=>c.met_date&&c.met_date.startsWith(month)).length;
+  const mo=today().slice(0,7);
+  document.getElementById('ct-month').textContent=D.contacts.filter(c=>c.met_date?.startsWith(mo)).length;
 }
-
+function renderContactAlerts(){
+  const el=document.getElementById('ct-followup-alerts');if(!el)return;
+  const now=new Date();now.setHours(0,0,0,0);
+  const due=D.contacts.filter(c=>c.follow_up_date&&new Date(c.follow_up_date)<=now);
+  el.innerHTML=due.map(c=>`<div style="background:var(--ydim);border:1px solid rgba(245,197,66,.2);border-radius:var(--r12);padding:11px 15px;margin-bottom:10px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="openContactDetail('${c.id}')"><i class="ti ti-clock" style="color:var(--gold);font-size:18px;flex-shrink:0"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Follow up with ${c.name}</div><div style="font-size:11px;color:var(--text2)">${c.role||''}${c.company?' @ '+c.company:''} · ${c.follow_up_date}</div></div></div>`).join('');
+}
 function renderFollowupBadge(){
-  const today_=new Date();today_.setHours(0,0,0,0);
-  const dueCount=D.contacts.filter(c=>c.follow_up_date&&new Date(c.follow_up_date)<=today_).length;
-  const badge=document.getElementById('followup-badge');
-  if(!badge)return;
-  if(dueCount>0){badge.style.display='flex';badge.textContent=dueCount;}
-  else badge.style.display='none';
+  const now=new Date();now.setHours(0,0,0,0);
+  const n=D.contacts.filter(c=>c.follow_up_date&&new Date(c.follow_up_date)<=now).length;
+  const b=document.getElementById('followup-badge');if(!b)return;
+  b.style.display=n?'flex':'none';if(n)b.textContent=n;
 }
-
-function renderContactFollowupAlerts(){
-  const el=document.getElementById('contact-followup-alerts');if(!el)return;
-  const today_=new Date();today_.setHours(0,0,0,0);
-  const due=D.contacts.filter(c=>c.follow_up_date&&new Date(c.follow_up_date)<=today_);
-  if(!due.length){el.innerHTML='';return;}
-  el.innerHTML=due.map(c=>`<div class="followup-card" onclick="openContactDetail('${c.id}')"><i class="ti ti-clock" style="font-size:20px;color:var(--gold);flex-shrink:0"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Follow up with ${c.name}</div><div style="font-size:12px;color:var(--text2)">${c.role||''}${c.company?' @ '+c.company:''} · Due ${c.follow_up_date}</div></div><i class="ti ti-chevron-right" style="color:var(--text3)"></i></div>`).join('');
-}
-
 function renderContacts(){
-  const el=document.getElementById('contacts-list');if(!el)return;
-  const search=(document.getElementById('contact-search')?.value||'').toLowerCase();
-  const today_=new Date();today_.setHours(0,0,0,0);
+  const el=document.getElementById('ct-list');if(!el)return;
+  const q=(document.getElementById('ct-search')?.value||'').toLowerCase();
+  const now=new Date();now.setHours(0,0,0,0);
   let list=D.contacts;
-  if(contactFilter==='followup') list=list.filter(c=>c.follow_up_date&&new Date(c.follow_up_date)<=today_);
-  else if(contactFilter!=='all') list=list.filter(c=>c.tags?.includes(contactFilter));
-  if(search) list=list.filter(c=>(c.name||'').toLowerCase().includes(search)||(c.company||'').toLowerCase().includes(search)||(c.notes||'').toLowerCase().includes(search));
+  if(ctFilter==='followup')list=list.filter(c=>c.follow_up_date&&new Date(c.follow_up_date)<=now);
+  else if(ctFilter!=='all')list=list.filter(c=>c.tags?.includes(ctFilter));
+  if(q)list=list.filter(c=>(c.name||'').toLowerCase().includes(q)||(c.company||'').toLowerCase().includes(q)||(c.notes||'').toLowerCase().includes(q));
   if(!list.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:20px 0;text-align:center">No contacts found.</div>';return;}
-  const avatarColors=['#4f8ef7','#2dd4a0','#a78bfa','#f5c542','#f06464','#fb923c','#38bdf8'];
-  const relColors={cold:'var(--text3)',acquaintance:'var(--gold)',good:'var(--teal)',close:'var(--green)'};
-  el.innerHTML=list.map(c=>{
-    const colorIdx=c.name.charCodeAt(0)%avatarColors.length;
-    const col=avatarColors[colorIdx];
-    const isDue=c.follow_up_date&&new Date(c.follow_up_date)<=today_;
-    return`<div class="contact-card" onclick="openContactDetail('${c.id}')">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div class="contact-avatar" style="background:${col}22;color:${col}">${c.name[0].toUpperCase()}</div>
+  const relCol={cold:'var(--text3)',acquaintance:'var(--gold)',good:'var(--teal)',close:'var(--green)'};
+  el.innerHTML=list.map(ct=>{
+    const col=CT_COLORS[ct.name.charCodeAt(0)%CT_COLORS.length];
+    const due=ct.follow_up_date&&new Date(ct.follow_up_date)<=now;
+    return`<div class="ct-card" onclick="openContactDetail('${ct.id}')">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="ct-av" style="background:${col}22;color:${col}">${ct.name[0].toUpperCase()}</div>
         <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
-            <div style="font-size:14px;font-weight:600">${c.name}</div>
-            <span class="rel-dot rel-${c.relationship||'cold'}" style="background:${relColors[c.relationship||'cold']}"></span>
-            ${isDue?'<span class="badge b-y" style="font-size:9px;padding:1px 6px"><i class="ti ti-clock" style="font-size:9px"></i>Follow-up</span>':''}
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px">
+            <span style="font-size:14px;font-weight:600">${ct.name}</span>
+            <span class="rel-bar" style="background:${relCol[ct.relationship||'cold']}"></span>
+            ${due?'<span class="badge b-y" style="font-size:9px;padding:1px 6px"><i class="ti ti-clock" style="font-size:9px"></i> Due</span>':''}
           </div>
-          <div style="font-size:12px;color:var(--text2)">${c.role||''}${c.company?' @ '+c.company:''}</div>
-          <div style="font-size:11px;color:var(--text3)">${c.location||''}${c.how_met?' · '+c.how_met:''}</div>
-          ${c.ai_summary?`<div style="font-size:11px;color:var(--accent);margin-top:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">🤖 ${c.ai_summary}</div>`:''}
+          <div style="font-size:12px;color:var(--text2)">${ct.role||''}${ct.company?' @ '+ct.company:''}</div>
+          <div style="font-size:11px;color:var(--text3)">${ct.location||''}${ct.how_met?' · '+ct.how_met:''}</div>
+          ${ct.ai_summary?`<div style="font-size:11px;color:var(--accent);margin-top:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">🤖 ${ct.ai_summary}</div>`:''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
-          ${c.tags?.slice(0,2).map(t=>`<span class="contact-tag">${t}</span>`).join('')||''}
-          ${c.phone?`<a href="https://wa.me/${c.phone.replace(/[^0-9]/g,'')}" target="_blank" onclick="event.stopPropagation()" style="width:30px;height:30px;border-radius:8px;background:var(--gdim);color:var(--green);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:14px"><i class="ti ti-brand-whatsapp"></i></a>`:''}
+          ${ct.tags?.slice(0,2).map(t=>`<span class="ct-tag">${t}</span>`).join('')||''}
+          ${ct.phone?`<a href="https://wa.me/${ct.phone.replace(/[^0-9]/g,'')}" target="_blank" onclick="event.stopPropagation()" style="width:28px;height:28px;border-radius:7px;background:var(--gdim);color:var(--green);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:13px"><i class="ti ti-brand-whatsapp"></i></a>`:''}
         </div>
       </div>
     </div>`;
   }).join('');
 }
-
-/* ── CONTACTS EXPORT CSV ── */
 function exportContactsCSV(){
-  if(!D.contacts.length){toast('No contacts to export','error');return;}
-  const headers=['Name','Phone','Email','Company','Role','Location','How Met','Date Met','Tags','Relationship','Notes','Follow-up Date'];
+  if(!D.contacts.length){toast('No contacts','error');return;}
+  const hdr=['Name','Phone','Email','Company','Role','Location','How Met','Date Met','Tags','Relationship','Notes','Follow-up'];
   const rows=D.contacts.map(c=>[c.name,c.phone,c.email,c.company,c.role,c.location,c.how_met,c.met_date,(c.tags||[]).join(';'),c.relationship,c.notes,c.follow_up_date].map(v=>`"${(v||'').replace(/"/g,'""')}"`));
-  const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+  const csv=[hdr,...rows].map(r=>r.join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='contacts.csv';a.click();
-  toast('Contacts exported!');
+  toast('Exported!');
 }
-
-/* ── DASHBOARD FOLLOW-UP CARD ── */
-function renderDashFollowups(){
-  const el=document.getElementById('dash-followups');if(!el)return;
-  const today_=new Date();today_.setHours(0,0,0,0);
-  const in7=new Date(today_);in7.setDate(in7.getDate()+7);
-  const due=D.contacts.filter(c=>c.follow_up_date&&new Date(c.follow_up_date)<=in7);
-  const card=document.getElementById('dash-followup-card');
-  if(!due.length){if(card)card.style.display='none';return;}
-  if(card)card.style.display='block';
-  el.innerHTML=due.slice(0,3).map(c=>`<div class="row" style="cursor:pointer" onclick="showPage('contacts');openContactDetail('${c.id}')"><div style="display:flex;align-items:center;gap:8px;flex:1"><div style="width:28px;height:28px;border-radius:50%;background:var(--ydim);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">${c.name[0]}</div><div><div style="font-size:13px;font-weight:500">${c.name}</div><div style="font-size:11px;color:var(--text3)">${c.role||''}${c.company?' @ '+c.company:''}</div></div></div><span style="font-size:11px;color:var(--gold)">${c.follow_up_date}</span></div>`).join('');
-}
-
-
-/* ── PWA & OFFLINE ── */
-let _deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();_deferredPrompt=e;
-});
-function showPWAPrompt(){
-  if(!isMobile())return;
-  if(localStorage.getItem('pwa-dismissed'))return;
-  if(window.matchMedia('(display-mode: standalone)').matches)return;
-  if(_deferredPrompt){document.getElementById('pwa-banner').style.display='block';}
-  else{
-    // iOS Safari — show manual instructions
-    const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
-    if(isIOS&&!navigator.standalone){document.getElementById('pwa-banner').style.display='block';}
-  }
-}
-async function installPWA(){
-  document.getElementById('pwa-banner').style.display='none';
-  if(_deferredPrompt){
-    _deferredPrompt.prompt();
-    const{outcome}=await _deferredPrompt.userChoice;
-    _deferredPrompt=null;
-  } else {
-    toast('Tap Share → Add to Home Screen in Safari');
-  }
-}
-function dismissPWA(){
-  document.getElementById('pwa-banner').style.display='none';
-  localStorage.setItem('pwa-dismissed','1');
-}
-
-/* ── SERVICE WORKER (inline blob) ── */
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    const swCode=`
-const CACHE='mytracker-v6';
-const OFFLINE_HTML='<html><body style="font-family:sans-serif;background:#0b0d12;color:#e4e8f0;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;gap:16px"><div style="width:52px;height:52px;background:#4f8ef7;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px">📊</div><div style="font-size:20px;font-weight:600">MyTracker</div><div style="color:#8892aa;font-size:14px">You are offline</div><div style="font-size:12px;color:#4a5268;text-align:center;max-width:280px">Check your connection and pull down to refresh when back online</div></body></html>';
-self.addEventListener('install',e=>e.waitUntil(self.skipWaiting()));
-self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
-self.addEventListener('fetch',e=>{
-  if(e.request.mode==='navigate'){
-    e.respondWith(fetch(e.request).catch(()=>new Response(OFFLINE_HTML,{headers:{'Content-Type':'text/html'}})));
-  } else {
-    e.respondWith(fetch(e.request).catch(()=>new Response('',{status:503})));
-  }
-});`;
-    const blob=new Blob([swCode],{type:'application/javascript'});
-    const swURL=URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swURL).catch(()=>{});
-  });
-}
-
 
 init();
 </script>
