@@ -57,7 +57,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .auth-err{background:var(--rdim);border:1px solid rgba(240,100,100,.2);border-radius:var(--r8);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
 .auth-lock{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);margin-top:14px;justify-content:center}
 /* LAYOUT */
-#app{display:none;height:100vh;overflow:visible}
+#app{display:none;height:100vh}
 .layout{display:flex;height:100%}
 /* SIDEBAR */
 .sidebar{width:232px;min-width:232px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
@@ -254,66 +254,113 @@ select.inp{appearance:none}
 /* EXPIRY ALERT */
 .expiry-alert-card{background:var(--rdim);border:1px solid rgba(240,100,100,.2);border-radius:var(--r12);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
 
-/* ═══════════ MOBILE ═══════════ */
-/* Bottom nav - hidden on desktop, flex on mobile */
-#mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;
-  background:var(--bg2);border-top:1px solid var(--border);
-  padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));
-  justify-content:space-around;align-items:center}
-.mnb{display:flex;flex-direction:column;align-items:center;gap:2px;
-  padding:5px 10px;border:none;background:none;color:var(--text3);
-  font-size:10px;font-weight:500;font-family:var(--font);cursor:pointer;
-  -webkit-tap-highlight-color:transparent;transition:color .12s}
-.mnb.active,.mnb:active{color:var(--accent)}
-.mnb i{font-size:22px}
-/* Slide-in panel */
-#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400}
-#mob-overlay.open{display:block}
-#mob-panel{position:fixed;top:0;left:-270px;bottom:0;width:260px;
-  background:var(--bg2);border-right:1px solid var(--border);
-  z-index:410;overflow-y:auto;display:flex;flex-direction:column;
-  transition:left .25s ease;will-change:left}
-#mob-panel.open{left:0}
-/* Hamburger btn - hidden on desktop */
-.mob-btn{display:none;width:34px;height:34px;background:var(--bg3);
-  border:1px solid var(--border2);border-radius:var(--r8);
-  align-items:center;justify-content:center;cursor:pointer;
-  font-size:16px;color:var(--text2);flex-shrink:0}
-/* Offline + PWA banners */
-#offline-bar{display:none;position:fixed;top:0;left:0;right:0;
-  background:var(--rdim);border-bottom:1px solid rgba(240,100,100,.3);
-  padding:7px 16px;z-index:600;text-align:center;font-size:12px;color:var(--red)}
-#pwa-bar{display:none;position:fixed;bottom:72px;left:12px;right:12px;
-  background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r16);
-  padding:12px 14px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.35)}
+/* ═══════════════════════════════════
+   MOBILE — clean rewrite
+═══════════════════════════════════ */
+
+/* Bottom nav — hidden on desktop */
+#mob-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg2); border-top: 1px solid var(--border);
+  padding: 6px 0;
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  z-index: 200;
+  justify-content: space-around; align-items: center;
+}
+.mnb {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 5px 12px; border: none; background: none;
+  color: var(--text3); font-size: 10px; font-weight: 500;
+  font-family: var(--font); cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: color .15s;
+  position: relative; min-width: 52px;
+}
+.mnb i { font-size: 23px; }
+.mnb.active { color: var(--accent); }
+.mnb.active::before {
+  content: ''; position: absolute; top: -6px; left: 50%;
+  transform: translateX(-50%); width: 32px; height: 3px;
+  background: var(--accent); border-radius: 0 0 3px 3px;
+}
+
+/* Slide-in drawer */
+#mob-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.6); z-index: 300;
+}
+#mob-overlay.open { display: block; }
+#mob-panel {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 270px;
+  background: var(--bg2); border-right: 1px solid var(--border);
+  z-index: 310; display: flex; flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform .25s cubic-bezier(.4,0,.2,1);
+  overflow-y: auto;
+}
+#mob-panel.open { transform: translateX(0); }
+
+/* Hamburger button */
+.mob-btn {
+  display: none; width: 36px; height: 36px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--r8); align-items: center; justify-content: center;
+  cursor: pointer; font-size: 17px; color: var(--text2); flex-shrink: 0;
+}
 
 /* ── RESPONSIVE ── */
-@media(max-width:768px){
-  /* Show mobile elements */
-  #mob-nav{display:flex}
-  .mob-btn{display:flex}
+@media (max-width: 768px) {
+  /* Show mobile UI */
+  #mob-nav { display: flex; }
+  .mob-btn { display: flex; }
+
   /* Hide desktop sidebar */
-  .layout>.sidebar{display:none!important}
-  /* Body/layout flow - MUST allow scroll on mobile */
-  html,body{height:auto!important;overflow:auto!important}
-  #app{height:auto!important;min-height:100vh}
-  .layout{height:auto!important;overflow:visible!important}
-  .main{height:auto!important;overflow:visible!important;padding-bottom:72px}
+  .layout > .sidebar { display: none !important; }
+
+  /* Layout flows naturally — no overflow trapping */
+  html, body { height: auto !important; overflow-y: auto !important; overflow-x: hidden; }
+  #app { height: auto !important; min-height: 100vh; overflow: visible !important; }
+  .layout { height: auto !important; overflow: visible !important; }
+  .main { height: auto !important; overflow: visible !important; padding-bottom: 74px; }
+
   /* Grids */
-  .g3,.g4,.g5{grid-template-columns:repeat(2,1fr)!important}
-  .two-col,.three-col{grid-template-columns:1fr!important}
-  .doc-grid{grid-template-columns:repeat(2,1fr)!important}
-  /* Touch */
-  .btn{min-height:42px}
-  .inp,.inp:focus{font-size:16px!important} /* no iOS zoom */
-  .content{padding:12px 14px}
-  .topbar{padding:10px 14px;flex-wrap:wrap;gap:6px}
-  /* Modals */
-  .modal{width:calc(100vw - 20px)!important;max-height:90vh;margin:0 10px}
-  .auth-card{width:calc(100vw - 32px);padding:24px 20px}
+  .g2 { grid-template-columns: 1fr 1fr !important; }
+  .g3, .g4, .g5 { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .doc-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Content padding */
+  .content { padding: 14px 14px 20px !important; }
+  .topbar { padding: 10px 14px !important; flex-wrap: nowrap; }
+  .topbar-right { gap: 6px !important; }
+
+  /* Touch targets */
+  .btn { min-height: 42px; }
+  .sb-item { min-height: 42px; }
+
+  /* Prevent iOS input zoom */
+  input, select, textarea { font-size: 16px !important; }
+
+  /* Modals — bottom sheet on mobile */
+  .modal-bg { align-items: flex-end !important; padding: 0 !important; }
+  .modal {
+    width: 100% !important; max-width: 100% !important;
+    border-radius: var(--r20) var(--r20) 0 0 !important;
+    max-height: 92vh; margin: 0 !important;
+    padding-bottom: max(24px, env(safe-area-inset-bottom)) !important;
+  }
+
+  /* Cards */
+  .trade-card { padding: 12px !important; }
+  .stat { padding: 12px !important; }
+
+  /* Hide verbose text on mobile topbars */
+  .mob-hide { display: none !important; }
 }
-@media(min-width:769px){
-  #mob-nav,#mob-panel,#mob-overlay,.mob-btn{display:none!important}
+
+/* Desktop — hide mobile UI */
+@media (min-width: 769px) {
+  #mob-nav, #mob-panel, #mob-overlay, .mob-btn { display: none !important; }
 }
 
 /* ═══════════ CONTACTS ═══════════ */
@@ -922,7 +969,7 @@ select.inp{appearance:none}
 
 <!-- MODALS -->
 <!-- Trade Modal -->
-<div class="modal-bg" id="trade-modal">
+<div class="modal-bg" style="display:none" id="trade-modal">
   <div class="modal">
     <div class="modal-title"><i class="ti ti-building-bank"></i>Log Trade</div>
     <button class="modal-close" onclick="closeModal('trade-modal')"><i class="ti ti-x"></i></button>
@@ -963,7 +1010,7 @@ select.inp{appearance:none}
 </div>
 
 <!-- Update Price Modal -->
-<div class="modal-bg" id="price-modal">
+<div class="modal-bg" style="display:none" id="price-modal">
   <div class="modal" style="width:360px">
     <div class="modal-title"><i class="ti ti-refresh"></i>Update Current Price</div>
     <button class="modal-close" onclick="closeModal('price-modal')"><i class="ti ti-x"></i></button>
@@ -974,7 +1021,7 @@ select.inp{appearance:none}
 </div>
 
 <!-- Transaction Modal -->
-<div class="modal-bg" id="tx-modal">
+<div class="modal-bg" style="display:none" id="tx-modal">
   <div class="modal">
     <div class="modal-title" id="tx-modal-title"><i class="ti ti-arrows-exchange"></i>Add Transaction</div>
     <button class="modal-close" onclick="closeModal('tx-modal')"><i class="ti ti-x"></i></button>
@@ -998,12 +1045,12 @@ select.inp{appearance:none}
 </div>
 
 <!-- Budget Modal -->
-<div class="modal-bg" id="budget-modal">
+<div class="modal-bg" style="display:none" id="budget-modal">
   <div class="modal"><div class="modal-title"><i class="ti ti-settings"></i>Set Monthly Budgets</div><button class="modal-close" onclick="closeModal('budget-modal')"><i class="ti ti-x"></i></button><div id="budget-inputs"></div><button class="btn btn-a btn-full" onclick="saveBudgets()"><i class="ti ti-check"></i>Save Budgets</button></div>
 </div>
 
 <!-- Sub Modal -->
-<div class="modal-bg" id="sub-modal">
+<div class="modal-bg" style="display:none" id="sub-modal">
   <div class="modal"><div class="modal-title"><i class="ti ti-repeat"></i>Add Subscription</div><button class="modal-close" onclick="closeModal('sub-modal')"><i class="ti ti-x"></i></button>
     <div class="ig"><label class="il">Service Name</label><input class="inp" id="sub-name" placeholder="e.g. Netflix, STC, Gym"></div>
     <div class="two-col"><div class="ig"><label class="il">Amount (SAR)</label><input class="inp" id="sub-amount" type="number" placeholder="39"></div><div class="ig"><label class="il">Billing</label><select class="inp" id="sub-cycle"><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select></div></div>
@@ -1013,7 +1060,7 @@ select.inp{appearance:none}
 </div>
 
 <!-- Upload Document Modal (FIXED) -->
-<div class="modal-bg" id="upload-modal">
+<div class="modal-bg" style="display:none" id="upload-modal">
   <div class="modal">
     <div class="modal-title"><i class="ti ti-lock"></i>Upload to Vault</div>
     <button class="modal-close" onclick="closeModal('upload-modal')"><i class="ti ti-x"></i></button>
@@ -1038,7 +1085,7 @@ select.inp{appearance:none}
 </div>
 
 <!-- Doc Preview Modal -->
-<div class="modal-bg" id="doc-preview-modal">
+<div class="modal-bg" style="display:none" id="doc-preview-modal">
   <div class="modal" style="width:640px">
     <div class="modal-title" id="doc-preview-title"><i class="ti ti-file"></i>Document</div>
     <button class="modal-close" onclick="closeModal('doc-preview-modal')"><i class="ti ti-x"></i></button>
@@ -1052,7 +1099,7 @@ select.inp{appearance:none}
 </div>
 
 <!-- Rename Modal -->
-<div class="modal-bg" id="rename-modal">
+<div class="modal-bg" style="display:none" id="rename-modal">
   <div class="modal" style="width:360px">
     <div class="modal-title"><i class="ti ti-edit"></i>Rename Document</div>
     <button class="modal-close" onclick="closeModal('rename-modal')"><i class="ti ti-x"></i></button>
@@ -1062,7 +1109,7 @@ select.inp{appearance:none}
 </div>
 
 <!-- Study Modal -->
-<div class="modal-bg" id="study-modal">
+<div class="modal-bg" style="display:none" id="study-modal">
   <div class="modal"><div class="modal-title"><i class="ti ti-books"></i>Add Subject</div><button class="modal-close" onclick="closeModal('study-modal')"><i class="ti ti-x"></i></button>
     <div class="ig"><label class="il">Subject Name</label><input class="inp" id="st-name" placeholder="e.g. Data Structures, PMP Exam"></div>
     <div class="two-col"><div class="ig"><label class="il">Type</label><select class="inp" id="st-type"><option value="university">University</option><option value="certification">Certification</option><option value="self-learning">Self-Learning</option></select></div><div class="ig"><label class="il">Target Date</label><input class="inp" id="st-target-date" type="date"></div></div>
@@ -1072,7 +1119,7 @@ select.inp{appearance:none}
 </div>
 
 <!-- Target Modal -->
-<div class="modal-bg" id="target-modal">
+<div class="modal-bg" style="display:none" id="target-modal">
   <div class="modal"><div class="modal-title"><i class="ti ti-target"></i>Set Monthly Target</div><button class="modal-close" onclick="closeModal('target-modal')"><i class="ti ti-x"></i></button>
     <div class="ig"><label class="il">Month</label><input class="inp" id="tgt-month" type="month"></div>
     <div class="ig"><label class="il">Target Hours</label><input class="inp" id="tgt-hours" type="number" placeholder="40"></div>
@@ -1190,7 +1237,7 @@ function toast(msg,type='success'){
 }
 function openModal(id){
   const el=document.getElementById(id);
-  if(!el){console.error('Modal not found:',id);toast('Error: modal not found','error');return;}
+  if(!el){console.error('Modal not found:',id);return;}
   el.classList.add('open');
   el.style.display='flex';
 }
@@ -1198,7 +1245,7 @@ function closeModal(id){
   const el=document.getElementById(id);
   if(!el)return;
   el.classList.remove('open');
-  el.style.display='';
+  el.style.display='none';
 }
 function getHijriDate(){
   const now=new Date();const diff=Math.floor((now-new Date('2024-01-11'))/86400000);
@@ -1865,6 +1912,18 @@ function handleFileSelect(input){
   }
 }
 async function uploadDoc(){
+  // Ensure bucket exists (creates it if missing)
+  try {
+    const {data:buckets} = await sb.storage.listBuckets();
+    const exists = buckets && buckets.some(b => b.name === 'documents');
+    if(!exists) {
+      const {error:bErr} = await sb.storage.createBucket('documents', {public:false});
+      if(bErr && !bErr.message.includes('already exists')) {
+        toast('Storage bucket error: ' + bErr.message, 'error');
+        return;
+      }
+    }
+  } catch(e) {}
   const name=document.getElementById('doc-name').value.trim();
   const cat=document.getElementById('doc-cat').value;
   const type=document.getElementById('doc-type-sel').value;
@@ -1995,88 +2054,83 @@ function exportCVPDF(){
   w.document.write(`<!DOCTYPE html><html><head><title>${name} - CV</title><style>body{font-family:sans-serif;padding:40px;color:#1a1d2e;max-width:800px;margin:0 auto}@media print{body{padding:20px}}</style></head><body>${preview}<script>window.onload=()=>window.print()<\/script>
 <!-- ═══ MOBILE UI ═══ -->
 <nav id="mob-nav">
-  <button class="mnb active" id="mnb-dash" onclick="mobGo('dashboard',this)"><i class="ti ti-home"></i>Home</button>
-  <button class="mnb" id="mnb-cash" onclick="mobGo('cashflow',this)"><i class="ti ti-arrows-exchange"></i>Finance</button>
-  <button class="mnb" id="mnb-inv" onclick="mobGo('investments',this)"><i class="ti ti-building-bank"></i>Stocks</button>
-  <button class="mnb" id="mnb-ct" onclick="window.location.href='contacts.html'"><i class="ti ti-users"></i>People</button>
-  <button class="mnb" id="mnb-more" onclick="openPanel()"><i class="ti ti-menu-2"></i>More</button>
+  <button class="mnb active" id="mnb-0" onclick="mobGo('dashboard',0)">
+    <i class="ti ti-home"></i>Home
+  </button>
+  <button class="mnb" id="mnb-1" onclick="mobGo('cashflow',1)">
+    <i class="ti ti-arrows-exchange"></i>Finance
+  </button>
+  <button class="mnb" id="mnb-2" onclick="mobGo('investments',2)">
+    <i class="ti ti-building-bank"></i>Stocks
+  </button>
+  <button class="mnb" id="mnb-3" onclick="window.location.href='contacts.html'">
+    <i class="ti ti-users"></i>People
+  </button>
+  <button class="mnb" id="mnb-4" onclick="openPanel()">
+    <i class="ti ti-menu-2"></i>More
+  </button>
 </nav>
+
 <div id="mob-overlay" onclick="closePanel()"></div>
+
 <div id="mob-panel">
-  <div style="padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0">
-    <div style="width:32px;height:32px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px"><i class="ti ti-chart-dots-3"></i></div>
-    <div style="flex:1"><div style="font-size:14px;font-weight:600">MyTracker</div><div style="font-size:10px;color:var(--text3)">v6 · Private</div></div>
-    <button onclick="closePanel()" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center"><i class="ti ti-x"></i></button>
+  <div style="padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;padding-top:max(14px,env(safe-area-inset-top))">
+    <div style="width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px"><i class="ti ti-chart-dots-3"></i></div>
+    <div style="flex:1"><div style="font-size:14px;font-weight:600">MyTracker</div><div style="font-size:10px;color:var(--text3)">Private Dashboard</div></div>
+    <button onclick="closePanel()" style="width:30px;height:30px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center"><i class="ti ti-x"></i></button>
   </div>
-  <div class="sb-nav" style="flex:1;overflow-y:auto;padding:8px 8px">
-    <div class="sb-group"><div class="sb-group-label">Finance</div>
+  <div class="sb-nav" style="flex:1;overflow-y:auto;padding:8px">
+    <div class="sb-group">
+      <div class="sb-group-label">Finance</div>
       <div class="sb-item" onclick="mobGo('cashflow');closePanel()"><i class="ti ti-arrows-exchange"></i>Cash Flow</div>
       <div class="sb-item" onclick="mobGo('spending');closePanel()"><i class="ti ti-chart-pie"></i>Spending Analysis</div>
       <div class="sb-item" onclick="mobGo('savings-calc');closePanel()"><i class="ti ti-calculator"></i>Savings Calculator</div>
       <div class="sb-item" onclick="mobGo('savings');closePanel()"><i class="ti ti-piggy-bank"></i>Savings & Charity</div>
       <div class="sb-item" onclick="mobGo('zakat');closePanel()"><i class="ti ti-star"></i>Zakat</div>
     </div>
-    <div class="sb-group"><div class="sb-group-label">Investments</div>
+    <div class="sb-group">
+      <div class="sb-group-label">Investments</div>
       <div class="sb-item" onclick="mobGo('investments');closePanel()"><i class="ti ti-building-bank"></i>My Investments</div>
       <div class="sb-item" onclick="mobGo('stocks');closePanel()"><i class="ti ti-trending-up"></i>SAHM AI Advisor</div>
     </div>
-    <div class="sb-group"><div class="sb-group-label">Productivity</div>
+    <div class="sb-group">
+      <div class="sb-group-label">People</div>
+      <div class="sb-item" onclick="window.location.href='contacts.html'"><i class="ti ti-users"></i>Contacts</div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Productivity</div>
       <div class="sb-item" onclick="mobGo('goals');closePanel()"><i class="ti ti-target"></i>Goals & Habits</div>
       <div class="sb-item" onclick="mobGo('routine');closePanel()"><i class="ti ti-calendar-time"></i>Routine</div>
       <div class="sb-item" onclick="mobGo('focus');closePanel()"><i class="ti ti-clock"></i>Focus Timer</div>
     </div>
-    <div class="sb-group"><div class="sb-group-label">Study</div>
+    <div class="sb-group">
+      <div class="sb-group-label">Study</div>
       <div class="sb-item" onclick="mobGo('study');closePanel()"><i class="ti ti-books"></i>Study Tracker</div>
       <div class="sb-item" onclick="mobGo('study-log');closePanel()"><i class="ti ti-pencil"></i>Log Session</div>
     </div>
-    <div class="sb-group"><div class="sb-group-label">People</div>
-      <div class="sb-item" onclick="window.location.href='contacts.html'"><i class="ti ti-users"></i>Contacts</div>
-    </div>
-    <div class="sb-group"><div class="sb-group-label">Personal</div>
+    <div class="sb-group">
+      <div class="sb-group-label">Personal</div>
       <div class="sb-item" onclick="mobGo('vault');closePanel()"><i class="ti ti-lock"></i>Document Vault</div>
       <div class="sb-item" onclick="mobGo('cv');closePanel()"><i class="ti ti-id-badge"></i>My CV</div>
       <div class="sb-item" onclick="mobGo('journal');closePanel()"><i class="ti ti-notes"></i>AI Journal</div>
       <div class="sb-item" onclick="mobGo('prayer');closePanel()"><i class="ti ti-sun"></i>Prayer Times</div>
     </div>
-    <div class="sb-group"><div class="sb-group-label">Reports</div>
+    <div class="sb-group">
+      <div class="sb-group-label">Reports</div>
       <div class="sb-item" onclick="mobGo('reports');closePanel()"><i class="ti ti-file-description"></i>PDF Reports</div>
     </div>
   </div>
-  <div class="sb-bottom" style="flex-shrink:0">
+  <div class="sb-bottom" style="flex-shrink:0;padding-bottom:max(12px,env(safe-area-inset-bottom))">
     <div class="sb-avatar" id="mob-av">?</div>
     <div style="flex:1;min-width:0"><div class="sb-email" id="mob-em">—</div><div class="sb-role">Owner · Private</div></div>
     <div class="sb-logout" onclick="doLogout()"><i class="ti ti-logout"></i></div>
   </div>
 </div>
 
-<!-- PWA prompt -->
-<div id="pwa-bar">
-  <div style="display:flex;align-items:center;gap:10px">
-    <div style="width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-chart-dots-3" style="color:#fff;font-size:18px"></i></div>
-    <div style="flex:1"><div style="font-size:13px;font-weight:600">Install MyTracker</div><div style="font-size:11px;color:var(--text2)">Add to Home Screen for best experience</div></div>
-    <button onclick="doPWA()" style="padding:7px 12px;background:var(--accent);color:#fff;border:none;border-radius:var(--r8);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font)">Install</button>
-    <button onclick="noPWA()" style="padding:7px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);color:var(--text2);cursor:pointer;font-size:13px"><i class="ti ti-x"></i></button>
-  </div>
-</div>
-<div id="offline-bar"><i class="ti ti-wifi-off"></i> Offline — showing cached data</div>
-
-
-
-<!-- Entry detail/delete modal -->
-<div class="modal-bg" id="entry-modal">
-  <div class="modal" style="width:400px">
-    <div class="modal-title" id="entry-modal-title"><i class="ti ti-info-circle"></i>Entry Details</div>
-    <button class="modal-close" onclick="closeModal('entry-modal')"><i class="ti ti-x"></i></button>
-    <div id="entry-modal-body" style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:16px"></div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-ghost" onclick="editEntry()" id="entry-edit-btn"><i class="ti ti-edit"></i>Edit</button>
-      <button class="btn btn-r btn-full" onclick="deleteEntry()"><i class="ti ti-trash"></i>Delete Entry</button>
-    </div>
-  </div>
-</div>
+<div id="offline-bar" style="display:none;position:fixed;top:0;left:0;right:0;background:var(--rdim);border-bottom:1px solid rgba(240,100,100,.3);padding:8px 16px;z-index:600;text-align:center;font-size:12px;color:var(--red)"><i class="ti ti-wifi-off"></i> Offline — showing cached data</div>
 
 <!-- Entry edit modal -->
-<div class="modal-bg" id="entry-edit-modal">
+<div class="modal-bg" style="display:none" id="entry-edit-modal">
   <div class="modal" style="width:420px">
     <div class="modal-title" id="entry-edit-title"><i class="ti ti-edit"></i>Edit Entry</div>
     <button class="modal-close" onclick="closeModal('entry-edit-modal')"><i class="ti ti-x"></i></button>
@@ -2620,27 +2674,30 @@ function renderContactsPage(){
 function openPanel(){
   document.getElementById('mob-overlay').classList.add('open');
   document.getElementById('mob-panel').classList.add('open');
-  document.body.style.overflow='hidden';
 }
 function closePanel(){
   document.getElementById('mob-overlay').classList.remove('open');
   document.getElementById('mob-panel').classList.remove('open');
-  document.body.style.overflow='';
 }
-function mobGo(id,btn){
+function mobGo(id, idx){
   showPage(id);
-  if(btn){document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  if(idx !== undefined){
+    document.querySelectorAll('.mnb').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById('mnb-'+idx);
+    if(btn) btn.classList.add('active');
+  }
+  closePanel();
 }
+// Swipe left to close panel
 (function(){
-  let sx=0,sy=0;
-  document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
-  document.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-sx;
-    const dy=e.changedTouches[0].clientY-sy;
-    if(dx<-60&&Math.abs(dy)<50&&document.getElementById('mob-panel')?.classList.contains('open'))closePanel();
-  },{passive:true});
+  let sx=0, sy=0;
+  document.addEventListener('touchstart', e=>{ sx=e.touches[0].clientX; sy=e.touches[0].clientY; }, {passive:true});
+  document.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = Math.abs(e.changedTouches[0].clientY - sy);
+    if(dx < -55 && dy < 60 && document.getElementById('mob-panel').classList.contains('open')) closePanel();
+  }, {passive:true});
 })();
-
 init();
 </script>
 </body>
