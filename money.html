@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Money Tracker">
+<title>Money Tracker — MyTracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:#0b0d12; --bg2:#111318; --bg3:#181b24; --bg4:#1e222e;
+  --border:#252a38; --border2:#2e3548;
+  --text:#e4e8f0; --text2:#8892aa; --text3:#4a5268;
+  --accent:#4f8ef7; --adim:rgba(79,142,247,.13);
+  --green:#2dd4a0; --gdim:rgba(45,212,160,.12);
+  --gold:#f5c542; --ydim:rgba(245,197,66,.12);
+  --red:#f06464; --rdim:rgba(240,100,100,.12);
+  --purple:#a78bfa; --teal:#38bdf8;
+  --font:'DM Sans',system-ui,sans-serif;
+  --r8:8px; --r12:12px; --r16:16px; --r20:20px;
+}
+body.light {
+  --bg:#f4f5f8; --bg2:#ffffff; --bg3:#f0f1f5; --bg4:#e8eaf0;
+  --border:#e2e4ec; --border2:#d0d4e0;
+  --text:#1a1d2e; --text2:#5a6180; --text3:#9aa0b8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px}
+
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:999}
+.spin{width:28px;height:28px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── AUTH ── */
+#auth{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:900}
+.auth-card{width:100%;max-width:380px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r20);padding:32px}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.auth-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
+.auth-err{background:var(--rdim);border:1px solid rgba(240,100,100,.2);border-radius:var(--r8);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
+.auth-field{margin-bottom:13px}
+.auth-label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.auth-inp{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);padding:11px 14px;color:var(--text);font-family:var(--font);font-size:16px;outline:none;transition:border .12s}
+.auth-inp:focus{border-color:var(--accent)}
+
+/* ── LAYOUT ── */
+#app{display:none;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:50;background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 24px;display:flex;align-items:center;gap:12px}
+.back-btn{width:34px;height:34px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);text-decoration:none;flex-shrink:0;font-size:16px;transition:all .12s}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.page-title{font-size:17px;font-weight:700;flex:1}
+.content{padding:24px;max-width:960px;margin:0 auto}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 18px;border-radius:var(--r8);border:none;cursor:pointer;font-size:13px;font-weight:500;font-family:var(--font);display:inline-flex;align-items:center;gap:6px;transition:all .12s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{opacity:.88}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--bg4)}
+.btn-danger{background:var(--rdim);color:var(--red);border:1px solid rgba(240,100,100,.2)}
+.btn-success{background:var(--gdim);color:var(--green);border:1px solid rgba(45,212,160,.2)}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
+.btn-full{width:100%;justify-content:center}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .12s;flex-shrink:0}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── TABS ── */
+.tabs{display:flex;background:var(--bg3);border-radius:var(--r12);padding:4px;gap:4px;margin-bottom:24px}
+.tab{flex:1;padding:10px 16px;border-radius:var(--r8);border:none;background:transparent;color:var(--text2);font-size:14px;font-weight:500;font-family:var(--font);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.tab.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tab-count{background:var(--bg4);color:var(--text3);padding:1px 7px;border-radius:20px;font-size:11px;font-weight:600}
+.tab.active .tab-count{background:var(--adim);color:var(--accent)}
+
+/* ── SUMMARY CARDS ── */
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r16);padding:16px 18px;position:relative;overflow:hidden}
+.sum-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r16) var(--r16) 0 0}
+.sum-card.total::before{background:var(--accent)}
+.sum-card.pending::before{background:var(--gold)}
+.sum-card.settled::before{background:var(--green)}
+.sum-label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.sum-amount{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.sum-sub{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* ── ENTRY CARDS ── */
+.entries-list{display:flex;flex-direction:column;gap:10px}
+.entry-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r16);overflow:hidden;transition:border .15s}
+.entry-card:hover{border-color:var(--border2)}
+.entry-card.overdue{border-color:rgba(240,100,100,.35)}
+.entry-main{padding:16px 18px;cursor:pointer}
+.entry-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.entry-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.entry-name{font-size:15px;font-weight:600}
+.entry-date{font-size:11px;color:var(--text3);margin-top:1px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-pending{background:var(--ydim);color:var(--gold)}
+.badge-partial{background:var(--adim);color:var(--accent)}
+.badge-settled{background:var(--gdim);color:var(--green)}
+.badge-overdue{background:var(--rdim);color:var(--red)}
+.progress-bar{height:5px;background:var(--bg4);border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.progress-fill{height:100%;border-radius:99px;transition:width .4s ease}
+.amounts-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.amount-item{display:flex;flex-direction:column;gap:1px}
+.amount-label{font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.amount-val{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.entry-actions{display:flex;gap:6px;padding:10px 18px;border-top:1px solid var(--border);background:var(--bg3)}
+
+/* ── REPAYMENTS ── */
+.repayments-section{border-top:1px solid var(--border);padding:12px 18px;background:var(--bg3)}
+.repay-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)}
+.repay-item:last-child{border-bottom:none}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:56px 20px;color:var(--text3)}
+.empty i{font-size:52px;display:block;margin-bottom:14px;opacity:.2}
+.empty h3{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r20);width:100%;max-width:500px;margin:auto;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.modal-hd{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.modal-x{width:28px;height:28px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
+.modal-x:hover{border-color:var(--red);color:var(--red)}
+.modal-body{padding:20px 22px 22px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.inp{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r8);padding:10px 13px;color:var(--text);font-family:var(--font);font-size:16px;outline:none;transition:border .12s}
+.inp:focus{border-color:var(--accent)}
+textarea.inp{resize:vertical;min-height:72px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r12);padding:11px 18px;font-size:13px;z-index:9999;transform:translateY(60px);opacity:0;transition:all .22s;display:flex;align-items:center;gap:8px;max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#toast.show{transform:translateY(0);opacity:1}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .summary-grid{grid-template-columns:1fr 1fr}
+  .sum-card:last-child{grid-column:1/-1}
+  .topbar{padding:11px 14px;position:fixed;top:0;left:0;right:0;z-index:100}
+  .content{padding:80px 14px 24px}
+  .two-col{grid-template-columns:1fr}
+  .modal-box{border-radius:var(--r16)}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal-box{border-radius:var(--r20) var(--r20) 0 0;max-width:100%;padding-bottom:max(0px,env(safe-area-inset-bottom))}
+  .amounts-row{gap:12px}
+  .entry-actions{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div style="width:48px;height:48px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px"><i class="ti ti-scale"></i></div>
+  <div style="font-size:15px;font-weight:600">Money Tracker</div>
+  <div class="spin"></div>
+</div>
+
+<!-- AUTH -->
+<div id="auth">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-icon" style="background:linear-gradient(135deg,var(--accent),var(--purple))"><i class="ti ti-scale"></i></div>
+      <div><div style="font-size:18px;font-weight:700">Money Tracker</div><div style="font-size:11px;color:var(--text3)">Lent & Owed</div></div>
+    </div>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="auth-field"><label class="auth-label">Email</label><input class="auth-inp" type="email" id="auth-email" placeholder="your@email.com" autocomplete="email"></div>
+    <div class="auth-field"><label class="auth-label">Password</label><input class="auth-inp" type="password" id="auth-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:4px" onclick="doLogin()" id="login-btn">Sign in</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <a href="index.html" class="back-btn" title="Back to MyTracker"><i class="ti ti-arrow-left"></i></a>
+    <div class="page-title"><i class="ti ti-scale" style="color:var(--accent)"></i> Money Tracker</div>
+    <button class="btn btn-ghost btn-sm" onclick="toggleTheme()" id="theme-btn" style="padding:7px"><i class="ti ti-sun"></i></button>
+    <button class="btn btn-primary btn-sm" id="add-btn" onclick="openAddModal()"><i class="ti ti-plus"></i>Add Entry</button>
+  </div>
+
+  <div class="content">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" id="tab-lent" onclick="switchTab('lent')">
+        <i class="ti ti-arrow-up-right" style="color:var(--gold)"></i>
+        Money I Lent
+        <span class="tab-count" id="tab-lent-count">0</span>
+      </button>
+      <button class="tab" id="tab-owed" onclick="switchTab('owed')">
+        <i class="ti ti-arrow-down-left" style="color:var(--red)"></i>
+        Money I Owe
+        <span class="tab-count" id="tab-owed-count">0</span>
+      </button>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-grid" id="summary-grid"></div>
+
+    <!-- Entries -->
+    <div id="entries-list"></div>
+  </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <div class="modal-title" id="modal-title"><i class="ti ti-plus"></i> Add Entry</div>
+      <button class="modal-x" onclick="closeModal('add-modal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+      <input type="hidden" id="edit-type">
+      <div class="field">
+        <label>Type</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="type-selector">
+          <button class="btn btn-ghost" id="type-lent-btn" onclick="selectType('lent')" style="justify-content:center;gap:8px;padding:11px">
+            <i class="ti ti-arrow-up-right" style="color:var(--gold)"></i> I Lent Money
+          </button>
+          <button class="btn btn-ghost" id="type-owed-btn" onclick="selectType('owed')" style="justify-content:center;gap:8px;padding:11px">
+            <i class="ti ti-arrow-down-left" style="color:var(--red)"></i> I Owe Money
+          </button>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Person's Name *</label><input class="inp" id="f-person" placeholder="e.g. Ahmed, Sara..."></div>
+        <div class="field"><label>Amount (SAR) *</label><input class="inp" id="f-amount" type="number" step="0.01" placeholder="500"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Date</label><input class="inp" id="f-date" type="date"></div>
+        <div class="field"><label>Due Date (optional)</label><input class="inp" id="f-due" type="date"></div>
+      </div>
+      <div class="field"><label>Notes</label><textarea class="inp" id="f-notes" rows="2" placeholder="What it was for..."></textarea></div>
+      <button class="btn btn-primary btn-full" onclick="saveEntry()" id="save-btn"><i class="ti ti-check"></i> Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOG REPAYMENT MODAL -->
+<div class="modal-overlay" id="repay-modal">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-hd">
+      <div class="modal-title"><i class="ti ti-coins"></i> Log Repayment</div>
+      <button class="modal-x" onclick="closeModal('repay-modal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="repay-entry-id">
+      <div id="repay-summary" style="background:var(--bg3);border-radius:var(--r8);padding:12px 14px;margin-bottom:16px;font-size:13px"></div>
+      <div class="two-col">
+        <div class="field"><label>Amount Paid (SAR) *</label><input class="inp" id="repay-amount" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="field"><label>Date</label><input class="inp" id="repay-date" type="date"></div>
+      </div>
+      <div class="field"><label>Note (optional)</label><input class="inp" id="repay-note" placeholder="e.g. Cash payment"></div>
+      <button class="btn btn-primary btn-full" onclick="saveRepayment()" id="repay-btn"><i class="ti ti-check"></i> Log Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+const SURL = 'https://qqxhfaleayormppicadp.supabase.co';
+const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxeGhmYWxlYXlvcm1wcGljYWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MjczMTksImV4cCI6MjA5NDAwMzMxOX0.vWEQbIbFoX9hYDuYv4pGyzfZRvPnFqiOK4mPyY5kga0';
+const sb = supabase.createClient(SURL, SKEY);
+
+let CU = null;
+let DATA = { lent: [], owed: [], repayments: [] };
+let currentTab = 'lent';
+let addingType = 'lent';
+let expandedId = null;
+
+const COLORS = ['#4f8ef7','#2dd4a0','#a78bfa','#f5c542','#f06464','#fb923c','#38bdf8','#ec4899'];
+function color(name){ return COLORS[(name||'?').charCodeAt(0) % COLORS.length]; }
+function fmt(n){ return 'SAR ' + parseFloat(n||0).toLocaleString('en-SA', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── INIT ──
+async function init() {
+  if(localStorage.getItem('mt-theme') === 'light') applyLight();
+  const { data:{ session } } = await sb.auth.getSession();
+  document.getElementById('loading').style.display = 'none';
+  if(session) { CU = session.user; showApp(); }
+  else { document.getElementById('auth').style.display = 'flex'; }
+}
+
+async function showApp() {
+  document.getElementById('app').style.display = 'block';
+  await loadAll();
+  render();
+}
+
+// ── AUTH ──
+async function doLogin() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pass  = document.getElementById('auth-pass').value;
+  const errEl = document.getElementById('auth-err');
+  const btn   = document.getElementById('login-btn');
+  errEl.style.display = 'none';
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.textContent = 'Sign in'; btn.disabled = false;
+  if(error) { errEl.textContent = 'Incorrect email or password.'; errEl.style.display = 'block'; return; }
+  CU = data.user;
+  document.getElementById('auth').style.display = 'none';
+  showApp();
+}
+
+// ── LOAD ──
+async function loadAll() {
+  const uid = CU.id;
+  const [lentRes, owedRes, repayRes] = await Promise.all([
+    sb.from('money_lent').select('*').eq('user_id', uid).order('date', {ascending:false}),
+    sb.from('money_owed').select('*').eq('user_id', uid).order('date', {ascending:false}),
+    sb.from('money_repayments').select('*').eq('user_id', uid).order('date', {ascending:false})
+  ]);
+  DATA.lent        = lentRes.data  || [];
+  DATA.owed        = owedRes.data  || [];
+  DATA.repayments  = repayRes.data || [];
+}
+
+// ── RENDER ──
+function render() {
+  updateTabCounts();
+  renderSummary();
+  renderList();
+}
+
+function updateTabCounts() {
+  document.getElementById('tab-lent-count').textContent = DATA.lent.length;
+  document.getElementById('tab-owed-count').textContent = DATA.owed.length;
+}
+
+function paidFor(entryId) {
+  return DATA.repayments.filter(r => r.entry_id === entryId).reduce((s,r) => s + parseFloat(r.amount||0), 0);
+}
+
+function remainingFor(entry) {
+  return Math.max(0, parseFloat(entry.amount||0) - paidFor(entry.id));
+}
+
+function statusOf(entry) {
+  const total = parseFloat(entry.amount||0);
+  const paid  = paidFor(entry.id);
+  if(entry.settled || paid >= total) return 'settled';
+  if(paid > 0) return 'partial';
+  const due = entry.due_date;
+  if(due && due < today()) return 'overdue';
+  return 'pending';
+}
+
+function renderSummary() {
+  const list = DATA[currentTab];
+  const totalAmt     = list.reduce((s,e) => s + parseFloat(e.amount||0), 0);
+  const totalPaid    = list.reduce((s,e) => s + paidFor(e.id), 0);
+  const totalPending = totalAmt - totalPaid;
+  const isLent = currentTab === 'lent';
+
+  document.getElementById('summary-grid').innerHTML = `
+    <div class="sum-card total">
+      <div class="sum-label">${isLent ? 'Total Lent Out' : 'Total Borrowed'}</div>
+      <div class="sum-amount" style="color:var(--accent)">${fmt(totalAmt)}</div>
+      <div class="sum-sub">${list.length} entr${list.length===1?'y':'ies'}</div>
+    </div>
+    <div class="sum-card pending">
+      <div class="sum-label">${isLent ? 'Still Owed to Me' : 'Still Owe'}</div>
+      <div class="sum-amount" style="color:var(--gold)">${fmt(totalPending)}</div>
+      <div class="sum-sub">${list.filter(e=>statusOf(e)!=='settled').length} outstanding</div>
+    </div>
+    <div class="sum-card settled">
+      <div class="sum-label">${isLent ? 'Recovered' : 'Paid Back'}</div>
+      <div class="sum-amount" style="color:var(--green)">${fmt(totalPaid)}</div>
+      <div class="sum-sub">${list.filter(e=>statusOf(e)==='settled').length} settled</div>
+    </div>
+  `;
+}
+
+function renderList() {
+  const el   = document.getElementById('entries-list');
+  const list = DATA[currentTab];
+  if(!list.length) {
+    const isLent = currentTab === 'lent';
+    el.innerHTML = `<div class="empty">
+      <i class="ti ti-${isLent ? 'arrow-up-right' : 'arrow-down-left'}"></i>
+      <h3>${isLent ? 'No money lent yet' : 'Nothing owed yet'}</h3>
+      <p>Click <strong>Add Entry</strong> to log a ${isLent ? 'loan you gave' : 'debt you owe'}</p>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(entry => {
+    const total     = parseFloat(entry.amount||0);
+    const paid      = paidFor(entry.id);
+    const remaining = Math.max(0, total - paid);
+    const pct       = total > 0 ? Math.min(100, (paid/total)*100) : 0;
+    const status    = statusOf(entry);
+    const col       = color(entry.person_name);
+    const isExpanded = expandedId === entry.id;
+    const repays    = DATA.repayments.filter(r => r.entry_id === entry.id);
+    const isLent    = currentTab === 'lent';
+    const overdue   = status === 'overdue';
+
+    const badgeHtml = {
+      settled: `<span class="badge badge-settled"><i class="ti ti-circle-check" style="font-size:11px"></i>Settled</span>`,
+      partial:  `<span class="badge badge-partial"><i class="ti ti-clock-half" style="font-size:11px"></i>Partial</span>`,
+      overdue:  `<span class="badge badge-overdue"><i class="ti ti-alert-circle" style="font-size:11px"></i>Overdue</span>`,
+      pending:  `<span class="badge badge-pending"><i class="ti ti-clock" style="font-size:11px"></i>Pending</span>`,
+    }[status];
+
+    const progressColor = status==='settled' ? 'var(--green)' : status==='overdue' ? 'var(--red)' : 'var(--accent)';
+
+    const repaysHtml = isExpanded && repays.length ? `
+      <div class="repayments-section">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Payment History</div>
+        ${repays.map(r => `
+          <div class="repay-item">
+            <i class="ti ti-coins" style="color:var(--green);font-size:16px;flex-shrink:0"></i>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500">${fmt(r.amount)}</div>
+              ${r.note ? `<div style="font-size:11px;color:var(--text3)">${esc(r.note)}</div>` : ''}
+            </div>
+            <div style="font-size:11px;color:var(--text3)">${r.date||''}</div>
+            <button class="icon-btn" style="border-color:rgba(240,100,100,.2);color:var(--red)" onclick="deleteRepayment('${r.id}','${entry.id}',event)"><i class="ti ti-trash" style="font-size:12px"></i></button>
+          </div>`).join('')}
+      </div>` : '';
+
+    const actionsHtml = status !== 'settled' ? `
+      <div class="entry-actions">
+        <button class="btn btn-success btn-sm" onclick="openRepayModal('${entry.id}',event)"><i class="ti ti-coins"></i>${isLent ? 'Log Repayment' : 'Log Payment'}</button>
+        <button class="btn btn-ghost btn-sm" onclick="markSettled('${entry.id}',event)"><i class="ti ti-circle-check"></i>Mark Settled</button>
+        <div style="flex:1"></div>
+        <button class="icon-btn" onclick="editEntry('${entry.id}',event)"><i class="ti ti-edit" style="font-size:13px"></i></button>
+        <button class="icon-btn" style="border-color:rgba(240,100,100,.2);color:var(--red)" onclick="deleteEntry('${entry.id}',event)"><i class="ti ti-trash" style="font-size:13px"></i></button>
+      </div>` : `
+      <div class="entry-actions">
+        <span class="badge badge-settled" style="font-size:12px;padding:5px 12px"><i class="ti ti-circle-check" style="font-size:12px"></i>Fully Settled</span>
+        <div style="flex:1"></div>
+        <button class="icon-btn" onclick="editEntry('${entry.id}',event)"><i class="ti ti-edit" style="font-size:13px"></i></button>
+        <button class="icon-btn" style="border-color:rgba(240,100,100,.2);color:var(--red)" onclick="deleteEntry('${entry.id}',event)"><i class="ti ti-trash" style="font-size:13px"></i></button>
+      </div>`;
+
+    return `
+      <div class="entry-card${overdue?' overdue':''}" id="card-${entry.id}">
+        <div class="entry-main" onclick="toggleExpand('${entry.id}')">
+          <div class="entry-header">
+            <div class="entry-avatar" style="background:${col}20;color:${col}">${(entry.person_name||'?')[0].toUpperCase()}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span class="entry-name">${esc(entry.person_name)}</span>
+                ${badgeHtml}
+                ${overdue && entry.due_date ? `<span style="font-size:10px;color:var(--red)">Due ${entry.due_date}</span>` : ''}
+              </div>
+              <div class="entry-date">${entry.date||''}${entry.due_date && !overdue ? ` · Due ${entry.due_date}` : ''}</div>
+            </div>
+            <i class="ti ti-chevron-${isExpanded?'up':'down'}" style="color:var(--text3);flex-shrink:0"></i>
+          </div>
+          ${entry.notes ? `<div style="font-size:12px;color:var(--text2);margin-bottom:10px;padding-left:52px">${esc(entry.notes)}</div>` : ''}
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${progressColor}"></div></div>
+          <div class="amounts-row">
+            <div class="amount-item">
+              <span class="amount-label">Original</span>
+              <span class="amount-val">${fmt(total)}</span>
+            </div>
+            <div class="amount-item">
+              <span class="amount-label">${isLent ? 'Received' : 'Paid'}</span>
+              <span class="amount-val" style="color:var(--green)">${fmt(paid)}</span>
+            </div>
+            <div class="amount-item">
+              <span class="amount-label">Remaining</span>
+              <span class="amount-val" style="color:${remaining>0?'var(--gold)':'var(--green)'}">${fmt(remaining)}</span>
+            </div>
+            <div style="flex:1;text-align:right">
+              <span style="font-size:11px;color:var(--text3)">${pct.toFixed(0)}% ${isLent?'back':'paid'}</span>
+            </div>
+          </div>
+        </div>
+        ${repaysHtml}
+        ${actionsHtml}
+      </div>`;
+  }).join('');
+}
+
+function toggleExpand(id) {
+  expandedId = expandedId === id ? null : id;
+  renderList();
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  currentTab = tab;
+  expandedId = null;
+  document.getElementById('tab-lent').classList.toggle('active', tab==='lent');
+  document.getElementById('tab-owed').classList.toggle('active', tab==='owed');
+  document.getElementById('add-btn').innerHTML = tab==='lent'
+    ? '<i class="ti ti-plus"></i>Add Entry'
+    : '<i class="ti ti-plus"></i>Add Entry';
+  render();
+}
+
+// ── ADD / EDIT ──
+function openAddModal(type) {
+  document.getElementById('edit-id').value = '';
+  document.getElementById('edit-type').value = '';
+  document.getElementById('f-person').value = '';
+  document.getElementById('f-amount').value = '';
+  document.getElementById('f-date').value = today();
+  document.getElementById('f-due').value = '';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('modal-title').innerHTML = '<i class="ti ti-plus"></i> Add Entry';
+  document.getElementById('save-btn').innerHTML = '<i class="ti ti-check"></i> Save Entry';
+  document.getElementById('type-selector').style.display = 'grid';
+  selectType(type || currentTab);
+  document.getElementById('add-modal').classList.add('open');
+}
+
+function selectType(type) {
+  addingType = type;
+  const lBtn = document.getElementById('type-lent-btn');
+  const oBtn = document.getElementById('type-owed-btn');
+  lBtn.style.background = type==='lent' ? 'var(--ydim)' : '';
+  lBtn.style.borderColor = type==='lent' ? 'rgba(245,197,66,.4)' : '';
+  lBtn.style.color = type==='lent' ? 'var(--gold)' : '';
+  oBtn.style.background = type==='owed' ? 'var(--rdim)' : '';
+  oBtn.style.borderColor = type==='owed' ? 'rgba(240,100,100,.4)' : '';
+  oBtn.style.color = type==='owed' ? 'var(--red)' : '';
+}
+
+function editEntry(id, e) {
+  if(e) e.stopPropagation();
+  const tab    = currentTab;
+  const entry  = DATA[tab].find(x => x.id === id);
+  if(!entry) return;
+  document.getElementById('edit-id').value   = id;
+  document.getElementById('edit-type').value = tab;
+  document.getElementById('f-person').value  = entry.person_name || '';
+  document.getElementById('f-amount').value  = entry.amount || '';
+  document.getElementById('f-date').value    = entry.date || today();
+  document.getElementById('f-due').value     = entry.due_date || '';
+  document.getElementById('f-notes').value   = entry.notes || '';
+  document.getElementById('modal-title').innerHTML = '<i class="ti ti-edit"></i> Edit Entry';
+  document.getElementById('save-btn').innerHTML    = '<i class="ti ti-check"></i> Update Entry';
+  document.getElementById('type-selector').style.display = 'none';
+  addingType = tab;
+  document.getElementById('add-modal').classList.add('open');
+}
+
+async function saveEntry() {
+  const person = document.getElementById('f-person').value.trim();
+  const amount = parseFloat(document.getElementById('f-amount').value);
+  if(!person) { toast('Person name is required', 'error'); return; }
+  if(!amount || amount <= 0) { toast('Enter a valid amount', 'error'); return; }
+  const payload = {
+    user_id:     CU.id,
+    person_name: person,
+    amount,
+    date:        document.getElementById('f-date').value || today(),
+    due_date:    document.getElementById('f-due').value || null,
+    notes:       document.getElementById('f-notes').value.trim() || null,
+    settled:     false
+  };
+  const editId   = document.getElementById('edit-id').value;
+  const editType = document.getElementById('edit-type').value || addingType;
+  const table    = editType === 'owed' ? 'money_owed' : 'money_lent';
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Saving...';
+  let data, error;
+  if(editId) {
+    ({ data, error } = await sb.from(table).update(payload).eq('id', editId).select().single());
+    if(!error && data) {
+      const arr = DATA[editType === 'owed' ? 'owed' : 'lent'];
+      const i = arr.findIndex(x => x.id === editId);
+      if(i >= 0) arr[i] = data;
+    }
+  } else {
+    ({ data, error } = await sb.from(table).insert(payload).select().single());
+    if(!error && data) {
+      DATA[addingType === 'owed' ? 'owed' : 'lent'].unshift(data);
+      currentTab = addingType;
+    }
+  }
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> Save Entry';
+  if(error) { toast('Error: ' + error.message, 'error'); return; }
+  closeModal('add-modal');
+  render();
+  toast(editId ? 'Entry updated!' : 'Entry saved!');
+}
+
+async function deleteEntry(id, e) {
+  if(e) e.stopPropagation();
+  if(!confirm('Delete this entry and all its repayments?')) return;
+  const table = currentTab === 'owed' ? 'money_owed' : 'money_lent';
+  await sb.from('money_repayments').delete().eq('entry_id', id);
+  const { error } = await sb.from(table).delete().eq('id', id);
+  if(error) { toast('Error: ' + error.message, 'error'); return; }
+  DATA[currentTab] = DATA[currentTab].filter(x => x.id !== id);
+  DATA.repayments  = DATA.repayments.filter(r => r.entry_id !== id);
+  if(expandedId === id) expandedId = null;
+  render(); toast('Entry deleted');
+}
+
+async function markSettled(id, e) {
+  if(e) e.stopPropagation();
+  const table = currentTab === 'owed' ? 'money_owed' : 'money_lent';
+  const { data, error } = await sb.from(table).update({settled:true}).eq('id',id).select().single();
+  if(error) { toast('Error: ' + error.message, 'error'); return; }
+  const arr = DATA[currentTab];
+  const i = arr.findIndex(x => x.id === id);
+  if(i >= 0) arr[i] = data;
+  render(); toast('Marked as settled ✓');
+}
+
+// ── REPAYMENTS ──
+function openRepayModal(id, e) {
+  if(e) e.stopPropagation();
+  const entry     = DATA[currentTab].find(x => x.id === id);
+  if(!entry) return;
+  const remaining = remainingFor(entry);
+  document.getElementById('repay-entry-id').value = id;
+  document.getElementById('repay-amount').value   = '';
+  document.getElementById('repay-date').value     = today();
+  document.getElementById('repay-note').value     = '';
+  document.getElementById('repay-summary').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="color:var(--text2)">Person:</span> <strong>${esc(entry.person_name)}</strong>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+      <span style="color:var(--text2)">Total:</span> <strong>${fmt(entry.amount)}</strong>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+      <span style="color:var(--text2)">Remaining:</span> <strong style="color:var(--gold)">${fmt(remaining)}</strong>
+    </div>`;
+  document.getElementById('repay-modal').classList.add('open');
+}
+
+async function saveRepayment() {
+  const entryId = document.getElementById('repay-entry-id').value;
+  const amount  = parseFloat(document.getElementById('repay-amount').value);
+  if(!amount || amount <= 0) { toast('Enter a valid amount', 'error'); return; }
+  const entry     = DATA[currentTab].find(x => x.id === entryId);
+  const remaining = remainingFor(entry);
+  if(amount > remaining + 0.01) { toast(`Max remaining is ${fmt(remaining)}`, 'error'); return; }
+  const payload = {
+    user_id:  CU.id,
+    entry_id: entryId,
+    amount,
+    date:   document.getElementById('repay-date').value || today(),
+    note:   document.getElementById('repay-note').value.trim() || null
+  };
+  const btn = document.getElementById('repay-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Saving...';
+  const { data, error } = await sb.from('money_repayments').insert(payload).select().single();
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> Log Payment';
+  if(error) { toast('Error: ' + error.message, 'error'); return; }
+  DATA.repayments.push(data);
+  // Auto-settle if fully paid
+  const newRemaining = remainingFor(entry);
+  if(newRemaining <= 0.01) {
+    const table = currentTab === 'owed' ? 'money_owed' : 'money_lent';
+    await sb.from(table).update({settled:true}).eq('id', entryId);
+    const i = DATA[currentTab].findIndex(x => x.id === entryId);
+    if(i >= 0) DATA[currentTab][i].settled = true;
+  }
+  closeModal('repay-modal');
+  render();
+  toast('Payment logged!' + (newRemaining <= 0.01 ? ' Entry auto-settled ✓' : ''));
+}
+
+async function deleteRepayment(repayId, entryId, e) {
+  if(e) e.stopPropagation();
+  if(!confirm('Delete this payment record?')) return;
+  const { error } = await sb.from('money_repayments').delete().eq('id', repayId);
+  if(error) { toast('Error', 'error'); return; }
+  DATA.repayments = DATA.repayments.filter(r => r.id !== repayId);
+  // Un-settle entry if it was settled
+  const entry = DATA[currentTab].find(x => x.id === entryId);
+  if(entry && entry.settled) {
+    const table = currentTab === 'owed' ? 'money_owed' : 'money_lent';
+    await sb.from(table).update({settled:false}).eq('id', entryId);
+    entry.settled = false;
+  }
+  render(); toast('Payment removed');
+}
+
+// ── MODAL ──
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.addEventListener('click', e => {
+  ['add-modal','repay-modal'].forEach(id => {
+    const el = document.getElementById(id);
+    if(e.target === el) el.classList.remove('open');
+  });
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') ['add-modal','repay-modal'].forEach(id => document.getElementById(id).classList.remove('open'));
+});
+
+// ── THEME ──
+function toggleTheme() {
+  const light = document.body.classList.contains('light');
+  if(light) { document.body.classList.remove('light'); localStorage.setItem('mt-theme','dark'); document.getElementById('theme-btn').innerHTML='<i class="ti ti-sun"></i>'; }
+  else applyLight();
+}
+function applyLight() {
+  document.body.classList.add('light');
+  localStorage.setItem('mt-theme','light');
+  document.getElementById('theme-btn').innerHTML = '<i class="ti ti-moon"></i>';
+}
+
+// ── TOAST ──
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.innerHTML = `<i class="ti ti-${type==='error'?'alert-circle':'circle-check'}" style="color:${type==='error'?'var(--red)':'var(--green)'}"></i>${msg}`;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+init();
+</script>
+</body>
+</html>
