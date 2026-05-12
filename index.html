@@ -7,7 +7,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MyTracker">
+<meta name="apple-touch-startup-image" content="">
 <meta name="theme-color" content="#0b0d12">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%234f8ef7'/><text y='135' font-size='110' text-anchor='middle' x='90'>📊</text></svg>">
 <title>MyTracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -254,123 +257,125 @@ select.inp{appearance:none}
 /* EXPIRY ALERT */
 .expiry-alert-card{background:var(--rdim);border:1px solid rgba(240,100,100,.2);border-radius:var(--r12);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
 
-/* ═══════════════════════════════════
-   MOBILE — clean rewrite
-═══════════════════════════════════ */
+/* ═══════════════════════════
+   MOBILE & PWA
+═══════════════════════════ */
 
-/* Bottom nav — hidden on desktop */
+/* ── Bottom nav ── */
 #mob-nav {
   display: none;
   position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--bg2); border-top: 1px solid var(--border);
-  padding: 6px 0;
-  padding-bottom: max(6px, env(safe-area-inset-bottom));
-  z-index: 200;
-  justify-content: space-around; align-items: center;
+  z-index: 400;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 4px 0 max(4px, env(safe-area-inset-bottom));
+  justify-content: space-around; align-items: stretch;
 }
 .mnb {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 5px 12px; border: none; background: none;
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px;
+  padding: 6px 4px;
+  border: none; background: none;
   color: var(--text3); font-size: 10px; font-weight: 500;
   font-family: var(--font); cursor: pointer;
-  -webkit-tap-highlight-color: transparent; transition: color .15s;
-  position: relative; min-width: 52px;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .12s; position: relative;
 }
-.mnb i { font-size: 23px; }
+.mnb i { font-size: 22px; line-height: 1; }
 .mnb.active { color: var(--accent); }
-.mnb.active::before {
-  content: ''; position: absolute; top: -6px; left: 50%;
-  transform: translateX(-50%); width: 32px; height: 3px;
-  background: var(--accent); border-radius: 0 0 3px 3px;
+.mnb.active i { transform: translateY(-1px); }
+.mnb.active::after {
+  content: ''; position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 28px; height: 2px;
+  background: var(--accent); border-radius: 0 0 2px 2px;
 }
 
-/* Slide-in drawer */
+/* ── Slide-in drawer ── */
 #mob-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.6); z-index: 300;
+  background: rgba(0,0,0,.55); z-index: 500;
+  backdrop-filter: blur(2px);
 }
 #mob-overlay.open { display: block; }
 #mob-panel {
-  position: fixed; top: 0; left: 0; bottom: 0; width: 270px;
+  position: fixed; top: 0; left: 0; bottom: 0; width: 272px;
   background: var(--bg2); border-right: 1px solid var(--border);
-  z-index: 310; display: flex; flex-direction: column;
+  z-index: 510; display: flex; flex-direction: column;
   transform: translateX(-100%);
-  transition: transform .25s cubic-bezier(.4,0,.2,1);
-  overflow-y: auto;
+  transition: transform .26s cubic-bezier(.4, 0, .2, 1);
+  will-change: transform;
 }
 #mob-panel.open { transform: translateX(0); }
 
-/* Hamburger button */
+/* ── Hamburger button ── */
 .mob-btn {
   display: none; width: 36px; height: 36px;
   background: var(--bg3); border: 1px solid var(--border2);
   border-radius: var(--r8); align-items: center; justify-content: center;
-  cursor: pointer; font-size: 17px; color: var(--text2); flex-shrink: 0;
+  cursor: pointer; font-size: 17px; color: var(--text2);
+  flex-shrink: 0; -webkit-tap-highlight-color: transparent;
 }
 
-/* ── RESPONSIVE ── */
+/* ── MOBILE BREAKPOINT ── */
 @media (max-width: 768px) {
-  /* Show mobile UI */
+  /* Show mobile chrome */
   #mob-nav { display: flex; }
   .mob-btn { display: flex; }
 
-  /* Hide desktop sidebar */
+  /* Kill desktop sidebar */
   .layout > .sidebar { display: none !important; }
 
-  /* Layout flows naturally */
-  html, body { height: auto !important; overflow-y: auto !important; overflow-x: hidden; }
-  #app { height: auto !important; min-height: 100vh; overflow: visible !important; }
-  .layout { height: auto !important; overflow: visible !important; }
-  .main { height: auto !important; overflow: visible !important; padding-bottom: 74px; }
-
-  /* Fix topbar: sticky breaks when parent overflow:visible — use fixed instead */
-  .topbar {
-    position: fixed !important;
-    top: 0; left: 0; right: 0;
-    z-index: 150 !important;
-    padding: 10px 14px !important;
+  /* Fix scroll — the root cause of sticky topbar breaking */
+  html, body {
+    height: auto !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto !important;
   }
-  /* Push content down to clear the fixed topbar (~56px) */
-  .content { padding-top: 70px !important; }
-  /* Pages need padding too since topbar is fixed */
-  .page.active > .content { padding-top: 70px !important; }
+  #app { height: auto !important; min-height: 100vh; }
+  .layout { height: auto !important; flex-direction: column; }
+  .main { height: auto !important; overflow: visible !important; }
 
-  /* Grids */
-  .g2 { grid-template-columns: 1fr 1fr !important; }
+  /* Fixed topbar (sticky breaks when parent overflow:visible) */
+  .topbar {
+    position: fixed !important; top: 0; left: 0; right: 0;
+    z-index: 200 !important; padding: 10px 14px !important;
+  }
+
+  /* Compensate for fixed topbar + fixed bottom nav */
+  .page.active { padding-top: 58px; padding-bottom: 72px; }
+  .content { padding: 14px 14px 20px !important; }
+
+  /* Grid collapses */
   .g3, .g4, .g5 { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
   .two-col, .three-col { grid-template-columns: 1fr !important; }
   .doc-grid { grid-template-columns: repeat(2, 1fr) !important; }
 
-  /* Content padding */
-  .content { padding: 14px 14px 20px !important; }
-  .topbar { padding: 10px 14px !important; flex-wrap: nowrap; }
-  .topbar-right { gap: 6px !important; }
-
   /* Touch targets */
-  .btn { min-height: 42px; }
-  .sb-item { min-height: 42px; }
-
-  /* Prevent iOS input zoom */
+  .btn { min-height: 44px; }
+  .sb-item { min-height: 44px; }
   input, select, textarea { font-size: 16px !important; }
 
-  /* Modals — bottom sheet on mobile */
-  .modal-bg { align-items: flex-end !important; padding: 0 !important; }
+  /* Bottom sheet modals */
+  .modal-bg {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
   .modal {
     width: 100% !important; max-width: 100% !important;
     border-radius: var(--r20) var(--r20) 0 0 !important;
-    max-height: 92vh; margin: 0 !important;
-    padding-bottom: max(24px, env(safe-area-inset-bottom)) !important;
+    margin: 0 !important;
+    max-height: 92vh;
+    padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
   }
 
-  /* Cards */
+  /* Misc */
   .trade-card { padding: 12px !important; }
-  .stat { padding: 12px !important; }
-
-  /* Hide verbose text on mobile topbars */
   .mob-hide { display: none !important; }
 }
 
-/* Desktop — hide mobile UI */
+/* Desktop — hide all mobile chrome */
 @media (min-width: 769px) {
   #mob-nav, #mob-panel, #mob-overlay, .mob-btn { display: none !important; }
 }
@@ -1265,7 +1270,28 @@ function getHijriDate(){
   const months=['Muharram','Safar','Rabi I','Rabi II','Jumada I','Jumada II',"Rajab","Sha'ban",'Ramadan','Shawwal',"Dhul Qa'dah","Dhul Hijjah"];
   return`${Math.floor(rem%29.5)+1} ${months[Math.min(Math.floor(rem/29.5),11)]} ${year} AH`;
 }
-function getPrayerTimes(){return{Fajr:'04:52',Sunrise:'06:12',Dhuhr:'12:15',Asr:'15:33',Maghrib:'18:35',Isha:'20:05'};}
+function getPrayerTimes(dateObj){
+  const lat=26.4206,lng=50.0888,tz=3;
+  const d=dateObj||new Date();
+  const Y=d.getFullYear(),M=d.getMonth()+1,D=d.getDate();
+  const JD=Math.floor(365.25*(Y+4716))+Math.floor(30.6001*(M+1))+D-1524.5+
+    (M<=2?0.75+2-Math.floor((Y-1)/4)+Math.floor((Y-1)/100)-Math.floor((Y-1)/400):
+    0.75+2-Math.floor(Y/4)+Math.floor(Y/100)-Math.floor(Y/400));
+  const T=(JD-2451545)/36525;
+  const L0=(280.46646+36000.76983*T)%360;
+  const M0=(357.52911+35999.05029*T)*Math.PI/180;
+  const C=(1.914602-0.004817*T)*Math.sin(M0)+0.019993*Math.sin(2*M0);
+  const sun=(L0+C)*Math.PI/180;
+  const e=(23.439291-0.013004*T)*Math.PI/180;
+  const dec=Math.asin(Math.sin(e)*Math.sin(sun));
+  const RA=Math.atan2(Math.cos(e)*Math.sin(sun),Math.cos(sun))*180/Math.PI;
+  const EqT=(L0-0.0057183-RA)*4;
+  const noon=12-(lng/15)-(EqT/60)+tz;
+  const ha=a=>{const r=a*Math.PI/180;return Math.acos((Math.sin(r)-Math.sin(lat*Math.PI/180)*Math.sin(dec))/(Math.cos(lat*Math.PI/180)*Math.cos(dec)))*180/Math.PI/15;};
+  const hm=h=>{const hh=Math.floor(h),mm=Math.round((h-hh)*60);return(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;};
+  const asrAlt=Math.atan(1/(1+Math.tan(Math.abs(lat*Math.PI/180-dec))))*180/Math.PI;
+  return{Fajr:hm(noon-ha(-18)),Sunrise:hm(noon-ha(-0.833)),Dhuhr:hm(noon+1/60),Asr:hm(noon+ha(asrAlt)),Maghrib:hm(noon+ha(-0.833)),Isha:hm(noon+ha(-0.833)+1.5)};
+}
 function getNextPrayer(){const now=new Date();const cur=now.getHours()*60+now.getMinutes();for(const[n,t]of Object.entries(getPrayerTimes())){if(n==='Sunrise')continue;const[h,m]=t.split(':').map(Number);if(h*60+m>cur)return n;}return'Fajr';}
 
 /* ── THEME ── */
@@ -2351,20 +2377,15 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&aiRefreshT
 ══════════════════════════════════════════ */
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_pwaPrompt=e;});
 // Service worker
+/* ── SERVICE WORKER REGISTRATION ── */
 if('serviceWorker' in navigator){
-  const sw=`self.addEventListener('install',e=>self.skipWaiting());
-self.addEventListener('activate',e=>self.clients.claim());
-self.addEventListener('fetch',e=>{
-  if(e.request.mode==='navigate'){
-    e.respondWith(fetch(e.request).catch(()=>new Response(
-      '<html><body style="font-family:sans-serif;background:#0b0d12;color:#e4e8f0;display:flex;height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:12px;margin:0"><div style="font-size:40px">📊</div><b style="font-size:18px">MyTracker</b><span style="color:#8892aa">You are offline</span><span style="font-size:12px;color:#4a5268">Pull down to refresh when back online</span></body></html>',
-      {headers:{"Content-Type":"text/html"}}
-    )));
-  }
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW failed:', err));
+  });
 });`;
-  const blob=new Blob([sw],{type:'application/javascript'});
-  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
-}
+
 
 /* ══════════════════════════════════════════
    ENTRY DETAIL / EDIT / DELETE
