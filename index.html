@@ -614,9 +614,10 @@ textarea.inp{resize:vertical;min-height:80px}
   position:fixed;bottom:0;left:0;right:0;z-index:400;
   background:var(--bg2);
   border-top:1px solid var(--border);
-  padding:4px 0;
-  padding-bottom:max(4px,env(safe-area-inset-bottom));
-  justify-content:space-around;align-items:stretch;
+  padding:4px 0 8px;
+  padding-bottom:max(8px,env(safe-area-inset-bottom));
+  justify-content:space-around;align-items:center;
+  min-height:56px;
 }
 .mnb{
   flex:1;display:flex;flex-direction:column;
@@ -666,20 +667,21 @@ textarea.inp{resize:vertical;min-height:80px}
 
 /* ══ MOBILE BREAKPOINT ══ */
 @media (max-width:768px){
-  #mob-nav{display:flex}
-  .mob-btn{display:flex}
+  #mob-nav{display:flex!important}
+  .mob-btn{display:flex!important}
   .layout>.sidebar{display:none!important}
 
   /* Window scroll model — no flex scroll container */
-  html{height:auto!important;overflow:auto!important;overflow-x:hidden}
-  body{height:auto!important;overflow:auto!important;overflow-x:hidden}
+  html{height:auto!important;overflow-x:hidden;overflow-y:auto}
+  body{height:auto!important;overflow-x:hidden;overflow-y:auto}
+  body.panel-open{overflow:hidden!important}
   #app{height:auto!important;display:block!important}
   .layout{height:auto!important;display:block!important;overflow:visible!important}
   .main{height:auto!important;overflow:visible!important;display:block!important;min-height:100vh}
 
   /* Pages flow naturally */
   .page{display:none!important}
-  .page.active{display:block!important}
+  .page.active{display:block!important;min-height:calc(100vh - 60px)}
 
   /* Fixed topbar — stays visible while window scrolls */
   .topbar{
@@ -701,10 +703,10 @@ textarea.inp{resize:vertical;min-height:80px}
   .content{padding:14px!important}
 
   /* Bottom padding for bottom nav */
-  .main{padding-bottom:calc(64px + max(0px,env(safe-area-inset-bottom)))}
+  .main{padding-bottom:80px}
 
   /* Grids */
-  .g2{grid-template-columns:1fr 1fr!important}
+  .g2{grid-template-columns:1fr!important}
   .g3,.g4,.g5{grid-template-columns:1fr 1fr!important;gap:10px!important}
   .two-col,.three-col{grid-template-columns:1fr!important}
   .doc-grid{grid-template-columns:repeat(2,1fr)!important}
@@ -3062,23 +3064,18 @@ function openPanel(){
   const overlay = document.getElementById('mob-overlay');
   const panel = document.getElementById('mob-panel');
   if(!overlay || !panel) return;
-  overlay.classList.add('open');
-  overlay.style.display = 'block';
-  panel.classList.add('open');
-  panel.style.transform = 'translateX(0)';
-  panel.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  // Use both class and direct style — belt and suspenders for iOS Safari
+  overlay.style.cssText = 'display:block!important';
+  panel.style.cssText = 'display:flex!important;transform:translateX(0)!important';
+  document.body.classList.add('panel-open');
 }
 function closePanel(){
   const overlay = document.getElementById('mob-overlay');
   const panel = document.getElementById('mob-panel');
   if(!overlay || !panel) return;
-  overlay.classList.remove('open');
-  overlay.style.display = '';
-  panel.classList.remove('open');
-  panel.style.transform = '';
-  panel.style.display = '';
-  document.body.style.overflow = '';
+  overlay.style.cssText = '';
+  panel.style.cssText = '';
+  document.body.classList.remove('panel-open');
 }
 function mobGo(id, idx){
   showPage(id);
