@@ -335,7 +335,9 @@ textarea.field-inp { resize:vertical; min-height:80px }
 // ── SUPABASE ──
 const SURL = 'https://qqxhfaleayormppicadp.supabase.co';
 const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxeGhmYWxlYXlvcm1wcGljYWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MjczMTksImV4cCI6MjA5NDAwMzMxOX0.vWEQbIbFoX9hYDuYv4pGyzfZRvPnFqiOK4mPyY5kga0';
-const sb = supabase.createClient(SURL, SKEY);
+const sb = supabase.createClient(SURL, SKEY, {
+  auth: { persistSession:true, autoRefreshToken:true, storage:window.localStorage }
+});
 
 // ── STATE ──
 let CU = null;

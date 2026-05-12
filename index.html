@@ -489,8 +489,9 @@ select.inp{appearance:none}
       <div class="sb-item" onclick="showPage('study-log')"><i class="ti ti-pencil"></i>Log Session</div>
     </div>
     <div class="sb-group">
-      <div class="sb-group-label">People</div>
+      <div class="sb-group-label">People & Money</div>
       <div class="sb-item" onclick="window.location.href='contacts.html'"><i class="ti ti-users"></i>Contacts</div>
+      <div class="sb-item" onclick="window.location.href='money.html'"><i class="ti ti-scale"></i>Money Tracker</div>
     </div>
     <div class="sb-group">
       <div class="sb-group-label">Personal</div>
@@ -1150,7 +1151,14 @@ select.inp{appearance:none}
 <script>
 const SURL='https://qqxhfaleayormppicadp.supabase.co';
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxeGhmYWxlYXlvcm1wcGljYWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MjczMTksImV4cCI6MjA5NDAwMzMxOX0.vWEQbIbFoX9hYDuYv4pGyzfZRvPnFqiOK4mPyY5kga0';
-const sb=supabase.createClient(SURL,SKEY);
+const sb=supabase.createClient(SURL,SKEY,{
+  auth:{
+    persistSession:true,
+    autoRefreshToken:true,
+    detectSessionInUrl:true,
+    storage:window.localStorage
+  }
+});
 let CU=null;
 let D={goals:[],habits:[],habitLogs:[],routine:[],routineLogs:[],savingsEntries:[],journalEntries:[],transactions:[],budgets:[],subscriptions:[],documents:[],studySubjects:[],studySessions:[],studyTargets:[],cvData:null,trades:[]};
 let txFilter='all',docFilter='all',currentDocId=null;
@@ -1167,11 +1175,12 @@ async function init(){
     document.getElementById('auth-screen').style.display='flex';
   }, 8000);
   try{
+    // Try to restore session
     const{data:{session}}=await sb.auth.getSession();
     clearTimeout(loadingTimeout);
     document.getElementById('loading').style.display='none';
-  const theme=localStorage.getItem('mt-theme')||'dark';
-  if(theme==='light')applyTheme('light');
+    const theme=localStorage.getItem('mt-theme')||'dark';
+    if(theme==='light')applyTheme('light');
   ['rpt-month-fin','rpt-month-study','rpt-month-combined'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=new Date().toISOString().slice(0,7);});
   document.getElementById('sl-date').value=today();
   document.getElementById('tr-date').value=today();
@@ -2145,8 +2154,9 @@ function exportCVPDF(){
       <div class="sb-item" onclick="mobGo('stocks');closePanel()"><i class="ti ti-trending-up"></i>SAHM AI Advisor</div>
     </div>
     <div class="sb-group">
-      <div class="sb-group-label">People</div>
+      <div class="sb-group-label">People & Money</div>
       <div class="sb-item" onclick="window.location.href='contacts.html'"><i class="ti ti-users"></i>Contacts</div>
+      <div class="sb-item" onclick="window.location.href='money.html'"><i class="ti ti-scale"></i>Money Tracker</div>
     </div>
     <div class="sb-group">
       <div class="sb-group-label">Productivity</div>
