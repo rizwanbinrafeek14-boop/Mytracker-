@@ -317,11 +317,23 @@ select.inp{appearance:none}
   /* Hide desktop sidebar */
   .layout > .sidebar { display: none !important; }
 
-  /* Layout flows naturally — no overflow trapping */
+  /* Layout flows naturally */
   html, body { height: auto !important; overflow-y: auto !important; overflow-x: hidden; }
   #app { height: auto !important; min-height: 100vh; overflow: visible !important; }
   .layout { height: auto !important; overflow: visible !important; }
   .main { height: auto !important; overflow: visible !important; padding-bottom: 74px; }
+
+  /* Fix topbar: sticky breaks when parent overflow:visible — use fixed instead */
+  .topbar {
+    position: fixed !important;
+    top: 0; left: 0; right: 0;
+    z-index: 150 !important;
+    padding: 10px 14px !important;
+  }
+  /* Push content down to clear the fixed topbar (~56px) */
+  .content { padding-top: 70px !important; }
+  /* Pages need padding too since topbar is fixed */
+  .page.active > .content { padding-top: 70px !important; }
 
   /* Grids */
   .g2 { grid-template-columns: 1fr 1fr !important; }
