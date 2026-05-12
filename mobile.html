@@ -625,7 +625,7 @@ textarea.form-inp{resize:none;min-height:80px}
       <label class="auth-label">Password</label>
       <input class="auth-inp" type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password">
     </div>
-    <button class="auth-btn" id="auth-submit" onclick="doLogin()">Sign in to MyTracker</button>
+    <button type="button" class="auth-btn" id="auth-submit" onclick="doLogin()">Sign in to MyTracker</button>
   </div>
 </div>
 
@@ -637,8 +637,8 @@ textarea.form-inp{resize:none;min-height:80px}
     <div class="header-logo"><i class="ti ti-chart-dots-3"></i></div>
     <div class="header-title" id="header-title">Home</div>
     <div class="header-actions">
-      <button class="header-btn" onclick="openSearch()" title="Search"><i class="ti ti-search"></i></button>
-      <button class="header-btn" onclick="toggleTheme()" id="theme-btn" title="Theme"><i class="ti ti-moon"></i></button>
+      <button type="button" class="header-btn" onclick="openSearch()" title="Search"><i class="ti ti-search"></i></button>
+      <button type="button" class="header-btn" onclick="toggleTheme()" id="theme-btn" title="Theme"><i class="ti ti-moon"></i></button>
     </div>
   </div>
 
@@ -904,12 +904,12 @@ textarea.form-inp{resize:none;min-height:80px}
           <div class="settings-row">
             <div class="settings-row-icon" style="background:var(--adim)"><i class="ti ti-number" style="color:var(--accent)"></i></div>
             <div class="settings-row-text"><div class="settings-row-title">Arabic-Indic Numerals</div><div class="settings-row-sub">١٢٣ instead of 123</div></div>
-            <button class="settings-toggle" id="arabic-toggle" onclick="toggleArabic()"></button>
+            <button type="button" class="settings-toggle" id="arabic-toggle" onclick="toggleArabic()"></button>
           </div>
           <div class="settings-row">
             <div class="settings-row-icon" style="background:var(--gdim)"><i class="ti ti-animation" style="color:var(--green)"></i></div>
             <div class="settings-row-text"><div class="settings-row-title">Animations</div><div class="settings-row-sub">Count-up, transitions</div></div>
-            <button class="settings-toggle on" id="anim-toggle" onclick="toggleAnimations()"></button>
+            <button type="button" class="settings-toggle on" id="anim-toggle" onclick="toggleAnimations()"></button>
           </div>
         </div>
       </div>
@@ -957,27 +957,27 @@ textarea.form-inp{resize:none;min-height:80px}
 
   <!-- TAB BAR -->
   <div class="tab-bar">
-    <button class="tab-item active" id="tb-home" onclick="goTab('home',this)">
+    <button type="button" class="tab-item active" id="tb-home" onclick="goTab('home',this)">
       <div class="tab-pip"></div>
       <div class="tab-icon"><i class="ti ti-home"></i></div>
       <span>Home</span>
     </button>
-    <button class="tab-item" id="tb-money" onclick="goTab('money',this)">
+    <button type="button" class="tab-item" id="tb-money" onclick="goTab('money',this)">
       <div class="tab-pip"></div>
       <div class="tab-icon"><i class="ti ti-wallet"></i></div>
       <span>Money</span>
     </button>
-    <button class="tab-item" id="tb-growth" onclick="goTab('growth',this)">
+    <button type="button" class="tab-item" id="tb-growth" onclick="goTab('growth',this)">
       <div class="tab-pip"></div>
       <div class="tab-icon"><i class="ti ti-trending-up"></i></div>
       <span>Growth</span>
     </button>
-    <button class="tab-item" id="tb-life" onclick="goTab('life',this)">
+    <button type="button" class="tab-item" id="tb-life" onclick="goTab('life',this)">
       <div class="tab-pip"></div>
       <div class="tab-icon"><i class="ti ti-heart"></i></div>
       <span>Life</span>
     </button>
-    <button class="tab-item" id="tb-more" onclick="goTab('more',this)">
+    <button type="button" class="tab-item" id="tb-more" onclick="goTab('more',this)">
       <div class="tab-pip"></div>
       <div class="tab-icon"><i class="ti ti-dots"></i></div>
       <span>More</span>
@@ -987,7 +987,7 @@ textarea.form-inp{resize:none;min-height:80px}
 </div><!-- /app -->
 
 <!-- FAB -->
-<button id="fab" onclick="openFab()"><i class="ti ti-plus"></i></button>
+<button type="button" id="fab" onclick="openFab()"><i class="ti ti-plus"></i></button>
 
 <!-- FAB MENU -->
 <div id="fab-menu">
@@ -1019,7 +1019,7 @@ textarea.form-inp{resize:none;min-height:80px}
   <div class="sheet-handle"></div>
   <div class="sheet-header">
     <div class="sheet-title" id="sheet-title">Add</div>
-    <button class="sheet-close" onclick="closeSheet()"><i class="ti ti-x"></i></button>
+    <button type="button" class="sheet-close" onclick="closeSheet()"><i class="ti ti-x"></i></button>
   </div>
   <div class="sheet-body" id="sheet-body"></div>
 </div>
@@ -1027,7 +1027,7 @@ textarea.form-inp{resize:none;min-height:80px}
 <!-- SUB-PAGE OVERLAY (for full sub-pages like cashflow, habits, etc) -->
 <div id="subpage-overlay" style="position:fixed;inset:0;z-index:700;background:var(--bg);display:none;flex-direction:column;padding-top:var(--safe-top)">
   <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0">
-    <button onclick="closeSubPage()" style="width:34px;height:34px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text2);cursor:pointer;border:none;background:var(--bg3)">
+    <button type="button" onclick="closeSubPage()" style="width:34px;height:34px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text2);cursor:pointer;border:none;background:var(--bg3)">
       <i class="ti ti-arrow-left"></i>
     </button>
     <div style="font-size:17px;font-weight:700;flex:1" id="subpage-title">—</div>
@@ -1283,7 +1283,7 @@ function buildSubPage(id){
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div style="font-size:16px;font-weight:700">Transactions</div>
-        <button class="btn btn-primary btn-sm" onclick="openSheet('transaction')">+ Add</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openSheet('transaction')">+ Add</button>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
         ${recent.length?recent.map(t=>`
@@ -1307,7 +1307,7 @@ function buildSubPage(id){
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div style="font-size:16px;font-weight:700">Recent Entries</div>
-        <button class="btn btn-primary btn-sm" onclick="openSheet('saving')">+ Log</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openSheet('saving')">+ Log</button>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
         ${D.savingsEntries.slice(0,15).map(e=>`
@@ -1339,7 +1339,7 @@ function buildSubPage(id){
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div style="font-size:16px;font-weight:700">Holdings</div>
-        <button class="btn btn-primary btn-sm" onclick="openSheet('trade')">+ Trade</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openSheet('trade')">+ Trade</button>
       </div>
       ${positions.length?positions.map(g=>{
         const val=g.totalShares*g.currentPrice;
@@ -1408,7 +1408,7 @@ function buildSubPage(id){
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div style="font-size:16px;font-weight:700">Log Session</div>
-        <button class="btn btn-primary btn-sm" onclick="openSheet('study')">+ Log</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openSheet('study')">+ Log</button>
       </div>
       <div style="font-size:16px;font-weight:700;margin-bottom:10px">Recent Sessions</div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
@@ -1428,7 +1428,7 @@ function buildSubPage(id){
     return`<div style="padding:16px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div style="font-size:16px;font-weight:700">Journal</div>
-        <button class="btn btn-primary btn-sm" onclick="openJournalSheet()">+ Write</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openJournalSheet()">+ Write</button>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
         ${D.journalEntries.slice(0,10).map(e=>{
@@ -1496,13 +1496,13 @@ function buildSubPage(id){
         <div style="font-size:64px;font-weight:700;font-family:var(--mono);letter-spacing:-2px;color:var(--accent)" id="pomo-display">25:00</div>
         <div style="font-size:13px;color:var(--text3);margin-top:4px;margin-bottom:20px" id="pomo-mode">Focus Session</div>
         <div style="display:flex;gap:10px;justify-content:center">
-          <button class="btn btn-primary" style="min-width:100px" id="pomo-btn" onclick="togglePomoMobile()">Start</button>
-          <button class="btn btn-secondary" onclick="resetPomoMobile()">Reset</button>
+          <button type="button" class="btn btn-primary" style="min-width:100px" id="pomo-btn" onclick="togglePomoMobile()">Start</button>
+          <button type="button" class="btn btn-secondary" onclick="resetPomoMobile()">Reset</button>
         </div>
         <div style="display:flex;gap:8px;justify-content:center;margin-top:16px">
-          <button class="btn btn-secondary btn-sm" onclick="setPomoModeMobile('focus')">Focus 25</button>
-          <button class="btn btn-secondary btn-sm" onclick="setPomoModeMobile('short')">Short 5</button>
-          <button class="btn btn-secondary btn-sm" onclick="setPomoModeMobile('long')">Long 15</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="setPomoModeMobile('focus')">Focus 25</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="setPomoModeMobile('short')">Short 5</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="setPomoModeMobile('long')">Long 15</button>
         </div>
       </div>
     </div>`;
@@ -1550,13 +1550,157 @@ function buildSubPage(id){
         </div>`;}).join(''):'<div style="padding:24px;text-align:center;color:var(--text3)">No spending data this month</div>'}
     </div>`;
   }
-  // Default fallback for cv, reports, savings-calc
-  return`<div style="padding:24px;text-align:center">
-    <div style="font-size:48px;margin-bottom:16px">💻</div>
-    <div style="font-size:16px;font-weight:600;margin-bottom:8px">Best on Desktop</div>
-    <div style="font-size:13px;color:var(--text3);margin-bottom:20px">This section has advanced features available on the full desktop dashboard.</div>
-    <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;border-radius:14px;text-decoration:none;font-weight:600;font-size:14px">Open Full Dashboard</a>
-  </div>`;
+
+  if(id==='savings-calc'){
+    return`<div style="padding:16px">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:16px">Savings Calculator</div>
+        <div class="form-field"><label class="form-label">Monthly Income (SAR)</label><input type="number" class="form-inp" id="sc-income" placeholder="0" oninput="calcSavingsMobile()"></div>
+        <div class="form-field"><label class="form-label">Monthly Expenses (SAR)</label><input type="number" class="form-inp" id="sc-expenses" placeholder="0" oninput="calcSavingsMobile()"></div>
+        <div class="form-field"><label class="form-label">Savings Goal (SAR)</label><input type="number" class="form-inp" id="sc-goal" placeholder="0" oninput="calcSavingsMobile()"></div>
+      </div>
+      <div id="sc-results" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px" id="sc-grid"></div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:16px" id="sc-projections"></div>
+      </div>
+    </div>`;
+  }
+  if(id==='stocks'){
+    const cachedSignals = window._aiSignals||[];
+    return`<div style="padding:16px">
+      <div style="background:linear-gradient(135deg,rgba(79,142,247,.12),rgba(139,92,246,.08));border:1px solid rgba(79,142,247,.2);border-radius:20px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;flex-shrink:0"><i class="ti ti-robot"></i></div>
+        <div><div style="font-size:15px;font-weight:700">SAHM AI Advisor</div><div style="font-size:12px;color:var(--text2)">Real-time TASI signals</div></div>
+        <button type="button" class="btn btn-primary btn-sm" style="margin-left:auto" onclick="loadAISignalsMobile()">Refresh</button>
+      </div>
+      <div id="ai-signals-container">
+        <div style="text-align:center;padding:32px;color:var(--text3)">
+          <div style="font-size:32px;margin-bottom:12px">📊</div>
+          <div style="font-size:14px;margin-bottom:16px">Tap Refresh to get live TASI signals</div>
+          <button type="button" class="btn btn-primary" onclick="loadAISignalsMobile()"><i class="ti ti-refresh"></i>Get Signals</button>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--text2)">Ask AI about SAHM</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:14px">
+          <textarea type="text" class="form-inp" id="ai-question" rows="2" placeholder="e.g. Is Aramco a good buy this week?"></textarea>
+          <button type="button" class="btn btn-primary btn-full" style="margin-top:10px" onclick="askAIMobile()"><i class="ti ti-send"></i>Ask AI</button>
+          <div id="ai-answer" style="margin-top:12px;font-size:13px;color:var(--text2);line-height:1.6;display:none"></div>
+        </div>
+      </div>
+    </div>`;
+  }
+  if(id==='study'||id==='study-log'){
+    const moMins=D.studySessions.filter(s=>s.session_date?.startsWith(mo)).reduce((t,s)=>t+parseInt(s.duration_min||0),0);
+    const weekSessions=D.studySessions.slice(0,7);
+    return`<div style="padding:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="stat-box"><div class="stat-box-label">This Month</div><div class="stat-box-val color-purple">${Math.round(moMins/60*10)/10}h</div></div>
+        <div class="stat-box"><div class="stat-box-label">Subjects</div><div class="stat-box-val color-accent">${D.studySubjects.length}</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700">Subjects</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px">
+        ${D.studySubjects.length?D.studySubjects.map(s=>{
+          const sMins=D.studySessions.filter(ss=>ss.subject_id===s.id).reduce((t,ss)=>t+parseInt(ss.duration_min||0),0);
+          return`<div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <div style="font-size:14px;font-weight:600">${esc(s.name)}</div>
+              <div style="font-size:12px;color:var(--text2)">${Math.round(sMins/60*10)/10}h total</div>
+            </div>
+            <div style="height:4px;background:var(--bg4);border-radius:99px"><div style="height:100%;width:${Math.min(100,s.progress||0)}%;background:var(--purple);border-radius:99px"></div></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px">${s.progress||0}% complete · ${s.type||'Self-learning'}</div>
+          </div>`;}).join(''):'<div style="padding:20px;text-align:center;color:var(--text3)">No subjects yet</div>'}
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700">Log Session</div>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openSheet('study')">+ Log</button>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+        ${D.studySessions.slice(0,10).map(s=>{
+          const sub=D.studySubjects.find(x=>x.id===s.subject_id);
+          return`<div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)">
+            <div style="width:36px;height:36px;border-radius:10px;background:var(--pdim);display:flex;align-items:center;justify-content:center"><i class="ti ti-books" style="color:var(--purple)"></i></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:500">${esc(sub?.name||'Unknown')}</div><div style="font-size:12px;color:var(--text2)">${s.session_date||''} · ${s.notes?esc(s.notes.slice(0,30))+'...':''}</div></div>
+            <div style="font-size:14px;font-weight:700;color:var(--purple)">${Math.round(parseInt(s.duration_min||0)/60*10)/10}h</div>
+          </div>`;}).join('')||'<div style="padding:24px;text-align:center;color:var(--text3)">No sessions yet</div>'}
+      </div>
+    </div>`;
+  }
+  if(id==='cv'){
+    const cv=D.cvData;
+    return`<div style="padding:16px">
+      ${cv?`
+        <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border2);border-radius:20px;padding:20px;margin-bottom:14px;text-align:center">
+          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto 12px">${(cv.full_name||'U')[0].toUpperCase()}</div>
+          <div style="font-size:18px;font-weight:700">${esc(cv.full_name||'')}</div>
+          <div style="font-size:14px;color:var(--accent);margin-top:2px">${esc(cv.title||'')}</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:4px">${esc(cv.email||'')} · ${esc(cv.phone||'')}</div>
+          <div style="font-size:13px;color:var(--text3);margin-top:2px">${esc(cv.location||'')}</div>
+        </div>
+        ${cv.summary?`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px"><div style="font-size:12px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Summary</div><div style="font-size:14px;color:var(--text2);line-height:1.6">${esc(cv.summary)}</div></div>`:''}
+        ${(cv.experience?.length)?`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px"><div style="font-size:12px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">Experience</div>${cv.experience.map(e=>`<div style="margin-bottom:12px"><div style="font-size:14px;font-weight:600">${esc(e.role||e.title||'')}</div><div style="font-size:13px;color:var(--accent)">${esc(e.company||'')}</div><div style="font-size:12px;color:var(--text3)">${esc(e.period||e.duration||'')}</div></div>`).join('')}</div>`:''}
+        ${(cv.skills?.length)?`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px"><div style="font-size:12px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Skills</div><div style="display:flex;flex-wrap:wrap;gap:7px">${(Array.isArray(cv.skills)?cv.skills:[cv.skills]).map(s=>`<span style="padding:5px 12px;background:var(--adim);color:var(--accent);border-radius:99px;font-size:12px;font-weight:500">${esc(typeof s==='object'?s.name||s:s)}</span>`).join('')}</div></div>`:''}
+      `:`<div style="text-align:center;padding:32px">
+        <div style="font-size:48px;margin-bottom:14px">📄</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px">No CV yet</div>
+        <div style="font-size:13px;color:var(--text3)">Build your CV on the desktop version and it will appear here.</div>
+      </div>`}
+    </div>`;
+  }
+  if(id==='reports'){
+    const mo2=today().slice(0,7);
+    const income=D.transactions.filter(t=>t.type==='inflow'&&t.tx_date?.startsWith(mo2)).reduce((s,t)=>s+parseFloat(t.amount||0),0);
+    const spend=D.transactions.filter(t=>t.type==='outflow'&&t.tx_date?.startsWith(mo2)).reduce((s,t)=>s+parseFloat(t.amount||0),0);
+    const saved=D.savingsEntries.reduce((s,e)=>s+parseFloat(e.amount||0),0);
+    const investVal=D.trades.reduce((s,t)=>s+parseFloat(t.shares||0)*parseFloat(t.current_price||t.buy_price||0),0);
+    const investCost=D.trades.reduce((s,t)=>s+parseFloat(t.shares||0)*parseFloat(t.buy_price||0),0);
+    const habDone=D.habitLogs.filter(l=>l.date?.startsWith(mo2)).length;
+    const studyH=Math.round(D.studySessions.filter(s=>s.session_date?.startsWith(mo2)).reduce((t,s)=>t+parseInt(s.duration_min||0),0)/60*10)/10;
+    return`<div style="padding:16px">
+      <div style="background:linear-gradient(135deg,rgba(79,142,247,.1),rgba(139,92,246,.08));border:1px solid rgba(79,142,247,.15);border-radius:20px;padding:16px;margin-bottom:14px">
+        <div style="font-size:12px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Monthly Summary</div>
+        <div style="font-size:17px;font-weight:700">${mo2}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="stat-box"><div class="stat-box-label">Income</div><div class="stat-box-val color-green" style="font-size:16px">${fmt(income)}</div></div>
+        <div class="stat-box"><div class="stat-box-label">Spent</div><div class="stat-box-val color-red" style="font-size:16px">${fmt(spend)}</div></div>
+        <div class="stat-box"><div class="stat-box-label">Net Saved</div><div class="stat-box-val color-accent" style="font-size:16px">${fmt(income-spend)}</div></div>
+        <div class="stat-box"><div class="stat-box-label">Total Savings</div><div class="stat-box-val" style="font-size:16px">${fmt(saved)}</div></div>
+        <div class="stat-box"><div class="stat-box-label">Portfolio</div><div class="stat-box-val color-purple" style="font-size:16px">${fmt(investVal)}</div></div>
+        <div class="stat-box"><div class="stat-box-label">P&L</div><div class="stat-box-val ${investVal-investCost>=0?'color-green':'color-red'}" style="font-size:16px">${investVal-investCost>=0?'+':''}${fmt(investVal-investCost)}</div></div>
+        <div class="stat-box"><div class="stat-box-label">Habits Done</div><div class="stat-box-val color-accent" style="font-size:16px">${habDone}</div></div>
+        <div class="stat-box"><div class="stat-box-label">Study Hours</div><div class="stat-box-val color-purple" style="font-size:16px">${studyH}h</div></div>
+      </div>
+      <button type="button" class="btn btn-primary btn-full" onclick="exportMobileReport()"><i class="ti ti-download"></i>Export as Text</button>
+    </div>`;
+  }
+  if(id==='contacts'){
+    return`<div style="padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:16px;font-weight:700">Contacts (${D.contacts.length})</div>
+        <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='contacts.html'"><i class="ti ti-external-link"></i>Full View</button>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px">
+        ${D.contacts.slice(0,20).map(ct=>{
+          const col=['#4f8ef7','#2dd4a0','#8b5cf6','#f59e0b','#ef4444','#f97316'][ct.name.charCodeAt(0)%6];
+          const due=ct.follow_up_date&&new Date(ct.follow_up_date)<=new Date();
+          return`<div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)" onclick="window.location.href='contacts.html'">
+            <div style="width:38px;height:38px;border-radius:50%;background:${col}20;color:${col};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0">${ct.name[0].toUpperCase()}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(ct.name)}</div>
+              <div style="font-size:12px;color:var(--text2)">${esc(ct.role||'')}${ct.company?' @ '+esc(ct.company):''}</div>
+            </div>
+            ${due?'<span style="font-size:10px;background:var(--ydim);color:var(--gold);padding:2px 7px;border-radius:99px;font-weight:700">Due</span>':''}
+            ${ct.phone?`<a href="https://wa.me/${ct.phone.replace(/[^0-9]/g,'')}" onclick="event.stopPropagation()" style="width:32px;height:32px;border-radius:9px;background:var(--gdim);color:var(--green);display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0"><i class="ti ti-brand-whatsapp"></i></a>`:''}
+          </div>`;}).join('')||'<div style="padding:24px;text-align:center;color:var(--text3)">No contacts yet</div>'}
+      </div>
+      <a href="contacts.html" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--adim);color:var(--accent);border:1px solid rgba(79,142,247,.2);border-radius:14px;text-decoration:none;font-weight:600;font-size:14px"><i class="ti ti-users"></i>Open Full Contacts Page</a>
+    </div>`;
+  }
+  // Default fallback - nothing should reach here
+  return`<div style="padding:24px;text-align:center;color:var(--text3)">Coming soon</div>`;
 }
 
 function calcZakatMobile(){
@@ -1615,11 +1759,11 @@ function openJournalSheet(){
   document.getElementById('sheet-title').textContent='New Journal Entry';
   document.getElementById('sheet-body').innerHTML=`
     <div style="display:flex;gap:8px;margin-bottom:16px" id="mood-row">
-      ${['😔','😕','😐','🙂','😊'].map((e,i)=>`<button onclick="selectMoodMobile(${i+1},this)" style="flex:1;padding:10px;background:var(--bg3);border:1.5px solid var(--border2);border-radius:12px;font-size:22px;cursor:pointer" id="mood-${i+1}">${e}</button>`).join('')}
+      ${['😔','😕','😐','🙂','😊'].map((e,i)=>`<button type="button" onclick="selectMoodMobile(${i+1},this)" style="flex:1;padding:10px;background:var(--bg3);border:1.5px solid var(--border2);border-radius:12px;font-size:22px;cursor:pointer" id="mood-${i+1}">${e}</button>`).join('')}
     </div>
     <input type="hidden" id="j-mood" value="3">
     <div class="form-field"><label class="form-label">How are you feeling?</label><textarea class="form-inp" id="j-content" rows="5" placeholder="Write freely..."></textarea></div>
-    <button class="btn btn-primary btn-full" onclick="saveJournalMobile()">Save Entry</button>`;
+    <button type="button" class="btn btn-primary btn-full" onclick="saveJournalMobile()">Save Entry</button>`;
   document.getElementById('sheet-backdrop').classList.add('open');
   document.getElementById('sheet').classList.add('open');
 }
@@ -1951,7 +2095,7 @@ function openFab(){
   opts.innerHTML=fabItems.map((item,i)=>`
     <div class="fab-option" style="animation-delay:${i*0.04}s" onclick="${item.action};closeFab()">
       <div class="fab-option-label">${item.label}</div>
-      <button class="fab-option-btn" style="background:${item.bg};color:${item.color}"><i class="ti ${item.icon}"></i></button>
+      <button type="button" class="fab-option-btn" style="background:${item.bg};color:${item.color}"><i class="ti ${item.icon}"></i></button>
     </div>`).join('');
   menu.classList.add('open');
 }
@@ -1966,8 +2110,8 @@ function openSheet(type){
     body=`
       <div class="form-field"><label class="form-label">Type</label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <button class="btn btn-success" id="tx-inflow-btn" onclick="selectTxType('inflow')" style="padding:12px">↑ Income</button>
-          <button class="btn btn-secondary" id="tx-outflow-btn" onclick="selectTxType('outflow')" style="padding:12px">↓ Expense</button>
+          <button type="button" class="btn btn-success" id="tx-inflow-btn" onclick="selectTxType('inflow')" style="padding:12px">↑ Income</button>
+          <button type="button" class="btn btn-secondary" id="tx-outflow-btn" onclick="selectTxType('outflow')" style="padding:12px">↓ Expense</button>
         </div>
         <input type="hidden" id="sh-tx-type" value="inflow">
       </div>
@@ -1981,7 +2125,7 @@ function openSheet(type){
           <option>Education</option><option>Family & Gifts</option><option>Subscriptions</option><option>Other</option>
         </select>
       </div>
-      <button class="btn btn-primary btn-full" onclick="saveSheetTransaction()">Save Transaction</button>`;
+      <button type="button" class="btn btn-primary btn-full" onclick="saveSheetTransaction()">Save Transaction</button>`;
   } else if(type==='saving'){
     body=`
       <div class="form-field"><label class="form-label">Amount (SAR)</label><input class="form-inp" id="sh-sv-amount" type="number" placeholder="0.00"></div>
@@ -1994,7 +2138,7 @@ function openSheet(type){
         </select>
       </div>
       <div class="form-field"><label class="form-label">Note</label><input class="form-inp" id="sh-sv-note" placeholder="Optional note"></div>
-      <button class="btn btn-primary btn-full" onclick="saveSheetSaving()">Save Entry</button>`;
+      <button type="button" class="btn btn-primary btn-full" onclick="saveSheetSaving()">Save Entry</button>`;
   } else if(type==='trade'){
     body=`
       <div class="form-field"><label class="form-label">Ticker</label><input class="form-inp" id="sh-tr-ticker" placeholder="e.g. 2222.SR" style="font-family:var(--mono);font-weight:700"></div>
@@ -2003,7 +2147,7 @@ function openSheet(type){
         <div class="form-field"><label class="form-label">Buy Price</label><input class="form-inp" id="sh-tr-price" type="number" placeholder="28.50" step="0.01"></div>
       </div>
       <div class="form-field"><label class="form-label">Notes</label><input class="form-inp" id="sh-tr-notes" placeholder="Strategy..."></div>
-      <button class="btn btn-primary btn-full" onclick="saveSheetTrade()">Log Trade</button>`;
+      <button type="button" class="btn btn-primary btn-full" onclick="saveSheetTrade()">Log Trade</button>`;
   } else if(type==='study'){
     const subjects=D.studySubjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
     body=`
@@ -2015,7 +2159,7 @@ function openSheet(type){
         <div class="form-field"><label class="form-label">Date</label><input class="form-inp" id="sh-st-date" type="date" value="${today()}"></div>
       </div>
       <div class="form-field"><label class="form-label">Notes</label><textarea class="form-inp" id="sh-st-notes" placeholder="What did you cover?"></textarea></div>
-      <button class="btn btn-primary btn-full" onclick="saveSheetStudy()">Log Session</button>`;
+      <button type="button" class="btn btn-primary btn-full" onclick="saveSheetStudy()">Log Session</button>`;
   }
   document.getElementById('sheet-body').innerHTML=body;
   document.getElementById('sheet-backdrop').classList.add('open');
@@ -2121,6 +2265,103 @@ document.addEventListener('DOMContentLoaded',function(){
     },{passive:false});
   }
 });
+
+function calcSavingsMobile(){
+  const inc=parseFloat(document.getElementById('sc-income')?.value||0);
+  const exp=parseFloat(document.getElementById('sc-expenses')?.value||0);
+  const goal=parseFloat(document.getElementById('sc-goal')?.value||0);
+  if(!inc&&!exp)return;
+  const monthly=inc-exp;
+  const rate=inc>0?((monthly/inc)*100).toFixed(1):0;
+  const res=document.getElementById('sc-results');
+  if(res)res.style.display='block';
+  const grid=document.getElementById('sc-grid');
+  if(grid)grid.innerHTML=`
+    <div class="stat-box"><div class="stat-box-label">Monthly Net</div><div class="stat-box-val ${monthly>=0?'color-green':'color-red'}" style="font-size:18px">${fmt(monthly)}</div></div>
+    <div class="stat-box"><div class="stat-box-label">Savings Rate</div><div class="stat-box-val color-accent" style="font-size:18px">${rate}%</div></div>
+  `;
+  const proj=document.getElementById('sc-projections');
+  if(proj)proj.innerHTML=`
+    <div style="font-size:12px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">Projections</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div style="text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">1 Year</div><div style="font-size:15px;font-weight:700;color:var(--accent)">${fmt(monthly*12)}</div></div>
+      <div style="text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">5 Years</div><div style="font-size:15px;font-weight:700;color:var(--green)">${fmt(monthly*60)}</div></div>
+      <div style="text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">10 Years</div><div style="font-size:15px;font-weight:700;color:var(--purple)">${fmt(monthly*120)}</div></div>
+    </div>
+    ${goal>0&&monthly>0?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;color:var(--text2)">🎯 Reach SAR ${goal.toLocaleString()} goal in <strong style="color:var(--accent)">${Math.ceil(goal/monthly)} months</strong></div>`:''}
+  `;
+}
+
+async function loadAISignalsMobile(){
+  const cont=document.getElementById('ai-signals-container');
+  if(!cont)return;
+  cont.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2)"><div class="splash-spin" style="margin:0 auto 12px"></div>Analyzing TASI market...</div>';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:800,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        system:'You are a SAHM stock advisor. Give BUY/WATCH/WAIT signals for 5 major Saudi stocks. Be concise. Format each as: TICKER | SIGNAL | one sentence reason.',
+        messages:[{role:'user',content:'Give me current signals for Aramco 2222.SR, Al Rajhi 1120.SR, STC 7010.SR, SABIC 2010.SR, NCB 1180.SR based on latest news.'}]
+      })
+    });
+    const d=await resp.json();
+    const text=d.content?.map(b=>b.type==='text'?b.text:'').join('')||'';
+    if(!text){cont.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3)">Could not fetch signals. Try again.</div>';return;}
+    const lines=text.split('\n').filter(l=>l.trim()&&l.includes('|'));
+    const signals={BUY:'var(--green)',WATCH:'var(--gold)',WAIT:'var(--red)'};
+    cont.innerHTML=lines.map(line=>{
+      const parts=line.split('|').map(p=>p.trim());
+      if(parts.length<2)return'';
+      const ticker=parts[0],signal=parts[1]?.toUpperCase(),reason=parts[2]||'';
+      const sigKey=Object.keys(signals).find(s=>signal?.includes(s))||'WATCH';
+      const col=signals[sigKey];
+      return`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;border-left:3px solid ${col}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent)">${esc(ticker)}</div>
+          <div style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:${col}20;color:${col}">${sigKey}</div>
+        </div>
+        <div style="font-size:13px;color:var(--text2)">${esc(reason)}</div>
+      </div>`;}).join('')||'<div style="padding:20px;text-align:center;color:var(--text3)">No signals available</div>';
+    window._aiSignals=lines;
+  }catch(e){cont.innerHTML='<div style="padding:20px;text-align:center;color:var(--red)">Error fetching signals. Check connection.</div>';}
+}
+
+async function askAIMobile(){
+  const q=document.getElementById('ai-question')?.value?.trim();
+  const ansEl=document.getElementById('ai-answer');
+  if(!q||!ansEl)return;
+  ansEl.style.display='block';
+  ansEl.innerHTML='<div style="display:flex;align-items:center;gap:8px"><div class="splash-spin"></div>Thinking...</div>';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:300,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        system:'You are a SAHM (Saudi stock market) advisor. Answer concisely in 2-3 sentences. Focus on Saudi stocks, TASI, oil prices.',
+        messages:[{role:'user',content:q}]
+      })
+    });
+    const d=await resp.json();
+    const text=d.content?.map(b=>b.type==='text'?b.text:'').join('')||'No answer available.';
+    ansEl.textContent=text;
+  }catch(e){ansEl.textContent='Error. Check your connection.';}
+}
+
+function exportMobileReport(){
+  const mo=today().slice(0,7);
+  const income=D.transactions.filter(t=>t.type==='inflow'&&t.tx_date?.startsWith(mo)).reduce((s,t)=>s+parseFloat(t.amount||0),0);
+  const spend=D.transactions.filter(t=>t.type==='outflow'&&t.tx_date?.startsWith(mo)).reduce((s,t)=>s+parseFloat(t.amount||0),0);
+  const saved=D.savingsEntries.reduce((s,e)=>s+parseFloat(e.amount||0),0);
+  const text=`MyTracker Monthly Report — ${mo}\n${'='.repeat(40)}\nIncome: SAR ${income.toFixed(2)}\nSpent: SAR ${spend.toFixed(2)}\nNet: SAR ${(income-spend).toFixed(2)}\nTotal Saved: SAR ${saved.toFixed(2)}\nHabits Logged: ${D.habitLogs.filter(l=>l.date?.startsWith(mo)).length}\nStudy Sessions: ${D.studySessions.filter(s=>s.session_date?.startsWith(mo)).length}\n\nGenerated by MyTracker`;
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(text);
+  a.download='mytracker-report-'+mo+'.txt';
+  a.click();
+  toast('Report exported!');
+}
 
 init();
 </script>
