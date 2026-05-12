@@ -687,10 +687,14 @@ textarea.inp{resize:vertical;min-height:80px}
   /* Fixed topbar — stays visible while window scrolls */
   .topbar{
     position:fixed!important;
-    top:max(0px,env(safe-area-inset-top));
+    top:0;
+    top:constant(safe-area-inset-top);
+    top:env(safe-area-inset-top);
     left:0;right:0;z-index:200!important;
     padding:10px 14px!important;
     background:var(--bg)!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
   }
 
   /* Content pushed below fixed topbar (56px) + safe area */
@@ -3104,6 +3108,17 @@ function mobGo(id, idx){
     if(dx < -55 && dy < 60 && document.getElementById('mob-panel').classList.contains('open')) closePanel();
   }, {passive:true});
 })();
+// Direct touch handler for hamburger buttons — bypasses any iOS click delay
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.mob-btn').forEach(function(btn){
+    btn.addEventListener('touchend', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      openPanel();
+    }, {passive:false});
+  });
+});
+
 init();
 </script>
 </body>
