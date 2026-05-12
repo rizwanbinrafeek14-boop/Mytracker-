@@ -1161,15 +1161,28 @@ let selectedFile=null;
 
 /* ── INIT ── */
 async function init(){
-  const{data:{session}}=await sb.auth.getSession();
-  document.getElementById('loading').style.display='none';
+  // Timeout fallback — if Supabase hangs, show auth screen after 8s
+  const loadingTimeout = setTimeout(()=>{
+    document.getElementById('loading').style.display='none';
+    document.getElementById('auth-screen').style.display='flex';
+  }, 8000);
+  try{
+    const{data:{session}}=await sb.auth.getSession();
+    clearTimeout(loadingTimeout);
+    document.getElementById('loading').style.display='none';
   const theme=localStorage.getItem('mt-theme')||'dark';
   if(theme==='light')applyTheme('light');
   ['rpt-month-fin','rpt-month-study','rpt-month-combined'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=new Date().toISOString().slice(0,7);});
   document.getElementById('sl-date').value=today();
   document.getElementById('tr-date').value=today();
   if(session){CU=session.user;await bootApp();}
-  else{document.getElementById('auth-screen').style.display='flex';}
+    else{document.getElementById('auth-screen').style.display='flex';}
+  }catch(err){
+    clearTimeout(loadingTimeout);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('auth-screen').style.display='flex';
+    console.error('Init error:',err);
+  }
 }
 
 async function doLogin(){
@@ -2381,10 +2394,10 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_pwaPrompt=
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.log('SW failed:', err));
+      .then(()=>console.log('SW registered'))
+      .catch(()=>console.log('SW unavailable'));
   });
-});`;
+}
 
 
 /* ══════════════════════════════════════════
