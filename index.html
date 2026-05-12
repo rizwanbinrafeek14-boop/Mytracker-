@@ -3059,12 +3059,26 @@ function renderContactsPage(){
 
 /* ── MOBILE PANEL ── */
 function openPanel(){
-  document.getElementById('mob-overlay').classList.add('open');
-  document.getElementById('mob-panel').classList.add('open');
+  const overlay = document.getElementById('mob-overlay');
+  const panel = document.getElementById('mob-panel');
+  if(!overlay || !panel) return;
+  overlay.classList.add('open');
+  overlay.style.display = 'block';
+  panel.classList.add('open');
+  panel.style.transform = 'translateX(0)';
+  panel.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
 function closePanel(){
-  document.getElementById('mob-overlay').classList.remove('open');
-  document.getElementById('mob-panel').classList.remove('open');
+  const overlay = document.getElementById('mob-overlay');
+  const panel = document.getElementById('mob-panel');
+  if(!overlay || !panel) return;
+  overlay.classList.remove('open');
+  overlay.style.display = '';
+  panel.classList.remove('open');
+  panel.style.transform = '';
+  panel.style.display = '';
+  document.body.style.overflow = '';
 }
 function mobGo(id, idx){
   showPage(id);

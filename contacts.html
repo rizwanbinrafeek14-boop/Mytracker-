@@ -10,22 +10,26 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
-  --bg:#0b0d12; --bg2:#111318; --bg3:#181b24; --bg4:#1e222e;
-  --border:#252a38; --border2:#2e3548;
-  --text:#e4e8f0; --text2:#8892aa; --text3:#4a5268;
-  --accent:#4f8ef7; --adim:rgba(79,142,247,.13);
-  --green:#2dd4a0; --gdim:rgba(45,212,160,.13);
-  --gold:#f5c542; --ydim:rgba(245,197,66,.13);
-  --red:#f06464; --rdim:rgba(240,100,100,.13);
-  --purple:#a78bfa; --teal:#38bdf8;
-  --font:'DM Sans',system-ui,sans-serif;
-  --mono:'DM Mono',monospace;
-  --r8:8px; --r12:12px; --r16:16px; --r20:20px;
+  --bg:#080a0f; --bg2:#0e1117; --bg3:#141720; --bg4:#1a1e2a; --bg5:#1f2435;
+  --border:rgba(255,255,255,.06); --border2:rgba(255,255,255,.10); --border3:rgba(255,255,255,.15);
+  --text:#f0f2f8; --text2:#8b95b0; --text3:#4a5270;
+  --accent:#4f8ef7; --accent2:#3d7ef6; --adim:rgba(79,142,247,.12); --aglow:rgba(79,142,247,.25);
+  --green:#10b981; --gdim:rgba(16,185,129,.12);
+  --gold:#f59e0b; --ydim:rgba(245,158,11,.12);
+  --red:#ef4444; --rdim:rgba(239,68,68,.12);
+  --purple:#8b5cf6; --pdim:rgba(139,92,246,.12);
+  --teal:#06b6d4; --tdim:rgba(6,182,212,.12);
+  --font:'DM Sans',system-ui,-apple-system,sans-serif;
+  --r6:6px; --r8:8px; --r10:10px; --r12:12px; --r16:16px; --r20:20px; --r24:24px;
+  --shadow-md:0 4px 16px rgba(0,0,0,.5);
+  --shadow-lg:0 8px 40px rgba(0,0,0,.6);
 }
 body.light {
-  --bg:#f4f5f8; --bg2:#ffffff; --bg3:#f0f1f5; --bg4:#e8eaf0;
-  --border:#e2e4ec; --border2:#d0d4e0;
-  --text:#1a1d2e; --text2:#5a6180; --text3:#9aa0b8;
+  --bg:#f8f9fc; --bg2:#ffffff; --bg3:#f1f3f8; --bg4:#e8ebf4;
+  --border:rgba(0,0,0,.07); --border2:rgba(0,0,0,.11); --border3:rgba(0,0,0,.16);
+  --text:#0f1120; --text2:#4a5270; --text3:#8b95b0;
+  --shadow-md:0 4px 16px rgba(0,0,0,.1);
+  --shadow-lg:0 8px 40px rgba(0,0,0,.15);
 }
 * { box-sizing:border-box; margin:0; padding:0 }
 html,body { min-height:100%; background:var(--bg); color:var(--text); font-family:var(--font); font-size:14px }
@@ -349,18 +353,28 @@ const COLORS = ['#4f8ef7','#2dd4a0','#a78bfa','#f5c542','#f06464','#fb923c','#38
 
 // ── INIT ──
 async function init() {
-  const { data: { session } } = await sb.auth.getSession();
-  document.getElementById('loading').style.display = 'none';
-  // Apply saved theme
   if (localStorage.getItem('mt-theme') === 'light') applyLight();
-  if (session) {
-    CU = session.user;
-    document.getElementById('app').style.display = 'block';
-    await load();
-    render();
-  } else {
-    document.getElementById('auth-screen').style.display = 'flex';
-  }
+  let booted = false;
+  sb.auth.onAuthStateChange(function(event, session){
+    if(booted)return;
+    if(session&&session.user){
+      booted=true;CU=session.user;
+      document.getElementById('loading').style.display='none';
+      document.getElementById('app').style.display='block';
+      load().then(function(){render();}).catch(function(e){console.error(e);});
+    }else if(!session&&(event==='SIGNED_OUT'||event==='INITIAL_SESSION')){
+      booted=true;
+      document.getElementById('loading').style.display='none';
+      document.getElementById('auth-screen').style.display='flex';
+    }
+  });
+  setTimeout(() => {
+    if (!booted) {
+      booted = true;
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'flex';
+    }
+  }, 6000);
 }
 
 // ── AUTH ──
