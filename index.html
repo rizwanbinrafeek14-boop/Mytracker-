@@ -636,17 +636,18 @@ textarea.inp{resize:vertical;min-height:80px}
 }
 
 /* ── Slide-in drawer ── */
-#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500}
 #mob-overlay.open{display:block}
 #mob-panel{
-  position:fixed;top:0;left:0;bottom:0;width:272px;
+  position:fixed;top:0;left:-280px;bottom:0;width:272px;
   background:var(--bg2);border-right:1px solid var(--border);
   z-index:510;display:flex;flex-direction:column;
-  transform:translateX(-100%);
-  transition:transform .26s cubic-bezier(.4,0,.2,1);
-  will-change:transform;
+  transition:left .26s cubic-bezier(.4,0,.2,1);
+  -webkit-transition:left .26s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
-#mob-panel.open{transform:translateX(0)}
+#mob-panel.open{left:0}
 
 /* ── Hamburger ── */
 .mob-btn{
@@ -2472,7 +2473,11 @@ function exportCVPDF(){
     <div style="flex:1"><div style="font-size:14px;font-weight:600">MyTracker</div><div style="font-size:10px;color:var(--text3)">Private Dashboard</div></div>
     <button onclick="closePanel()" style="width:30px;height:30px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center"><i class="ti ti-x"></i></button>
   </div>
-  <div class="sb-nav" style="flex:1;overflow-y:auto;padding:8px">
+  <div class="sb-nav" style="flex:1;overflow-y:auto;padding:8px;-webkit-overflow-scrolling:touch">
+    <div class="sb-group">
+      <div class="sb-group-label">Overview</div>
+      <div class="sb-item" onclick="mobGo('dashboard');closePanel()"><i class="ti ti-home"></i>Dashboard</div>
+    </div>
     <div class="sb-group">
       <div class="sb-group-label">Finance</div>
       <div class="sb-item" onclick="mobGo('cashflow');closePanel()"><i class="ti ti-arrows-exchange"></i>Cash Flow</div>
@@ -3063,19 +3068,22 @@ function renderContactsPage(){
 function openPanel(){
   const overlay = document.getElementById('mob-overlay');
   const panel = document.getElementById('mob-panel');
-  if(!overlay || !panel) return;
-  // Use both class and direct style — belt and suspenders for iOS Safari
-  overlay.style.cssText = 'display:block!important';
-  panel.style.cssText = 'display:flex!important;transform:translateX(0)!important';
-  document.body.classList.add('panel-open');
+  if(!overlay || !panel){
+    console.log('panel elements missing');return;
+  }
+  overlay.style.display = 'block';
+  panel.style.left = '0';
+  document.body.style.overflowY = 'hidden';
+  document.documentElement.style.overflowY = 'hidden';
 }
 function closePanel(){
   const overlay = document.getElementById('mob-overlay');
   const panel = document.getElementById('mob-panel');
   if(!overlay || !panel) return;
-  overlay.style.cssText = '';
-  panel.style.cssText = '';
-  document.body.classList.remove('panel-open');
+  overlay.style.display = 'none';
+  panel.style.left = '-280px';
+  document.body.style.overflowY = '';
+  document.documentElement.style.overflowY = '';
 }
 function mobGo(id, idx){
   showPage(id);
