@@ -1535,10 +1535,11 @@ function init(){
 async function doLogin(){
   const email=document.getElementById('auth-email').value.trim();
   const pass=document.getElementById('auth-pass').value;
-  const btn=document.getElementById('login-btn');const err=document.getElementById('auth-err');
-  err.style.display='none';btn.textContent='Signing in...';btn.disabled=true;
+  const btn=document.getElementById('auth-submit-btn');const err=document.getElementById('auth-err');
+  if(err)err.style.display='none';
+  if(btn){btn.innerHTML='<i class="ti ti-loader"></i> Signing in...';btn.disabled=true;}
   const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-  btn.innerHTML='<i class="ti ti-arrow-right"></i>Sign in';btn.disabled=false;
+  if(btn){btn.innerHTML='<i class="ti ti-arrow-right"></i>Sign in to MyTracker';btn.disabled=false;}
   if(error){err.textContent=error.message==='Invalid login credentials'?'Incorrect email or password.':error.message;err.style.display='block';return;}
   CU=data.user;document.getElementById('auth-screen').style.display='none';await bootApp();
 }
