@@ -462,12 +462,12 @@ html,body{
 
 /* ── BOTTOM SHEET ── */
 .sheet-backdrop{
-  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:740;
   opacity:0;transition:opacity .25s;pointer-events:none;
 }
 .sheet-backdrop.open{opacity:1;pointer-events:all}
 .sheet{
-  position:fixed;left:0;right:0;bottom:0;z-index:610;
+  position:fixed;left:0;right:0;bottom:0;z-index:750;
   background:var(--bg2);
   border-radius:24px 24px 0 0;
   border-top:1px solid var(--border2);
@@ -652,6 +652,7 @@ textarea.form-inp{resize:none;min-height:80px}
         <div class="hero-label">Net Worth <i class="ti ti-pencil" style="font-size:11px;opacity:.5;margin-left:4px"></i></div>
         <div class="hero-value" id="hw-networth">SAR 0</div>
         <div class="hero-sub" id="hw-sub">Calculating your financial picture...</div>
+      <div id="hw-cash-balance" style="margin-top:8px;font-size:14px;color:rgba(255,255,255,.6)"></div>
         <div class="hero-badges" id="hw-badges"></div>
       </div>
 
@@ -685,7 +686,7 @@ textarea.form-inp{resize:none;min-height:80px}
       <!-- Quick action buttons -->
       <div class="quick-actions">
         <div class="qa-btn" onclick="openFab()"><i class="ti ti-plus" style="color:var(--accent)"></i><span>Add</span></div>
-        <div class="qa-btn" onclick="goTab('money')"><i class="ti ti-arrows-exchange" style="color:var(--green)"></i><span>Log Transaction</span></div>
+        <div class="qa-btn" onclick="openSheet('transaction')"><i class="ti ti-arrows-exchange" style="color:var(--green)"></i><span>Log Transaction</span></div>
         <div class="qa-btn" onclick="goTab('growth')"><i class="ti ti-books" style="color:var(--purple)"></i><span>Study</span></div>
         <div class="qa-btn" onclick="showSubPage('journal')"><i class="ti ti-notes" style="color:var(--gold)"></i><span>Journal</span></div>
       </div>
@@ -714,6 +715,19 @@ textarea.form-inp{resize:none;min-height:80px}
     <div class="page" id="tab-money">
       <div class="section-header">
         <div><div class="section-title">Money</div><div class="section-sub">Finance & Investments</div></div>
+      </div>
+
+      <!-- Quick add buttons -->
+      <div style="display:flex;gap:8px;padding:0 16px;margin-bottom:12px">
+        <button type="button" class="btn btn-success" style="flex:1;justify-content:center;font-size:13px" onclick="openSheet('transaction');setTimeout(()=>selectTxType('inflow'),50)">
+          <i class="ti ti-arrow-up-right"></i>Income
+        </button>
+        <button type="button" class="btn btn-danger" style="flex:1;justify-content:center;font-size:13px" onclick="openSheet('transaction');setTimeout(()=>selectTxType('outflow'),50)">
+          <i class="ti ti-arrow-down-left"></i>Expense
+        </button>
+        <button type="button" class="btn btn-secondary" style="flex:1;justify-content:center;font-size:13px" onclick="openSheet('saving')">
+          <i class="ti ti-piggy-bank"></i>Save
+        </button>
       </div>
 
       <!-- Financial snapshot -->
@@ -1042,6 +1056,22 @@ textarea.form-inp{resize:none;min-height:80px}
 </div>
 
 <!-- TOAST -->
+<!-- DOCUMENT VIEWER OVERLAY -->
+<div id="doc-viewer-overlay" style="position:fixed;inset:0;z-index:800;background:var(--bg);display:none;flex-direction:column;padding-top:var(--safe-top)">
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg2)">
+    <button type="button" onclick="closeDocViewer()" style="width:34px;height:34px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text2);cursor:pointer;border:none;background:var(--bg3)">
+      <i class="ti ti-arrow-left"></i>
+    </button>
+    <div style="font-size:15px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="doc-viewer-title">Document</div>
+    <a id="doc-viewer-download" href="#" download style="width:34px;height:34px;background:var(--adim);border:1px solid rgba(79,142,247,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--accent);text-decoration:none">
+      <i class="ti ti-download"></i>
+    </a>
+  </div>
+  <div style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:flex-start;justify-content:center;background:var(--bg3)" id="doc-viewer-content">
+    <div style="padding:24px;color:var(--text3);text-align:center">Loading...</div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1268,7 +1298,8 @@ function showSubPage(id){
     savings:'Savings & Charity',zakat:'Zakat Calculator',investments:'My Investments',
     stocks:'SAHM AI Advisor',goals:'Goals & Habits',routine:'Daily Routine',
     focus:'Focus Timer',study:'Study Tracker','study-log':'Log Session',
-    vault:'Document Vault',cv:'My CV',journal:'AI Journal',prayer:'Prayer Times',reports:'PDF Reports'
+    vault:'Document Vault',cv:'My CV',journal:'AI Journal',prayer:'Prayer Times',
+    reports:'PDF Reports',markets:'World Markets'
   };
   document.getElementById('subpage-title').textContent=titles[id]||id;
   document.getElementById('subpage-content').innerHTML=buildSubPage(id);
@@ -1298,8 +1329,8 @@ function buildSubPage(id){
         <div class="stat-box" style="padding:12px"><div class="stat-box-label" style="font-size:9px">NET</div><div style="font-size:14px;font-weight:700;color:${moIncome-moSpend>=0?'var(--accent)':'var(--red)'};margin-top:3px">${fmt(moIncome-moSpend)}</div></div>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:16px">
-        <button type="button" class="btn btn-success btn-sm" style="flex:1;justify-content:center" onclick="closeSubPage();setTimeout(()=>{openSheet('transaction');setTimeout(()=>selectTxType('inflow'),50)},100)"><i class="ti ti-arrow-up-right"></i>Income</button>
-        <button type="button" class="btn btn-danger btn-sm" style="flex:1;justify-content:center" onclick="closeSubPage();setTimeout(()=>{openSheet('transaction');setTimeout(()=>selectTxType('outflow'),50)},100)"><i class="ti ti-arrow-down-left"></i>Expense</button>
+        <button type="button" class="btn btn-success btn-sm" style="flex:1;justify-content:center" onclick="openSheet('transaction');setTimeout(()=>selectTxType('inflow'),50)"><i class="ti ti-arrow-up-right"></i>Income</button>
+        <button type="button" class="btn btn-danger btn-sm" style="flex:1;justify-content:center" onclick="openSheet('transaction');setTimeout(()=>selectTxType('outflow'),50)"><i class="ti ti-arrow-down-left"></i>Expense</button>
       </div>
       <div style="font-size:15px;font-weight:700;margin-bottom:10px">Transactions (${allTx.length})</div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
@@ -1933,6 +1964,13 @@ function renderNetWorth(){
   const subEl=document.getElementById('hw-sub');
   if(subEl)subEl.textContent=`${fmt(totalSaved)} saved · ${fmt(totalInvested)} invested`;
 
+  // Show cash balance (income - expenses)
+  const allIncome=D.transactions.filter(t=>t.type==='inflow').reduce((s,t)=>s+parseFloat(t.amount||0),0);
+  const allSpend=D.transactions.filter(t=>t.type==='outflow').reduce((s,t)=>s+parseFloat(t.amount||0),0);
+  const cashBal=allIncome-allSpend;
+  const cashEl=document.getElementById('hw-cash-balance');
+  if(cashEl)cashEl.textContent='Cash balance: '+fmt(cashBal);
+
   const badgesEl=document.getElementById('hw-badges');
   if(badgesEl){
     const rate=thisMonthIncome>0?((thisMonthIncome-thisMonthSpend)/thisMonthIncome*100).toFixed(0):0;
@@ -2292,6 +2330,12 @@ async function saveSheetTransaction(){
   const{data,error}=await sb.from('transactions').insert({user_id:CU.id,type,amount,label,category:category||null,tx_date:today()}).select().single();
   if(error){toast('Error: '+error.message,'error');return}
   D.transactions.unshift(data);closeSheet();renderMoney();renderHome();
+  // Refresh cashflow subpage if open
+  const spContent=document.getElementById('subpage-content');
+  const spOverlay=document.getElementById('subpage-overlay');
+  if(spContent&&spOverlay&&spOverlay.style.display!=='none'){
+    spContent.innerHTML=buildSubPage('cashflow');
+  }
   toast('Transaction saved!');
 }
 
