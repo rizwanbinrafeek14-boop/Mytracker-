@@ -850,6 +850,11 @@ textarea.form-inp{resize:none;min-height:80px}
           <div class="list-main"><div class="list-title">Prayer Times</div><div class="list-sub">Dammam · Umm al-Qura</div></div>
           <i class="ti ti-chevron-right" style="color:var(--text3)"></i>
         </div>
+        <div class="list-row" onclick="showSubPage('markets')">
+          <div class="list-icon" style="background:var(--adim)"><i class="ti ti-chart-candle" style="color:var(--accent)"></i></div>
+          <div class="list-main"><div class="list-title">World Markets</div><div class="list-sub" id="mob-markets-sub">India · Global · Stock picks</div></div>
+          <span class="badge badge-green" style="font-size:9px;padding:2px 7px">LIVE</span>
+        </div>
       </div>
       <div class="spacer"></div>
     </div>
@@ -1383,43 +1388,73 @@ function buildSubPage(id){
   if(id==='goals'){
     const todayLogs=D.habitLogs.filter(l=>l.date===today()).map(l=>l.habit_id);
     return`<div style="padding:16px">
-      <div style="font-size:16px;font-weight:700;margin-bottom:12px">Goals (${D.goals.length})</div>
-      ${D.goals.length?D.goals.map(g=>`
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
-          <div style="font-size:14px;font-weight:600;margin-bottom:4px">${esc(g.title||g.name||'Goal')}</div>
-          <div style="font-size:12px;color:var(--text2)">${esc(g.description||'')}</div>
-        </div>`).join(''):'<div style="padding:20px;text-align:center;color:var(--text3)">No goals yet</div>'}
-      <div style="font-size:16px;font-weight:700;margin:16px 0 12px">Habits Today</div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
-        ${D.habits.map(h=>{
-          const done=todayLogs.includes(h.id);
-          return`<div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)" onclick="toggleHabit('${h.id}','${done}')">
-            <div style="font-size:22px">${h.icon||'⭐'}</div>
-            <div style="flex:1;font-size:14px;font-weight:500;${done?'text-decoration:line-through;opacity:.5':''}">${esc(h.name)}</div>
-            <div style="width:26px;height:26px;border-radius:99px;border:2px solid ${done?'var(--green)':'var(--border2)'};background:${done?'var(--green)':'transparent'};display:flex;align-items:center;justify-content:center">
-              ${done?'<i class="ti ti-check" style="font-size:12px;color:#fff"></i>':''}
+      <!-- Goals section -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700">Goals (${D.goals.length})</div>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openAddGoalSheet()"><i class="ti ti-plus"></i>Add Goal</button>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:16px">
+        ${D.goals.length?D.goals.map(g=>`
+          <div style="padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">${esc(g.title||g.name||'Goal')}</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:2px">${esc(g.description||g.target_desc||'')}</div>
             </div>
-          </div>`;}).join('')||'<div style="padding:20px;text-align:center;color:var(--text3)">No habits yet</div>'}
+            <button type="button" onclick="deleteMobileGoal('${g.id}')" style="width:28px;height:28px;border-radius:8px;background:var(--rdim);border:none;color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ti ti-trash" style="font-size:12px"></i></button>
+          </div>`).join(''):'<div style="padding:20px;text-align:center;color:var(--text3)">No goals yet. Add your first goal!</div>'}
+      </div>
+      <!-- Habits section -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700">Habits (${D.habits.length})</div>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openAddHabitSheet()"><i class="ti ti-plus"></i>Add Habit</button>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+        ${D.habits.length?D.habits.map(h=>{
+          const done=todayLogs.includes(h.id);
+          return`<div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)">
+            <div style="font-size:22px;cursor:pointer" onclick="toggleHabit('${h.id}','${done}')">${h.icon||'⭐'}</div>
+            <div style="flex:1;cursor:pointer" onclick="toggleHabit('${h.id}','${done}')">
+              <div style="font-size:14px;font-weight:500;${done?'text-decoration:line-through;opacity:.5':''}">${esc(h.name)}</div>
+              <div style="font-size:11px;color:var(--text3)">${h.frequency||'Daily'}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div onclick="toggleHabit('${h.id}','${done}')" style="width:26px;height:26px;border-radius:99px;border:2px solid ${done?'var(--green)':'var(--border2)'};background:${done?'var(--green)':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer">
+                ${done?'<i class="ti ti-check" style="font-size:12px;color:#fff"></i>':''}
+              </div>
+              <button type="button" onclick="deleteMobileHabit('${h.id}')" style="width:26px;height:26px;border-radius:8px;background:var(--rdim);border:none;color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ti ti-trash" style="font-size:11px"></i></button>
+            </div>
+          </div>`;}).join(''):'<div style="padding:20px;text-align:center;color:var(--text3)">No habits yet. Add your first habit!</div>'}
       </div>
     </div>`;
   }
+
   if(id==='routine'){
     const todayDone=D.routineLogs.filter(l=>l.date===today()).map(l=>l.block_id);
     return`<div style="padding:16px">
-      <div style="font-size:16px;font-weight:700;margin-bottom:12px">Today's Routine</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:16px;font-weight:700">Daily Routine (${D.routine.length})</div>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openAddRoutineSheet()"><i class="ti ti-plus"></i>Add Block</button>
+      </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
-        ${D.routine.map(b=>{
+        ${D.routine.length?D.routine.map(b=>{
           const done=todayDone.includes(b.id);
-          return`<div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)" onclick="toggleRoutine('${b.id}','${done}')">
-            <div style="font-size:20px">${b.icon||'📌'}</div>
-            <div style="flex:1"><div style="font-size:14px;font-weight:500;${done?'text-decoration:line-through;opacity:.5':''}">${esc(b.title)}</div><div style="font-size:12px;color:var(--text2)">${b.start_time||''}${b.duration_min?' · '+b.duration_min+'min':''}</div></div>
-            <div style="width:26px;height:26px;border-radius:99px;border:2px solid ${done?'var(--green)':'var(--border2)'};background:${done?'var(--green)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              ${done?'<i class="ti ti-check" style="font-size:12px;color:#fff"></i>':''}
+          return`<div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)">
+            <div style="font-size:20px;cursor:pointer" onclick="toggleRoutine('${b.id}','${done}')">${b.icon||'📌'}</div>
+            <div style="flex:1;cursor:pointer" onclick="toggleRoutine('${b.id}','${done}')">
+              <div style="font-size:14px;font-weight:500;${done?'text-decoration:line-through;opacity:.5':''}">${esc(b.title)}</div>
+              <div style="font-size:11px;color:var(--text2)">${b.start_time||''}${b.duration_min?' · '+b.duration_min+' min':''}</div>
             </div>
-          </div>`;}).join('')||'<div style="padding:24px;text-align:center;color:var(--text3)">No routine blocks yet</div>'}
+            <div style="display:flex;align-items:center;gap:6px">
+              <div onclick="toggleRoutine('${b.id}','${done}')" style="width:26px;height:26px;border-radius:99px;border:2px solid ${done?'var(--green)':'var(--border2)'};background:${done?'var(--green)':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer">
+                ${done?'<i class="ti ti-check" style="font-size:12px;color:#fff"></i>':''}
+              </div>
+              <button type="button" onclick="deleteMobileRoutineBlock('${b.id}')" style="width:26px;height:26px;border-radius:8px;background:var(--rdim);border:none;color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ti ti-trash" style="font-size:11px"></i></button>
+            </div>
+          </div>`;}).join(''):'<div style="padding:24px;text-align:center;color:var(--text3)">No routine blocks yet. Add your first block!</div>'}
       </div>
     </div>`;
   }
+
   if(id==='study'||id==='study-log'){
     const moMins=D.studySessions.filter(s=>s.session_date?.startsWith(mo)).reduce((t,s)=>t+parseInt(s.duration_min||0),0);
     return`<div style="padding:16px">
@@ -1537,19 +1572,24 @@ function buildSubPage(id){
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
         ${D.documents.length?D.documents.map(d=>{
           const expiring=d.expiry_date&&(new Date(d.expiry_date)-new Date())/86400000<=30;
+          const expired=d.expiry_date&&new Date(d.expiry_date)<new Date();
           return`<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)">
-            <div style="width:34px;height:34px;border-radius:10px;background:var(--adim);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <div style="width:36px;height:36px;border-radius:10px;background:var(--adim);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer" onclick="viewDocMobile('${d.id}','${(d.file_path||'').replace(/'/g,'&apos;')}','${d.file_type||''}','${(d.name||'').replace(/'/g,'&apos;')}')">
               <i class="ti ti-${d.file_type==='pdf'?'file-type-pdf':'photo'}" style="color:var(--accent)"></i>
             </div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div>
-              <div style="font-size:11px;color:${expiring?'var(--red)':'var(--text2)'}">${d.category||''}${d.expiry_date?' · Exp '+d.expiry_date:''}${expiring?' ⚠️ Expiring':''}</div>
+            <div style="flex:1;min-width:0;cursor:pointer" onclick="viewDocMobile('${d.id}','${(d.file_path||'').replace(/'/g,'&apos;')}','${d.file_type||''}','${(d.name||'').replace(/'/g,'&apos;')}')">
+              <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div>
+              <div style="font-size:11px;color:${expired?'var(--red)':expiring?'var(--gold)':'var(--text2)'}">${d.category||''}${d.expiry_date?' · Exp '+d.expiry_date:''}${expired?' — EXPIRED':expiring?' — Expiring soon':''}</div>
             </div>
-            <button type="button" onclick="deleteDocMobile('${d.id}','${d.file_path||''}')" style="width:26px;height:26px;border-radius:7px;background:var(--rdim);border:none;color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><i class="ti ti-trash" style="font-size:12px"></i></button>
-          </div>`;}).join(''):'<div style="padding:32px;text-align:center"><div style="font-size:40px;margin-bottom:12px">📄</div><div style="font-size:14px;font-weight:600;margin-bottom:6px">No documents yet</div><div style="font-size:13px;color:var(--text3);margin-bottom:16px">Store your IDs, certificates and more</div><button type="button" class="btn btn-primary" onclick="openVaultUpload()"><i class="ti ti-upload"></i>Upload First Document</button></div>'}
+            <div style="display:flex;gap:6px;flex-shrink:0">
+              <button type="button" onclick="viewDocMobile('${d.id}','${(d.file_path||'').replace(/'/g,'&apos;')}','${d.file_type||''}','${(d.name||'').replace(/'/g,'&apos;')}')" style="width:28px;height:28px;border-radius:8px;background:var(--adim);border:none;color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ti ti-eye" style="font-size:13px"></i></button>
+              <button type="button" onclick="deleteDocMobile('${d.id}','${d.file_path||''}')" style="width:28px;height:28px;border-radius:8px;background:var(--rdim);border:none;color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ti ti-trash" style="font-size:13px"></i></button>
+            </div>
+          </div>`;}).join(''):'<div style="padding:32px;text-align:center"><div style="font-size:40px;margin-bottom:12px">📄</div><div style="font-size:14px;font-weight:600;margin-bottom:6px">No documents yet</div><div style="font-size:13px;color:var(--text3);margin-bottom:16px">Store IDs, certificates and important files</div><button type="button" class="btn btn-primary" onclick="openVaultUpload()"><i class="ti ti-upload"></i>Upload First Document</button></div>'}
       </div>
     </div>`;
   }
+
   if(id==='spending'){
     const cats={};
     D.transactions.filter(t=>t.type==='outflow'&&t.tx_date?.startsWith(mo)).forEach(t=>{
@@ -1723,6 +1763,45 @@ function buildSubPage(id){
           </div>`;}).join('')||'<div style="padding:24px;text-align:center;color:var(--text3)">No contacts yet</div>'}
       </div>
       <button type="button" onclick="window.open('contacts.html','_blank')" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--adim);color:var(--accent);border:1px solid rgba(79,142,247,.2);border-radius:14px;font-weight:600;font-size:14px;width:100%;font-family:var(--font);cursor:pointer"><i class="ti ti-external-link"></i>Open Full Contacts Page</button>
+    </div>`;
+  }
+  if(id==='markets'){
+    const status = getMarketStatus();
+    return`<div style="padding:16px">
+      <!-- Status bar -->
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;font-size:11px;font-weight:700;background:${status.nse?'var(--gdim)':'var(--rdim)'};color:${status.nse?'var(--green)':'var(--red)'}">
+          <span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>
+          NSE ${status.nse?'OPEN':'CLOSED'}
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;font-size:11px;font-weight:700;background:${status.us?'var(--gdim)':'var(--rdim)'};color:${status.us?'var(--green)':'var(--red)'}">
+          NYSE ${status.us?'OPEN':'CLOSED'}
+        </span>
+        <button type="button" class="btn btn-primary btn-sm" onclick="loadMobileMarkets()"><i class="ti ti-refresh"></i>Refresh</button>
+      </div>
+      <!-- Learn accordion -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px">
+        <div style="padding:14px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">📚</span><span style="font-size:14px;font-weight:600">Learn: Indian Markets</span></div>
+          <i class="ti ti-chevron-down" style="color:var(--text3)"></i>
+        </div>
+        <div style="display:none;padding:0 16px 16px;font-size:13px;color:var(--text2);line-height:1.7">
+          <p><strong style="color:var(--text)">NSE/BSE</strong> — India's two main exchanges. NSE has Nifty 50, BSE has Sensex.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">Market Hours</strong> — Mon–Fri, 9:15am–3:30pm IST.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">How to Invest</strong> — Open a Demat account on Zerodha, Groww, or Upstox. Link your bank. Start with index funds (Nifty BeES) for beginners.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">P/E Ratio</strong> — Price ÷ Earnings per share. Lower = cheaper. Nifty 50 avg ~22–25x.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">Global Investing</strong> — Via LRS up to $250,000/year. Use INDMoney or Vested for US stocks.</p>
+        </div>
+      </div>
+      <!-- Live data container -->
+      <div id="mob-markets-data">
+        <div style="text-align:center;padding:32px;color:var(--text3)">
+          <div style="font-size:36px;margin-bottom:12px">📊</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text2)">Live Market Data</div>
+          <div style="font-size:13px;margin-bottom:16px">Tap Refresh to load current data</div>
+          <button type="button" class="btn btn-primary" onclick="loadMobileMarkets()"><i class="ti ti-refresh"></i>Load Markets</button>
+        </div>
+      </div>
     </div>`;
   }
   // Default fallback - nothing should reach here
@@ -2583,6 +2662,432 @@ async function deleteDocMobile(id,path){
     content.innerHTML=buildSubPage('vault');
   }
   renderLife();toast('Deleted');
+}
+
+/* ── DOCUMENT VIEWER (MOBILE) ── */
+async function viewDocMobile(id, path, fileType, name){
+  const overlay = document.getElementById('doc-viewer-overlay');
+  const titleEl = document.getElementById('doc-viewer-title');
+  const contentEl = document.getElementById('doc-viewer-content');
+  const dlEl = document.getElementById('doc-viewer-download');
+  if(!overlay) return;
+  
+  // Show overlay with loading state
+  titleEl.textContent = name || 'Document';
+  contentEl.innerHTML = '<div style="padding:48px;text-align:center"><div class="splash-spin" style="margin:0 auto 16px"></div><div style="color:var(--text2);font-size:14px">Loading document...</div></div>';
+  overlay.style.display = 'flex';
+  
+  try {
+    // Get signed URL from Supabase Storage
+    const { data, error } = await sb.storage.from('documents').createSignedUrl(path, 3600);
+    if(error || !data?.signedUrl) {
+      contentEl.innerHTML = '<div style="padding:48px;text-align:center"><div style="font-size:48px;margin-bottom:16px">⚠️</div><div style="color:var(--red);font-size:14px">Could not load: ' + (error?.message||'Unknown error') + '</div></div>';
+      return;
+    }
+    const url = data.signedUrl;
+    // Set download link
+    dlEl.href = url;
+    dlEl.download = name || 'document';
+    // Render based on type
+    if(fileType === 'pdf') {
+      contentEl.innerHTML = '<iframe src="' + url + '" style="width:100%;height:100%;min-height:calc(100vh - 120px);border:none" title="' + (name||'Document') + '"></iframe>';
+    } else {
+      contentEl.innerHTML = '<img src="' + url + '" style="max-width:100%;max-height:calc(100vh - 120px);object-fit:contain;display:block;margin:0 auto;border-radius:12px" alt="' + (name||'Document') + '" onerror="this.src=\'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\'/>\';">';
+    }
+  } catch(e) {
+    contentEl.innerHTML = '<div style="padding:48px;text-align:center"><div style="color:var(--red)">Error: ' + e.message + '</div></div>';
+  }
+}
+
+function closeDocViewer(){
+  const overlay = document.getElementById('doc-viewer-overlay');
+  if(overlay) overlay.style.display = 'none';
+  // Stop iframe loading
+  const iframe = overlay?.querySelector('iframe');
+  if(iframe) iframe.src = '';
+}
+
+/* ══════════════════════════════════════════════════
+   WORLD MARKETS & INDIA STOCKS MODULE
+   Auto-refreshes during market hours (IST)
+══════════════════════════════════════════════════ */
+
+let _marketsData = null;
+let _marketsTimer = null;
+let _marketsLoading = false;
+
+// NSE hours: 9:15am - 3:30pm IST (Mon-Fri)
+// IST = UTC+5:30
+function getISTNow(){
+  const now = new Date();
+  return new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+}
+function isNSEOpen(){
+  const ist = getISTNow();
+  const day = ist.getDay(); // 0=Sun,6=Sat
+  if(day === 0 || day === 6) return false;
+  const h = ist.getHours(), m = ist.getMinutes();
+  const mins = h * 60 + m;
+  return mins >= 9*60+15 && mins <= 15*60+30;
+}
+function isUSMarketOpen(){
+  // NYSE: 9:30am - 4pm ET (UTC-5 or UTC-4 DST)
+  const now = new Date();
+  const etOffset = -5; // simplified
+  const et = new Date(now.getTime() + etOffset * 3600000);
+  const day = et.getDay();
+  if(day === 0 || day === 6) return false;
+  const mins = et.getHours()*60 + et.getMinutes();
+  return mins >= 9*60+30 && mins <= 16*60;
+}
+function getMarketStatus(){
+  const nse = isNSEOpen();
+  const us = isUSMarketOpen();
+  const ist = getISTNow();
+  const timeStr = ist.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'});
+  return { nse, us, timeStr };
+}
+
+async function loadMarketsData(forceRefresh){
+  if(_marketsLoading && !forceRefresh) return;
+  _marketsLoading = true;
+  
+  const status = getMarketStatus();
+  const statusEl = document.getElementById('markets-status');
+  const lastUpdateEl = document.getElementById('markets-last-update');
+  
+  if(statusEl){
+    statusEl.innerHTML = `
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;background:${status.nse?'var(--gdim)':'var(--rdim)'};color:${status.nse?'var(--green)':'var(--red)'}">
+        <span style="width:6px;height:6px;border-radius:50%;background:currentColor;${status.nse?'animation:pulse 1.5s ease infinite':''}"></span>
+        NSE ${status.nse?'OPEN':'CLOSED'}
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;background:${status.us?'var(--gdim)':'var(--rdim)'};color:${status.us?'var(--green)':'var(--red)'}">
+        <span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>
+        NYSE ${status.us?'OPEN':'CLOSED'}
+      </span>
+      <span style="font-size:11px;color:var(--text3)">IST ${status.timeStr}</span>
+    `;
+  }
+
+  const container = document.getElementById('markets-ai-content');
+  if(container && !_marketsData){
+    container.innerHTML = '<div style="text-align:center;padding:32px"><div class="splash-spin" style="margin:0 auto 12px"></div><div style="color:var(--text2);font-size:13px">Loading market data...</div></div>';
+  }
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:2000,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        system:`You are a financial market analyst. Return ONLY valid JSON, no markdown, no explanation.
+Provide current market data for Indian and global markets.
+Format: {"nifty":{"value":"24500","change":"+0.5%","trend":"up"},"sensex":{"value":"80000","change":"+0.4%","trend":"up"},"banknifty":{"value":"52000","change":"+0.3%","trend":"up"},"dow":{"value":"43000","change":"-0.2%","trend":"down"},"nasdaq":{"value":"19500","change":"+0.1%","trend":"up"},"sp500":{"value":"5900","change":"+0.2%","trend":"up"},"gold_mcx":{"value":"72000","change":"+0.3%","trend":"up"},"crude_oil":{"value":"6500","change":"-0.5%","trend":"down"},"usd_inr":{"value":"83.5","change":"-0.1%","trend":"down"},"india_top_picks_long":[{"ticker":"RELIANCE","name":"Reliance Industries","cmp":"2850","target":"3200","reason":"Strong Jio growth, retail expansion","sector":"Conglomerate","timeframe":"12-18 months"},{"ticker":"HDFCBANK","name":"HDFC Bank","cmp":"1680","target":"1950","reason":"Strong fundamentals, NIM recovery","sector":"Banking","timeframe":"12-18 months"},{"ticker":"TCS","name":"TCS","cmp":"4100","target":"4600","reason":"AI deals, strong order book","sector":"IT","timeframe":"12-24 months"},{"ticker":"INFY","name":"Infosys","cmp":"1850","target":"2100","reason":"Cost efficiency, cloud deals","sector":"IT","timeframe":"12-18 months"},{"ticker":"ICICIBANK","name":"ICICI Bank","cmp":"1280","target":"1500","reason":"Consistent ROE, retail growth","sector":"Banking","timeframe":"12-18 months"}],"india_top_picks_short":[{"ticker":"TATAMOTORS","name":"Tata Motors","cmp":"950","target":"1050","reason":"EV momentum, JLR recovery","sector":"Auto","timeframe":"1-3 months"},{"ticker":"ADANIPORTS","name":"Adani Ports","cmp":"1380","target":"1480","reason":"Strong volume growth","sector":"Infra","timeframe":"1-2 months"},{"ticker":"SUNPHARMA","name":"Sun Pharma","cmp":"1720","target":"1820","reason":"US generics recovery","sector":"Pharma","timeframe":"2-3 months"}],"sectors":[{"name":"IT","trend":"up","note":"AI tailwinds, deal wins"},{"name":"Banking","trend":"up","note":"NIM stable, credit growth"},{"name":"Auto","trend":"up","note":"EV transition, rural demand"},{"name":"Pharma","trend":"neutral","note":"US FDA approvals key"},{"name":"FMCG","trend":"neutral","note":"Rural recovery slow"},{"name":"Metals","trend":"down","note":"China slowdown pressure"}],"global_markets":[{"name":"London FTSE","value":"8200","change":"+0.3%"},{"name":"Tokyo Nikkei","value":"38500","change":"-0.4%"},{"name":"Shanghai CSI","value":"3400","change":"+0.6%"},{"name":"Frankfurt DAX","value":"19800","change":"+0.2%"},{"name":"Hong Kong HSI","value":"21000","change":"+0.8%"},{"name":"Australia ASX","value":"8100","change":"+0.1%"}],"market_summary":"Brief 2-sentence market summary here"}`,
+        messages:[{role:'user',content:'Get current live data for Indian markets (Nifty 50, Sensex, Bank Nifty), US markets, and top Indian stock picks for long-term (12+ months) and short-term (1-3 months) investment for an Indian investor. Include current prices, targets, and reasons. Search for today\'s market data.'}]
+      })
+    });
+    const d = await resp.json();
+    const text = (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    // Parse JSON from response
+    const jsonMatch = text.match(/\{[\s\S]+\}/);
+    if(jsonMatch){
+      try {
+        _marketsData = JSON.parse(jsonMatch[0]);
+        renderMarketsData(_marketsData);
+        if(lastUpdateEl) lastUpdateEl.textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN');
+      } catch(e){
+        if(container) container.innerHTML = '<div style="padding:20px;color:var(--text3);text-align:center">Could not parse market data. Try refreshing.</div>';
+      }
+    }
+  } catch(e){
+    if(container) container.innerHTML = '<div style="padding:20px;color:var(--red);text-align:center">Error loading data: ' + e.message + '</div>';
+  }
+  _marketsLoading = false;
+}
+
+function renderMarketsData(data){
+  if(!data) return;
+  const container = document.getElementById('markets-ai-content');
+  if(!container) return;
+
+  const trendIcon = t => t==='up' ? '<i class="ti ti-trending-up" style="color:var(--green);font-size:13px"></i>' : t==='down' ? '<i class="ti ti-trending-down" style="color:var(--red);font-size:13px"></i>' : '<i class="ti ti-minus" style="color:var(--gold);font-size:13px"></i>';
+  const changeColor = ch => ch?.startsWith('+') ? 'var(--green)' : ch?.startsWith('-') ? 'var(--red)' : 'var(--gold)';
+
+  container.innerHTML = `
+    <!-- Market Summary -->
+    ${data.market_summary ? `<div style="background:var(--adim);border:1px solid rgba(79,142,247,.2);border-radius:14px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--text2);line-height:1.6"><i class="ti ti-info-circle" style="color:var(--accent);margin-right:6px"></i>${data.market_summary}</div>` : ''}
+
+    <!-- Indian Indices -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🇮🇳 Indian Indices</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
+        ${[['nifty','Nifty 50'],['sensex','Sensex'],['banknifty','Bank Nifty']].map(([key,label])=>data[key]?`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;${data[key].trend==='up'?'border-left:3px solid var(--green)':data[key].trend==='down'?'border-left:3px solid var(--red)':'border-left:3px solid var(--gold)'}">
+            <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:6px">${label}</div>
+            <div style="font-size:18px;font-weight:700;letter-spacing:-.3px">${data[key].value}</div>
+            <div style="font-size:12px;font-weight:600;color:${changeColor(data[key].change)};display:flex;align-items:center;gap:4px;margin-top:3px">${trendIcon(data[key].trend)}${data[key].change}</div>
+          </div>`:''
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- US Indices -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🇺🇸 US Markets</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
+        ${[['dow','Dow Jones'],['nasdaq','NASDAQ'],['sp500','S&P 500']].map(([key,label])=>data[key]?`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;${data[key].trend==='up'?'border-left:3px solid var(--green)':data[key].trend==='down'?'border-left:3px solid var(--red)':'border-left:3px solid var(--gold)'}">
+            <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:6px">${label}</div>
+            <div style="font-size:18px;font-weight:700;letter-spacing:-.3px">${data[key].value}</div>
+            <div style="font-size:12px;font-weight:600;color:${changeColor(data[key].change)};display:flex;align-items:center;gap:4px;margin-top:3px">${trendIcon(data[key].trend)}${data[key].change}</div>
+          </div>`:''
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- Commodities & FX -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">💱 Commodities & FX</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
+        ${[['gold_mcx','Gold MCX'],['crude_oil','Crude Oil'],['usd_inr','USD/INR']].map(([key,label])=>data[key]?`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px">
+            <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:6px">${label}</div>
+            <div style="font-size:18px;font-weight:700;letter-spacing:-.3px">${data[key].value}</div>
+            <div style="font-size:12px;font-weight:600;color:${changeColor(data[key].change)};margin-top:3px">${data[key].change||''}</div>
+          </div>`:''
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- Long-term picks -->
+    ${(data.india_top_picks_long||[]).length ? `
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">📈 Long-Term Picks (India) · 12+ Months</div>
+      ${(data.india_top_picks_long||[]).map(s=>`
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;border-left:3px solid var(--green)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent)">${s.ticker}</span>
+              <span style="font-size:13px;color:var(--text2)">${s.name}</span>
+            </div>
+            <span style="font-size:10px;background:var(--gdim);color:var(--green);padding:2px 8px;border-radius:99px;font-weight:700">${s.timeframe||'Long'}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">CMP</div><div style="font-size:14px;font-weight:700">₹${s.cmp}</div></div>
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Target</div><div style="font-size:14px;font-weight:700;color:var(--green)">₹${s.target}</div></div>
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Upside</div><div style="font-size:14px;font-weight:700;color:var(--green)">${s.cmp&&s.target?'+'+Math.round((parseFloat(s.target)-parseFloat(s.cmp))/parseFloat(s.cmp)*100)+'%':''}</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">${s.reason}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px">Sector: ${s.sector}</div>
+        </div>`).join('')}
+    </div>` : ''}
+
+    <!-- Short-term picks -->
+    ${(data.india_top_picks_short||[]).length ? `
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">⚡ Short-Term Picks (India) · 1-3 Months</div>
+      ${(data.india_top_picks_short||[]).map(s=>`
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;border-left:3px solid var(--gold)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent)">${s.ticker}</span>
+              <span style="font-size:13px;color:var(--text2)">${s.name}</span>
+            </div>
+            <span style="font-size:10px;background:var(--ydim);color:var(--gold);padding:2px 8px;border-radius:99px;font-weight:700">${s.timeframe||'Short'}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">CMP</div><div style="font-size:14px;font-weight:700">₹${s.cmp}</div></div>
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Target</div><div style="font-size:14px;font-weight:700;color:var(--gold)">₹${s.target}</div></div>
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Upside</div><div style="font-size:14px;font-weight:700;color:var(--gold)">${s.cmp&&s.target?'+'+Math.round((parseFloat(s.target)-parseFloat(s.cmp))/parseFloat(s.cmp)*100)+'%':''}</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">${s.reason}</div>
+        </div>`).join('')}
+    </div>` : ''}
+
+    <!-- Sector watch -->
+    ${(data.sectors||[]).length ? `
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🏭 Sector Watch</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+        ${(data.sectors||[]).map(s=>`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;${s.trend==='up'?'border-top:2px solid var(--green)':s.trend==='down'?'border-top:2px solid var(--red)':'border-top:2px solid var(--gold)'}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:13px;font-weight:600">${s.name}</span>
+              ${trendIcon(s.trend)}
+            </div>
+            <div style="font-size:11px;color:var(--text3)">${s.note}</div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- Global markets -->
+    ${(data.global_markets||[]).length ? `
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🌍 Global Markets</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+        ${(data.global_markets||[]).map(m=>`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px">
+            <div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:5px">${m.name}</div>
+            <div style="font-size:15px;font-weight:700">${m.value}</div>
+            <div style="font-size:12px;font-weight:600;color:${changeColor(m.change)};margin-top:2px">${m.change}</div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- Disclaimer -->
+    <div style="padding:12px 14px;background:var(--bg3);border-radius:10px;font-size:11px;color:var(--text3);line-height:1.5">
+      ⚠️ <strong>Disclaimer:</strong> This is AI-generated market analysis for educational purposes only. Not financial advice. Always do your own research (DYOR) before investing. Past performance does not guarantee future results.
+    </div>
+  `;
+}
+
+function startMarketsAutoRefresh(){
+  if(_marketsTimer) clearInterval(_marketsTimer);
+  // Refresh every 15 mins if market open, every 60 mins if closed
+  _marketsTimer = setInterval(()=>{
+    const { nse, us } = getMarketStatus();
+    if(nse || us) loadMarketsData(true);
+  }, 15 * 60 * 1000);
+}
+
+
+/* ── MOBILE MARKETS ── */
+async function loadMobileMarkets(){
+  const container = document.getElementById('mob-markets-data');
+  if(!container) return;
+  container.innerHTML = '<div style="text-align:center;padding:24px"><div class="splash-spin" style="margin:0 auto 12px"></div><div style="color:var(--text2);font-size:13px">Loading market data...</div></div>';
+  await loadMarketsData(true);
+  // renderMarketsData writes to markets-ai-content (desktop id)
+  // We need to write to mob-markets-data instead
+  const desktopData = document.getElementById('markets-ai-content');
+  if(desktopData && _marketsData){
+    container.innerHTML = desktopData.innerHTML;
+    desktopData.innerHTML = ''; // clear desktop copy
+  }
+  // Update sub text
+  const sub = document.getElementById('mob-markets-sub');
+  if(sub) sub.textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN');
+}
+
+// Override renderMarketsData to work for both mobile and desktop
+const _origRenderMarkets = typeof renderMarketsData === 'function' ? renderMarketsData : null;
+
+/* ── GOALS ── */
+function openAddGoalSheet(){
+  document.getElementById('sheet-title').textContent='Add Goal';
+  document.getElementById('sheet-body').innerHTML=`
+    <div class="form-field"><label class="form-label">Goal Title *</label><input type="text" class="form-inp" id="ag-title" placeholder="e.g. Save SAR 50,000"></div>
+    <div class="form-field"><label class="form-label">Description</label><textarea class="form-inp" id="ag-desc" rows="2" placeholder="Why this goal matters..."></textarea></div>
+    <div class="form-field"><label class="form-label">Target Date</label><input type="date" class="form-inp" id="ag-date"></div>
+    <button type="button" class="btn btn-primary btn-full" onclick="saveGoalMobile()">Save Goal</button>
+  `;
+  document.getElementById('sheet-backdrop').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
+}
+async function saveGoalMobile(){
+  const title=document.getElementById('ag-title')?.value?.trim();
+  if(!title){toast('Title required','error');return;}
+  const{data,error}=await sb.from('goals').insert({user_id:CU.id,title,description:document.getElementById('ag-desc')?.value||null,target_date:document.getElementById('ag-date')?.value||null}).select().single();
+  if(error){toast('Error: '+error.message,'error');return;}
+  D.goals.push(data);closeSheet();
+  const content=document.getElementById('subpage-content');
+  if(content)content.innerHTML=buildSubPage('goals');
+  toast('Goal added!');
+}
+async function deleteMobileGoal(id){
+  if(!confirm('Delete this goal?'))return;
+  await sb.from('goals').delete().eq('id',id);
+  D.goals=D.goals.filter(g=>g.id!==id);
+  const content=document.getElementById('subpage-content');
+  if(content)content.innerHTML=buildSubPage('goals');
+  toast('Goal deleted');
+}
+
+/* ── HABITS ── */
+function openAddHabitSheet(){
+  document.getElementById('sheet-title').textContent='Add Habit';
+  document.getElementById('sheet-body').innerHTML=`
+    <div class="form-field"><label class="form-label">Habit Name *</label><input type="text" class="form-inp" id="ah-name" placeholder="e.g. Morning walk"></div>
+    <div class="form-field"><label class="form-label">Icon (emoji)</label><input type="text" class="form-inp" id="ah-icon" placeholder="🏃" maxlength="2" value="⭐"></div>
+    <div class="form-field"><label class="form-label">Frequency</label>
+      <select class="form-inp" id="ah-freq">
+        <option value="Daily">Daily</option>
+        <option value="Weekdays">Weekdays</option>
+        <option value="Weekly">Weekly</option>
+      </select>
+    </div>
+    <button type="button" class="btn btn-primary btn-full" onclick="saveHabitMobile()">Save Habit</button>
+  `;
+  document.getElementById('sheet-backdrop').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
+}
+async function saveHabitMobile(){
+  const name=document.getElementById('ah-name')?.value?.trim();
+  if(!name){toast('Name required','error');return;}
+  const icon=document.getElementById('ah-icon')?.value||'⭐';
+  const freq=document.getElementById('ah-freq')?.value||'Daily';
+  const{data,error}=await sb.from('habits').insert({user_id:CU.id,name,icon,frequency:freq}).select().single();
+  if(error){toast('Error: '+error.message,'error');return;}
+  D.habits.push(data);closeSheet();
+  const content=document.getElementById('subpage-content');
+  if(content)content.innerHTML=buildSubPage('goals');
+  renderHabitBubbles();
+  toast('Habit added!');
+}
+async function deleteMobileHabit(id){
+  if(!confirm('Delete this habit?'))return;
+  await sb.from('habit_logs').delete().eq('habit_id',id);
+  await sb.from('habits').delete().eq('id',id);
+  D.habits=D.habits.filter(h=>h.id!==id);
+  D.habitLogs=D.habitLogs.filter(l=>l.habit_id!==id);
+  const content=document.getElementById('subpage-content');
+  if(content)content.innerHTML=buildSubPage('goals');
+  renderHabitBubbles();
+  toast('Habit deleted');
+}
+
+/* ── ROUTINE ── */
+function openAddRoutineSheet(){
+  document.getElementById('sheet-title').textContent='Add Routine Block';
+  document.getElementById('sheet-body').innerHTML=`
+    <div class="form-field"><label class="form-label">Block Title *</label><input type="text" class="form-inp" id="ar-title" placeholder="e.g. Morning Exercise"></div>
+    <div class="form-field"><label class="form-label">Icon (emoji)</label><input type="text" class="form-inp" id="ar-icon" placeholder="🏋️" maxlength="2" value="📌"></div>
+    <div class="form-grid">
+      <div class="form-field"><label class="form-label">Start Time</label><input type="time" class="form-inp" id="ar-start"></div>
+      <div class="form-field"><label class="form-label">Duration (min)</label><input type="number" class="form-inp" id="ar-dur" placeholder="30" value="30"></div>
+    </div>
+    <button type="button" class="btn btn-primary btn-full" onclick="saveRoutineBlockMobile()">Add Block</button>
+  `;
+  document.getElementById('sheet-backdrop').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
+}
+async function saveRoutineBlockMobile(){
+  const title=document.getElementById('ar-title')?.value?.trim();
+  if(!title){toast('Title required','error');return;}
+  const icon=document.getElementById('ar-icon')?.value||'📌';
+  const start=document.getElementById('ar-start')?.value||null;
+  const dur=parseInt(document.getElementById('ar-dur')?.value||30);
+  const{data,error}=await sb.from('routine_blocks').insert({user_id:CU.id,title,icon,start_time:start,duration_min:dur}).select().single();
+  if(error){toast('Error: '+error.message,'error');return;}
+  D.routine.push(data);closeSheet();
+  const content=document.getElementById('subpage-content');
+  if(content)content.innerHTML=buildSubPage('routine');
+  renderHomeRoutine();
+  toast('Routine block added!');
+}
+async function deleteMobileRoutineBlock(id){
+  if(!confirm('Delete this routine block?'))return;
+  await sb.from('routine_logs').delete().eq('block_id',id);
+  await sb.from('routine_blocks').delete().eq('id',id);
+  D.routine=D.routine.filter(b=>b.id!==id);
+  D.routineLogs=D.routineLogs.filter(l=>l.block_id!==id);
+  const content=document.getElementById('subpage-content');
+  if(content)content.innerHTML=buildSubPage('routine');
+  renderHomeRoutine();
+  toast('Block deleted');
 }
 
 init();

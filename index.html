@@ -647,7 +647,7 @@ textarea.inp{resize:vertical;min-height:80px}
     <div class="auth-err" id="auth-err"></div>
     <div class="auth-field"><label class="auth-label">Email</label><input class="auth-inp" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email"></div>
     <div class="auth-field"><label class="auth-label">Password</label><input class="auth-inp" type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <button type="button" class="auth-submit" onclick="doLogin()" id="auth-submit-btn"><i class="ti ti-login"></i>Sign in to MyTracker</button>
+    <button type="button" class="auth-submit" onclick="doLogin()" id="auth-submit-btn"><i class="ti ti-arrow-right"></i>Sign in to MyTracker</button>
   </div>
 </div>
 
@@ -719,6 +719,7 @@ textarea.inp{resize:vertical;min-height:80px}
       <div class="sb-group" id="grp-more">
         <div class="sb-group-header" onclick="toggleGroup('grp-more')"><i class="ti ti-dots" style="font-size:14px;color:var(--text3);flex-shrink:0"></i><div class="sb-group-label">More</div><i class="ti ti-chevron-right sb-group-chevron"></i></div>
         <div class="sb-group-items" id="grp-more-items" style="max-height:0">
+          <div class="sb-item" onclick="showPage('markets')" data-label="World Markets"><i class="ti ti-chart-candle"></i><span class="sb-item-text">World Markets</span><span class="sb-badge" style="background:var(--green)">LIVE</span></div>
           <div class="sb-item" onclick="showPage('reports')" data-label="Reports"><i class="ti ti-file-description"></i><span class="sb-item-text">PDF Reports</span></div>
           <div class="sb-item" onclick="window.location.href='mobile.html'" data-label="Mobile App"><i class="ti ti-device-mobile"></i><span class="sb-item-text">Mobile App</span><span class="sb-badge" style="background:var(--green)">NEW</span></div>
         </div>
@@ -1173,6 +1174,63 @@ textarea.inp{resize:vertical;min-height:80px}
 </div>
 
 <!-- REPORTS -->
+<div id="page-markets" class="page">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">World Markets & India Stocks</div>
+      <div class="topbar-sub" id="markets-last-update">Not yet loaded</div>
+    </div>
+    <div class="topbar-right">
+      <div id="markets-status" style="display:flex;align-items:center;gap:8px"></div>
+      <button class="topbar-btn primary" onclick="loadMarketsData(true)"><i class="ti ti-refresh"></i>Refresh Now</button>
+      <button class="topbar-btn" onclick="openSearch()"><i class="ti ti-search"></i>Search <span class="kb-hint">⌘K</span></button>
+    </div>
+  </div>
+  <div class="content">
+    <!-- Learn section -->
+    <div class="g2" style="margin-bottom:20px">
+      <div class="card" style="cursor:pointer" onclick="this.querySelector('.learn-body').style.display=this.querySelector('.learn-body').style.display==='none'?'block':'none'">
+        <div class="card-hd">
+          <div class="card-title"><i class="ti ti-school" style="color:var(--accent)"></i>How Indian Markets Work</div>
+          <i class="ti ti-chevron-down" style="color:var(--text3)"></i>
+        </div>
+        <div class="learn-body" style="display:none;font-size:13px;color:var(--text2);line-height:1.7">
+          <p><strong style="color:var(--text)">NSE (National Stock Exchange)</strong> — India's largest exchange by volume. Home to Nifty 50.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">BSE (Bombay Stock Exchange)</strong> — World's oldest Asian exchange. Home to Sensex (30 stocks).</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">Nifty 50</strong> — Top 50 companies by market cap on NSE. A proxy for the Indian economy.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">Market Hours</strong> — Mon-Fri, 9:15am – 3:30pm IST. Pre-open: 9:00–9:15am.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">Demat Account</strong> — Required to invest. Open with Zerodha, Groww, Upstox, or your bank.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">P/E Ratio</strong> — Price ÷ Earnings. Lower = cheaper. Nifty 50 avg is ~22-25x.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">SEBI</strong> — Securities and Exchange Board of India. Regulates all markets.</p>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="this.querySelector('.learn-body2').style.display=this.querySelector('.learn-body2').style.display==='none'?'block':'none'">
+        <div class="card-hd">
+          <div class="card-title"><i class="ti ti-world" style="color:var(--purple)"></i>Global Exchanges Guide</div>
+          <i class="ti ti-chevron-down" style="color:var(--text3)"></i>
+        </div>
+        <div class="learn-body2" style="display:none;font-size:13px;color:var(--text2);line-height:1.7">
+          <p><strong style="color:var(--text)">NYSE</strong> — New York. World's largest. 9:30am–4pm ET. Home to Fortune 500.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">NASDAQ</strong> — New York. Tech-heavy. Apple, Microsoft, Google, Meta all here.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">LSE (London)</strong> — 8am–4:30pm GMT. FTSE 100 index.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">TSE/Tokyo</strong> — 9am–3:30pm JST. Nikkei 225 index. Auto, tech, banking.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">Shanghai/Shenzhen</strong> — 9:30am–3pm CST. Tracks China's economy closely.</p>
+          <p style="margin-top:8px"><strong style="color:var(--text)">As an Indian investor</strong> — You can invest globally via LRS (Liberalized Remittance Scheme) up to $250,000/year through platforms like INDMoney, Vested, or Groww.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Live data -->
+    <div id="markets-ai-content">
+      <div style="text-align:center;padding:48px;color:var(--text3)">
+        <div style="font-size:48px;margin-bottom:16px">📊</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text2)">Live Market Data</div>
+        <div style="font-size:13px;margin-bottom:20px">Click Refresh Now to load current market data, Indian stock picks, and global indices.</div>
+        <button class="btn btn-a" onclick="loadMarketsData(true)"><i class="ti ti-refresh"></i>Load Market Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="page-reports" class="page">
   <div class="topbar"><button class="mob-btn" onclick="openPanel()" style="margin-right:8px"><i class="ti ti-menu-2"></i></button><div class="topbar-title">PDF Reports</div></div>
   <div class="content">
@@ -1341,7 +1399,7 @@ textarea.inp{resize:vertical;min-height:80px}
 
 <!-- Doc Preview Modal -->
 <div class="modal-bg" style="display:none" id="doc-preview-modal">
-  <div class="modal" style="width:640px">
+  <div class="modal" style="width:80vw;max-width:1000px;min-height:70vh">
     <div class="modal-title" id="doc-preview-title"><i class="ti ti-file"></i>Document</div>
     <button class="modal-close" onclick="closeModal('doc-preview-modal')"><i class="ti ti-x"></i></button>
     <div id="doc-preview-content" style="border-radius:var(--r12);overflow:hidden;min-height:200px;background:var(--bg3)"></div>
@@ -1480,7 +1538,7 @@ async function doLogin(){
   const btn=document.getElementById('login-btn');const err=document.getElementById('auth-err');
   err.style.display='none';btn.textContent='Signing in...';btn.disabled=true;
   const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-  btn.innerHTML='<i class="ti ti-login"></i>Sign in';btn.disabled=false;
+  btn.innerHTML='<i class="ti ti-arrow-right"></i>Sign in';btn.disabled=false;
   if(error){err.textContent=error.message==='Invalid login credentials'?'Incorrect email or password.':error.message;err.style.display='block';return;}
   CU=data.user;document.getElementById('auth-screen').style.display='none';await bootApp();
 }
@@ -1501,6 +1559,14 @@ async function bootApp(){
   window.addEventListener('offline',()=>{document.getElementById('offline-bar').style.display='block';});
   await loadAll();
   renderDashboard();
+
+  // Premium desktop features init
+  initSidebar();
+  startDesktopPrayerWidget();
+  updateFollowupBadge();
+  // Restore last active page
+  const lastPage = localStorage.getItem('mt-last-page') || 'dashboard';
+  showPage(lastPage);
 }
 
 async function loadAll(){
@@ -1597,21 +1663,21 @@ function getPrayerTimes(dateObj){
 function getNextPrayer(){const now=new Date();const cur=now.getHours()*60+now.getMinutes();for(const[n,t]of Object.entries(getPrayerTimes())){if(n==='Sunrise')continue;const[h,m]=t.split(':').map(Number);if(h*60+m>cur)return n;}return'Fajr';}
 
 /* ── THEME ── */
-function toggleTheme(){applyTheme(document.body.classList.contains('light')?'dark':'light');}
-function applyTheme(t){
-  if(t==='light'){document.body.classList.add('light');document.getElementById('theme-icon').className='ti ti-moon';document.getElementById('theme-label').textContent='Dark';}
-  else{document.body.classList.remove('light');document.getElementById('theme-icon').className='ti ti-sun';document.getElementById('theme-label').textContent='Light';}
-  localStorage.setItem('mt-theme',t);
-}
+/* toggleTheme: defined below */
+/* applyTheme: defined below */
 
 /* ── PAGE NAV ── */
 function showPage(id){
+  localStorage.setItem('mt-last-page', id);
+  if(id==='markets' && !_marketsData) setTimeout(()=>initMarketsPage(),100);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id)?.classList.add('active');
   document.querySelectorAll('.sb-item').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+id+"'"))n.classList.add('active');});
   const r={dashboard:renderDashboard,cashflow:renderCashFlow,spending:renderSpending,'savings-calc':calcSavings,savings:()=>{renderSavingsLog();renderSavingsTotals();renderSavingsChart();},zakat:()=>{},investments:renderInvestments,stocks:initStocksPage,goals:renderGoalsPage,routine:renderRoutinePage,study:renderStudyPage,'study-log':renderStudyLog,vault:renderVaultPage,cv:renderCV,journal:renderJournalHistory,prayer:renderPrayerFull,reports:()=>{},contacts:renderContactsPage};
   r[id]?.();
+
+  if(typeof updateTopbarTitle==="function")updateTopbarTitle(id);
 }
 
 /* ── EXPIRY ALERTS ── */
@@ -2340,7 +2406,7 @@ async function previewDoc(id){
   if(error||!data?.signedUrl){toast('Could not load file: '+( error?.message||'unknown error'),'error');return;}
   const url=data.signedUrl;
   const content=document.getElementById('doc-preview-content');
-  content.innerHTML=doc.file_type==='pdf'?`<iframe src="${url}" style="width:100%;height:420px;border:none;border-radius:var(--r12)"></iframe>`:`<img src="${url}" style="width:100%;max-height:420px;object-fit:contain;border-radius:var(--r12);display:block">`;
+  content.innerHTML=doc.file_type==='pdf'?`<iframe src="${url}" style="width:100%;height:75vh;border:none;border-radius:var(--r12)"></iframe>`:`<img src="${url}" style="width:100%;max-height:80vh;object-fit:contain;border-radius:var(--r12);display:block">`;
   const dl=document.getElementById('doc-download-link');dl.href=url;dl.download=doc.name;
   openModal('doc-preview-modal');
 }
@@ -3266,26 +3332,265 @@ function updateFollowupBadge(){
   if(n)b.textContent=n;
 }
 
-/* ── HOOK INTO showPage ── */
-const _origSP=window.showPage||function(){};
-window.showPage=function(id){
-  _origSP(id);
-  updateTopbarTitle(id);
-};
+/* showPage title update handled inline */
 
-/* ── HOOK INTO bootApp ── */
-const _origBoot=window.bootApp||async function(){};
-window.bootApp=async function(){
-  await _origBoot();
-  initSidebar();
-  startDesktopPrayerWidget();
-  updateFollowupBadge();
-  updateTopbarTitle('dashboard');
-};
+/* bootApp init handled inline */
 
 /* ── SERVICE WORKER ── */
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+
+/* ══════════════════════════════════════════════════
+   WORLD MARKETS & INDIA STOCKS MODULE
+   Auto-refreshes during market hours (IST)
+══════════════════════════════════════════════════ */
+
+let _marketsData = null;
+let _marketsTimer = null;
+let _marketsLoading = false;
+
+// NSE hours: 9:15am - 3:30pm IST (Mon-Fri)
+// IST = UTC+5:30
+function getISTNow(){
+  const now = new Date();
+  return new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+}
+function isNSEOpen(){
+  const ist = getISTNow();
+  const day = ist.getDay(); // 0=Sun,6=Sat
+  if(day === 0 || day === 6) return false;
+  const h = ist.getHours(), m = ist.getMinutes();
+  const mins = h * 60 + m;
+  return mins >= 9*60+15 && mins <= 15*60+30;
+}
+function isUSMarketOpen(){
+  // NYSE: 9:30am - 4pm ET (UTC-5 or UTC-4 DST)
+  const now = new Date();
+  const etOffset = -5; // simplified
+  const et = new Date(now.getTime() + etOffset * 3600000);
+  const day = et.getDay();
+  if(day === 0 || day === 6) return false;
+  const mins = et.getHours()*60 + et.getMinutes();
+  return mins >= 9*60+30 && mins <= 16*60;
+}
+function getMarketStatus(){
+  const nse = isNSEOpen();
+  const us = isUSMarketOpen();
+  const ist = getISTNow();
+  const timeStr = ist.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'});
+  return { nse, us, timeStr };
+}
+
+async function loadMarketsData(forceRefresh){
+  if(_marketsLoading && !forceRefresh) return;
+  _marketsLoading = true;
+  
+  const status = getMarketStatus();
+  const statusEl = document.getElementById('markets-status');
+  const lastUpdateEl = document.getElementById('markets-last-update');
+  
+  if(statusEl){
+    statusEl.innerHTML = `
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;background:${status.nse?'var(--gdim)':'var(--rdim)'};color:${status.nse?'var(--green)':'var(--red)'}">
+        <span style="width:6px;height:6px;border-radius:50%;background:currentColor;${status.nse?'animation:pulse 1.5s ease infinite':''}"></span>
+        NSE ${status.nse?'OPEN':'CLOSED'}
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;background:${status.us?'var(--gdim)':'var(--rdim)'};color:${status.us?'var(--green)':'var(--red)'}">
+        <span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>
+        NYSE ${status.us?'OPEN':'CLOSED'}
+      </span>
+      <span style="font-size:11px;color:var(--text3)">IST ${status.timeStr}</span>
+    `;
+  }
+
+  const container = document.getElementById('markets-ai-content');
+  if(container && !_marketsData){
+    container.innerHTML = '<div style="text-align:center;padding:32px"><div class="splash-spin" style="margin:0 auto 12px"></div><div style="color:var(--text2);font-size:13px">Loading market data...</div></div>';
+  }
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:2000,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        system:`You are a financial market analyst. Return ONLY valid JSON, no markdown, no explanation.
+Provide current market data for Indian and global markets.
+Format: {"nifty":{"value":"24500","change":"+0.5%","trend":"up"},"sensex":{"value":"80000","change":"+0.4%","trend":"up"},"banknifty":{"value":"52000","change":"+0.3%","trend":"up"},"dow":{"value":"43000","change":"-0.2%","trend":"down"},"nasdaq":{"value":"19500","change":"+0.1%","trend":"up"},"sp500":{"value":"5900","change":"+0.2%","trend":"up"},"gold_mcx":{"value":"72000","change":"+0.3%","trend":"up"},"crude_oil":{"value":"6500","change":"-0.5%","trend":"down"},"usd_inr":{"value":"83.5","change":"-0.1%","trend":"down"},"india_top_picks_long":[{"ticker":"RELIANCE","name":"Reliance Industries","cmp":"2850","target":"3200","reason":"Strong Jio growth, retail expansion","sector":"Conglomerate","timeframe":"12-18 months"},{"ticker":"HDFCBANK","name":"HDFC Bank","cmp":"1680","target":"1950","reason":"Strong fundamentals, NIM recovery","sector":"Banking","timeframe":"12-18 months"},{"ticker":"TCS","name":"TCS","cmp":"4100","target":"4600","reason":"AI deals, strong order book","sector":"IT","timeframe":"12-24 months"},{"ticker":"INFY","name":"Infosys","cmp":"1850","target":"2100","reason":"Cost efficiency, cloud deals","sector":"IT","timeframe":"12-18 months"},{"ticker":"ICICIBANK","name":"ICICI Bank","cmp":"1280","target":"1500","reason":"Consistent ROE, retail growth","sector":"Banking","timeframe":"12-18 months"}],"india_top_picks_short":[{"ticker":"TATAMOTORS","name":"Tata Motors","cmp":"950","target":"1050","reason":"EV momentum, JLR recovery","sector":"Auto","timeframe":"1-3 months"},{"ticker":"ADANIPORTS","name":"Adani Ports","cmp":"1380","target":"1480","reason":"Strong volume growth","sector":"Infra","timeframe":"1-2 months"},{"ticker":"SUNPHARMA","name":"Sun Pharma","cmp":"1720","target":"1820","reason":"US generics recovery","sector":"Pharma","timeframe":"2-3 months"}],"sectors":[{"name":"IT","trend":"up","note":"AI tailwinds, deal wins"},{"name":"Banking","trend":"up","note":"NIM stable, credit growth"},{"name":"Auto","trend":"up","note":"EV transition, rural demand"},{"name":"Pharma","trend":"neutral","note":"US FDA approvals key"},{"name":"FMCG","trend":"neutral","note":"Rural recovery slow"},{"name":"Metals","trend":"down","note":"China slowdown pressure"}],"global_markets":[{"name":"London FTSE","value":"8200","change":"+0.3%"},{"name":"Tokyo Nikkei","value":"38500","change":"-0.4%"},{"name":"Shanghai CSI","value":"3400","change":"+0.6%"},{"name":"Frankfurt DAX","value":"19800","change":"+0.2%"},{"name":"Hong Kong HSI","value":"21000","change":"+0.8%"},{"name":"Australia ASX","value":"8100","change":"+0.1%"}],"market_summary":"Brief 2-sentence market summary here"}`,
+        messages:[{role:'user',content:'Get current live data for Indian markets (Nifty 50, Sensex, Bank Nifty), US markets, and top Indian stock picks for long-term (12+ months) and short-term (1-3 months) investment for an Indian investor. Include current prices, targets, and reasons. Search for today\'s market data.'}]
+      })
+    });
+    const d = await resp.json();
+    const text = (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    // Parse JSON from response
+    const jsonMatch = text.match(/\{[\s\S]+\}/);
+    if(jsonMatch){
+      try {
+        _marketsData = JSON.parse(jsonMatch[0]);
+        renderMarketsData(_marketsData);
+        if(lastUpdateEl) lastUpdateEl.textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN');
+      } catch(e){
+        if(container) container.innerHTML = '<div style="padding:20px;color:var(--text3);text-align:center">Could not parse market data. Try refreshing.</div>';
+      }
+    }
+  } catch(e){
+    if(container) container.innerHTML = '<div style="padding:20px;color:var(--red);text-align:center">Error loading data: ' + e.message + '</div>';
+  }
+  _marketsLoading = false;
+}
+
+function renderMarketsData(data){
+  if(!data) return;
+  const container = document.getElementById('markets-ai-content');
+  if(!container) return;
+
+  const trendIcon = t => t==='up' ? '<i class="ti ti-trending-up" style="color:var(--green);font-size:13px"></i>' : t==='down' ? '<i class="ti ti-trending-down" style="color:var(--red);font-size:13px"></i>' : '<i class="ti ti-minus" style="color:var(--gold);font-size:13px"></i>';
+  const changeColor = ch => ch?.startsWith('+') ? 'var(--green)' : ch?.startsWith('-') ? 'var(--red)' : 'var(--gold)';
+
+  container.innerHTML = `
+    <!-- Market Summary -->
+    ${data.market_summary ? `<div style="background:var(--adim);border:1px solid rgba(79,142,247,.2);border-radius:14px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--text2);line-height:1.6"><i class="ti ti-info-circle" style="color:var(--accent);margin-right:6px"></i>${data.market_summary}</div>` : ''}
+
+    <!-- Indian Indices -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🇮🇳 Indian Indices</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
+        ${[['nifty','Nifty 50'],['sensex','Sensex'],['banknifty','Bank Nifty']].map(([key,label])=>data[key]?`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;${data[key].trend==='up'?'border-left:3px solid var(--green)':data[key].trend==='down'?'border-left:3px solid var(--red)':'border-left:3px solid var(--gold)'}">
+            <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:6px">${label}</div>
+            <div style="font-size:18px;font-weight:700;letter-spacing:-.3px">${data[key].value}</div>
+            <div style="font-size:12px;font-weight:600;color:${changeColor(data[key].change)};display:flex;align-items:center;gap:4px;margin-top:3px">${trendIcon(data[key].trend)}${data[key].change}</div>
+          </div>`:''
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- US Indices -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🇺🇸 US Markets</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
+        ${[['dow','Dow Jones'],['nasdaq','NASDAQ'],['sp500','S&P 500']].map(([key,label])=>data[key]?`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;${data[key].trend==='up'?'border-left:3px solid var(--green)':data[key].trend==='down'?'border-left:3px solid var(--red)':'border-left:3px solid var(--gold)'}">
+            <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:6px">${label}</div>
+            <div style="font-size:18px;font-weight:700;letter-spacing:-.3px">${data[key].value}</div>
+            <div style="font-size:12px;font-weight:600;color:${changeColor(data[key].change)};display:flex;align-items:center;gap:4px;margin-top:3px">${trendIcon(data[key].trend)}${data[key].change}</div>
+          </div>`:''
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- Commodities & FX -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">💱 Commodities & FX</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
+        ${[['gold_mcx','Gold MCX'],['crude_oil','Crude Oil'],['usd_inr','USD/INR']].map(([key,label])=>data[key]?`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px">
+            <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:6px">${label}</div>
+            <div style="font-size:18px;font-weight:700;letter-spacing:-.3px">${data[key].value}</div>
+            <div style="font-size:12px;font-weight:600;color:${changeColor(data[key].change)};margin-top:3px">${data[key].change||''}</div>
+          </div>`:''
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- Long-term picks -->
+    ${(data.india_top_picks_long||[]).length ? `
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">📈 Long-Term Picks (India) · 12+ Months</div>
+      ${(data.india_top_picks_long||[]).map(s=>`
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;border-left:3px solid var(--green)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent)">${s.ticker}</span>
+              <span style="font-size:13px;color:var(--text2)">${s.name}</span>
+            </div>
+            <span style="font-size:10px;background:var(--gdim);color:var(--green);padding:2px 8px;border-radius:99px;font-weight:700">${s.timeframe||'Long'}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">CMP</div><div style="font-size:14px;font-weight:700">₹${s.cmp}</div></div>
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Target</div><div style="font-size:14px;font-weight:700;color:var(--green)">₹${s.target}</div></div>
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Upside</div><div style="font-size:14px;font-weight:700;color:var(--green)">${s.cmp&&s.target?'+'+Math.round((parseFloat(s.target)-parseFloat(s.cmp))/parseFloat(s.cmp)*100)+'%':''}</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">${s.reason}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px">Sector: ${s.sector}</div>
+        </div>`).join('')}
+    </div>` : ''}
+
+    <!-- Short-term picks -->
+    ${(data.india_top_picks_short||[]).length ? `
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">⚡ Short-Term Picks (India) · 1-3 Months</div>
+      ${(data.india_top_picks_short||[]).map(s=>`
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;border-left:3px solid var(--gold)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent)">${s.ticker}</span>
+              <span style="font-size:13px;color:var(--text2)">${s.name}</span>
+            </div>
+            <span style="font-size:10px;background:var(--ydim);color:var(--gold);padding:2px 8px;border-radius:99px;font-weight:700">${s.timeframe||'Short'}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">CMP</div><div style="font-size:14px;font-weight:700">₹${s.cmp}</div></div>
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Target</div><div style="font-size:14px;font-weight:700;color:var(--gold)">₹${s.target}</div></div>
+            <div><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Upside</div><div style="font-size:14px;font-weight:700;color:var(--gold)">${s.cmp&&s.target?'+'+Math.round((parseFloat(s.target)-parseFloat(s.cmp))/parseFloat(s.cmp)*100)+'%':''}</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">${s.reason}</div>
+        </div>`).join('')}
+    </div>` : ''}
+
+    <!-- Sector watch -->
+    ${(data.sectors||[]).length ? `
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🏭 Sector Watch</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+        ${(data.sectors||[]).map(s=>`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;${s.trend==='up'?'border-top:2px solid var(--green)':s.trend==='down'?'border-top:2px solid var(--red)':'border-top:2px solid var(--gold)'}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:13px;font-weight:600">${s.name}</span>
+              ${trendIcon(s.trend)}
+            </div>
+            <div style="font-size:11px;color:var(--text3)">${s.note}</div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- Global markets -->
+    ${(data.global_markets||[]).length ? `
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🌍 Global Markets</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+        ${(data.global_markets||[]).map(m=>`
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px">
+            <div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:5px">${m.name}</div>
+            <div style="font-size:15px;font-weight:700">${m.value}</div>
+            <div style="font-size:12px;font-weight:600;color:${changeColor(m.change)};margin-top:2px">${m.change}</div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- Disclaimer -->
+    <div style="padding:12px 14px;background:var(--bg3);border-radius:10px;font-size:11px;color:var(--text3);line-height:1.5">
+      ⚠️ <strong>Disclaimer:</strong> This is AI-generated market analysis for educational purposes only. Not financial advice. Always do your own research (DYOR) before investing. Past performance does not guarantee future results.
+    </div>
+  `;
+}
+
+function startMarketsAutoRefresh(){
+  if(_marketsTimer) clearInterval(_marketsTimer);
+  // Refresh every 15 mins if market open, every 60 mins if closed
+  _marketsTimer = setInterval(()=>{
+    const { nse, us } = getMarketStatus();
+    if(nse || us) loadMarketsData(true);
+  }, 15 * 60 * 1000);
+}
+
+
+function initMarketsPage(){
+  loadMarketsData(false);
+  startMarketsAutoRefresh();
 }
 
 init();
