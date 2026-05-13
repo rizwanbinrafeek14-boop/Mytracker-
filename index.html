@@ -747,6 +747,7 @@ textarea.inp{resize:vertical;min-height:80px}
       <div class="topbar-right">
         <button type="button" class="topbar-btn" onclick="openSearch()"><i class="ti ti-search"></i>Search <span class="kb-hint">⌘K</span></button>
         <button type="button" class="topbar-btn" onclick="openFab()"><i class="ti ti-plus"></i>Quick Add</button>
+        <button type="button" class="topbar-btn" onclick="switchToMobile()" title="Switch to Mobile View" style="gap:6px"><i class="ti ti-device-mobile"></i>Mobile</button>
         <button type="button" class="topbar-btn" id="theme-btn" onclick="toggleTheme()"><i class="ti ti-sun"></i></button>
       </div>
     </div>
@@ -3592,6 +3593,11 @@ function startMarketsAutoRefresh(){
 function initMarketsPage(){
   loadMarketsData(false);
   startMarketsAutoRefresh();
+}
+
+/* ── VIEW SWITCHER ── */
+function switchToMobile(){
+  window.location.href = 'mobile.html';
 }
 
 init();
